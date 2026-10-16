@@ -1,0 +1,70 @@
+{
+  "approvalPopover": {
+    "rect": {
+      "top": 284,
+      "left": 397,
+      "width": 553,
+      "height": 193
+    },
+    "assertedBy": "listbox \"Modos de aprobación\""
+  },
+  "projectPicker": {
+    "rect": {
+      "top": 322,
+      "left": 396,
+      "width": 330,
+      "height": 114
+    },
+    "assertedBy": "listbox \"Proyectos\""
+  },
+  "environmentPopover": {
+    "rect": {
+      "top": 141,
+      "left": 819,
+      "width": 282,
+      "height": 295
+    },
+    "assertedBy": "group \"Entorno de ejecución\""
+  },
+  "approvalChipWarn": {
+    "rect": {
+      "top": 554,
+      "left": 443,
+      "width": 174,
+      "height": 31
+    },
+    "style": {
+      "color": "rgb(217, 86, 30)",
+      "backgroundColor": "rgb(237, 237, 240)",
+      "borderColor": "rgb(217, 86, 30)",
+      "height": "31px",
+      "fontSize": "14px",
+      "borderRadius": "999px",
+      "padding": "0px 10px 0px 12px"
+    },
+    "assertedBy": "aria-label=\"Aprobación: Acceso completo\"",
+    "label": "Aprobación: Acceso completo"
+  },
+  "approvalWarnRow": {
+    "style": {
+      "color": "rgb(217, 86, 30)",
+      "backgroundColor": "rgb(251, 240, 234)",
+      "borderRadius": "8px"
+    },
+    "assertedBy": "option \"Acceso completo\""
+  },
+  "afterAll": {
+    "contextBar": {
+      "top": 444,
+      "left": 412,
+      "width": 674,
+      "height": 40
+    },
+    "composer": {
+      "top": 484,
+      "left": 396,
+      "width": 705,
+      "height": 111
+    }
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "captureMode": "clip",
+  "scopes": [
+    {
+      "scope": "approval-chip",
+      "note": "wireframe 10 draws the chip in the unrestricted (warn) state; the current side is the same state.",
+      "baseline": {
+        "path": "/tmp/opencode/qa/issue-8/baseline/approval-chip/desktop/desktop.png",
+        "width": 136,
+        "height": 26
+      },
+      "current": {
+        "path": "/tmp/opencode/qa/issue-8/current/approval-chip-warn.png",
+        "width": 174,
+        "height": 32
+      },
+      "dimensionDelta": {
+        "width": 38,
+        "height": 6
+      },
+      "overlapCompared": {
+        "width": 136,
+        "height": 26
+      },
+      "diffPixels": 734,
+      "diffRatioOverlap": 0.2076,
+      "sideBySide": "/tmp/opencode/qa/issue-8/comparison/approval-chip.side-by-side.png",
+      "diffImage": "/tmp/opencode/qa/issue-8/comparison/approval-chip.diff.png"
+    },
+    {
+      "scope": "context-bar",
+      "note": "wireframe 04 `.dock .context-bar` vs the app context bar.",
+      "baseline": {
+        "path": "/tmp/opencode/qa/issue-8/baseline/context-bar/desktop/desktop.png",
+        "width": 780,
+        "height": 40
+      },
+      "current": {
+        "path": "/tmp/opencode/qa/issue-8/current/context-bar-initial.png",
+        "width": 675,
+        "height": 40
+      },
+      "dimensionDelta": {
+        "width": -105,
+        "height": 0
+      },
+      "overlapCompared": {
+        "width": 675,
+        "height": 40
+      },
+      "diffPixels": 2528,
+      "diffRatioOverlap": 0.0936,
+      "sideBySide": "/tmp/opencode/qa/issue-8/comparison/context-bar.side-by-side.png",
+      "diffImage": "/tmp/opencode/qa/issue-8/comparison/context-bar.diff.png"
+    },
+    {
+      "scope": "project-picker",
+      "note": "wireframe 04 `.popover` (project list) vs the app picker.",
+      "baseline": {
+        "path": "/tmp/opencode/qa/issue-8/baseline/project-picker/desktop/desktop.png",
+        "width": 286,
+        "height": 282
+      },
+      "current": {
+        "path": "/tmp/opencode/qa/issue-8/current/project-picker-open.png",
+        "width": 330,
+        "height": 114
+      },
+      "dimensionDelta": {
+        "width": 44,
+        "height": -168
+      },
+      "overlapCompared": {
+        "width": 286,
+        "height": 114
+      },
+      "diffPixels": 2775,
+      "diffRatioOverlap": 0.0851,
+      "sideBySide": "/tmp/opencode/qa/issue-8/comparison/project-picker.side-by-side.png",
+      "diffImage": "/tmp/opencode/qa/issue-8/comparison/project-picker.diff.png"
+    },
+    {
+      "scope": "environment-popover",
+      "note": "wireframe 09 `.popover.env` vs the app panel.",
+      "baseline": {
+        "path": "/tmp/opencode/qa/issue-8/baseline/environment-popover/desktop/desktop.png",
+        "width": 287,
+        "height": 131
+      },
+      "current": {
+        "path": "/tmp/opencode/qa/issue-8/current/environment-popover-before.png",
+        "width": 282,
+        "height": 263
+      },
+      "dimensionDelta": {
+        "width": -5,
+        "height": 132
+      },
+      "overlapCompared": {
+        "width": 282,
+        "height": 131
+      },
+      "diffPixels": 3564,
+      "diffRatioOverlap": 0.0965,
+      "sideBySide": "/tmp/opencode/qa/issue-8/comparison/environment-popover.side-by-side.png",
+      "diffImage": "/tmp/opencode/qa/issue-8/comparison/environment-popover.diff.png"
+    },
+    {
+      "scope": "approval-popover",
+      "note": "wireframe 10 `.popover` (3 levels) vs the app popover.",
+      "baseline": {
+        "path": "/tmp/opencode/qa/issue-8/baseline/approval-popover/desktop/desktop.png",
+        "width": 554,
+        "height": 181
+      },
+      "current": {
+        "path": "/tmp/opencode/qa/issue-8/current/approval-popover-open.png",
+        "width": 553,
+        "height": 193
+      },
+      "dimensionDelta": {
+        "width": -1,
+        "height": 12
+      },
+      "overlapCompared": {
+        "width": 553,
+        "height": 181
+      },
+      "diffPixels": 16198,
+      "diffRatioOverlap": 0.1618,
+      "sideBySide": "/tmp/opencode/qa/issue-8/comparison/approval-popover.side-by-side.png",
+      "diffImage": "/tmp/opencode/qa/issue-8/comparison/approval-popover.diff.png"
+    }
+  ]
+}

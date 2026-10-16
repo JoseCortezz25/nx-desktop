@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "url": "file:///home/ajosecortes/development/fabrica/nx-desktop-worktrees/issue-8-qa/docs/wireframes/10-approval-mode.html",
+  "scope": "approval-popover",
+  "capture": "clip",
+  "selector": ".popover",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900
+  },
+  "engine": {
+    "name": "chromium",
+    "version": "156.0.8078.4"
+  },
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": null,
+  "screenshot": "/tmp/opencode/qa/issue-8/baseline/approval-popover/desktop/desktop.png",
+  "createdAt": "2026-10-16T20:06:14.393Z"
+}

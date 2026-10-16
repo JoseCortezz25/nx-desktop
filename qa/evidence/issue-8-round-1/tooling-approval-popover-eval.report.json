@@ -1,0 +1,40 @@
+{
+  "url": "http://localhost:1420/",
+  "baselineDir": "/tmp/opencode/qa/issue-8/baseline/approval-popover",
+  "outDir": "/tmp/opencode/qa/issue-8/tooling/approval-popover-eval",
+  "capture": "viewport",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "maxDiffPixels": null,
+  "maxDiffRatio": 0.01,
+  "passed": false,
+  "results": [
+    {
+      "viewport": "desktop",
+      "baseline": "/tmp/opencode/qa/issue-8/baseline/approval-popover/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-8/tooling/approval-popover-eval/desktop/desktop.current.png",
+      "diff": "/tmp/opencode/qa/issue-8/tooling/approval-popover-eval/desktop/desktop.diff.png",
+      "diffPixels": 1296000,
+      "diffRatio": 1,
+      "passed": false,
+      "reason": "dimension-mismatch",
+      "baselineSize": {
+        "width": 554,
+        "height": 181
+      },
+      "currentSize": {
+        "width": 1440,
+        "height": 900
+      },
+      "viewportSource": "baseline-manifest",
+      "renderedViewport": {
+        "width": 1440,
+        "height": 900
+      }
+    }
+  ],
+  "createdAt": "2026-10-16T20:08:28.868Z"
+}

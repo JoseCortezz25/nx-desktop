@@ -1,0 +1,543 @@
+{
+  "assertions": [
+    {
+      "where": "initial approval chip",
+      "expected": "Aprobación: Solicitar aprobación",
+      "actual": "Aprobación: Solicitar aprobación",
+      "ok": true
+    },
+    {
+      "where": "initial project chip",
+      "expected": "Proyecto: Design system",
+      "actual": "Proyecto: Design system",
+      "ok": true
+    },
+    {
+      "where": "initial environment chip",
+      "expected": "Entorno: Este ordenador",
+      "actual": "Entorno: Este ordenador",
+      "ok": true
+    },
+    {
+      "where": "approval popover listbox",
+      "expected": "Modos de aprobación",
+      "actual": "Modos de aprobación",
+      "ok": true
+    },
+    {
+      "where": "project picker listbox",
+      "expected": "Proyectos",
+      "actual": "Proyectos",
+      "ok": true
+    },
+    {
+      "where": "environment popover group",
+      "expected": "Entorno de ejecución",
+      "actual": "Entorno de ejecución",
+      "ok": true
+    },
+    {
+      "where": "environment branch listbox",
+      "expected": "Ramas",
+      "actual": "Ramas",
+      "ok": true
+    }
+  ],
+  "captures": [
+    {
+      "name": "context-bar-initial",
+      "path": "/tmp/opencode/qa/issue-8/current/context-bar-initial.png",
+      "assertedBy": "contains buttons \"Proyecto: Design system\" + \"Entorno: Este ordenador\""
+    },
+    {
+      "name": "approval-chip-initial",
+      "path": "/tmp/opencode/qa/issue-8/current/approval-chip-initial.png",
+      "assertedBy": "aria-label=\"Aprobación: Solicitar aprobación\""
+    },
+    {
+      "name": "approval-popover-open",
+      "path": "/tmp/opencode/qa/issue-8/current/approval-popover-open.png",
+      "assertedBy": "contains listbox aria-label=\"Modos de aprobación\""
+    },
+    {
+      "name": "project-picker-open",
+      "path": "/tmp/opencode/qa/issue-8/current/project-picker-open.png",
+      "assertedBy": "contains listbox aria-label=\"Proyectos\""
+    },
+    {
+      "name": "approval-chip-after-project-switch",
+      "path": "/tmp/opencode/qa/issue-8/current/approval-chip-after-project-switch.png",
+      "assertedBy": "aria-label=\"Aprobación: Aprobar automáticamente\""
+    },
+    {
+      "name": "context-bar-after-project-switch",
+      "path": "/tmp/opencode/qa/issue-8/current/context-bar-after-project-switch.png",
+      "assertedBy": "contains buttons \"Proyecto: API client\" + \"Entorno: Este ordenador\""
+    },
+    {
+      "name": "approval-chip-warn",
+      "path": "/tmp/opencode/qa/issue-8/current/approval-chip-warn.png",
+      "assertedBy": "aria-label=\"Aprobación: Acceso completo\""
+    },
+    {
+      "name": "environment-popover-before",
+      "path": "/tmp/opencode/qa/issue-8/current/environment-popover-before.png",
+      "assertedBy": "contains group aria-label=\"Entorno de ejecución\" + listbox \"Ramas\""
+    },
+    {
+      "name": "environment-popover-after",
+      "path": "/tmp/opencode/qa/issue-8/current/environment-popover-after.png",
+      "assertedBy": "contains group aria-label=\"Entorno de ejecución\" + listbox \"Ramas\""
+    },
+    {
+      "name": "context-bar-after-environment-edit",
+      "path": "/tmp/opencode/qa/issue-8/current/context-bar-after-environment-edit.png",
+      "assertedBy": "contains button \"Entorno: staging\""
+    },
+    {
+      "name": "plus-trigger-clicked",
+      "path": "/tmp/opencode/qa/issue-8/current/plus-trigger-clicked.png",
+      "assertedBy": "aria-label=\"Añadir\" clicked; no menu surface rendered"
+    }
+  ],
+  "focus": {
+    "afterEscapeApprovalPopover": {
+      "tag": "BUTTON",
+      "role": null,
+      "ariaLabel": "Aprobación: Solicitar aprobación",
+      "text": "Solicitar aprobación"
+    }
+  },
+  "notes": [
+    "after Escape on approval popover, activeElement = {\"tag\":\"BUTTON\",\"role\":null,\"ariaLabel\":\"Aprobación: Solicitar aprobación\",\"text\":\"Solicitar aprobación\"}"
+  ],
+  "initial": {
+    "approvalChip": "Aprobación: Solicitar aprobación",
+    "approvalChipClass": "button button--pill",
+    "projectChip": "Proyecto: Design system",
+    "environmentChip": "Entorno: Este ordenador",
+    "harnessChips": [
+      "Añadir",
+      "Aprobación: Solicitar aprobación",
+      "Proveedor: OpenCode",
+      "Modelo: DeepSeek V3.1",
+      "Esfuerzo: Ligero",
+      "Enviar"
+    ]
+  },
+  "ariaSnapshotInitial": "- 'button \"Proyecto: Design system\"': Design system\n- 'button \"Entorno: Este ordenador\"': Este ordenador\n- textbox \"Mensaje\":\n  - /placeholder: Trabaja con OpenCode\n- button \"Añadir\"\n- 'button \"Aprobación: Solicitar aprobación\"': Solicitar aprobación\n- 'button \"Proveedor: OpenCode\"': OpenCode\n- 'button \"Modelo: DeepSeek V3.1\"': DeepSeek V3.1\n- 'button \"Esfuerzo: Ligero\"': Ligero\n- button \"Enviar\"",
+  "approvalPopover": {
+    "header": "¿Cómo deben aprobarse las acciones de OpenCode?",
+    "rows": [
+      {
+        "label": "Solicitar aprobación",
+        "selected": "true",
+        "warn": false
+      },
+      {
+        "label": "Aprobar automáticamente",
+        "selected": "false",
+        "warn": false
+      },
+      {
+        "label": "Acceso completo",
+        "selected": "false",
+        "warn": true
+      }
+    ]
+  },
+  "ariaSnapshotApprovalPopover": "- 'button \"Proyecto: Design system\"': Design system\n- 'button \"Entorno: Este ordenador\"': Este ordenador\n- textbox \"Mensaje\":\n  - /placeholder: Trabaja con OpenCode\n- button \"Añadir\"\n- 'button \"Aprobación: Solicitar aprobación\" [expanded]': Solicitar aprobación\n- 'button \"Proveedor: OpenCode\"': OpenCode\n- 'button \"Modelo: DeepSeek V3.1\"': DeepSeek V3.1\n- 'button \"Esfuerzo: Ligero\"': Ligero\n- button \"Enviar\"\n- paragraph: ¿Cómo deben aprobarse las acciones de OpenCode?\n- listbox \"Modos de aprobación\":\n  - option \"Solicitar aprobación\" [selected]: Solicitar aprobación Pedir siempre confirmación antes de editar archivos externos y usar internet\n  - option \"Aprobar automáticamente\": Aprobar automáticamente Solicitar aprobación solo para las acciones detectadas como potencialmente inseguras\n  - option \"Acceso completo\": Acceso completo Acceder sin restricciones a internet y a cualquier archivo de tu ordenador",
+  "projectPicker": {
+    "header": "Seleccionar proyecto",
+    "rows": [
+      {
+        "label": "Design system",
+        "selected": "true"
+      },
+      {
+        "label": "API client",
+        "selected": "false"
+      }
+    ],
+    "visibleText": "Seleccionar proyecto\n\nDesign system\nAPI client"
+  },
+  "projectSwitch": {
+    "before": {
+      "chipLabel": "Aprobación: Solicitar aprobación"
+    },
+    "after": {
+      "chipLabel": "Aprobación: Aprobar automáticamente",
+      "chipClass": "button button--pill",
+      "projectChip": "Proyecto: API client",
+      "environmentChip": "Entorno: Este ordenador"
+    }
+  },
+  "portWriteProof": {
+    "apiClientAfterChange": {
+      "chipLabel": "Aprobación: Acceso completo",
+      "chipClass": "button button--pill button--warn"
+    },
+    "designSystemAfterReturn": "Aprobación: Solicitar aprobación",
+    "apiClientAfterReturn": "Aprobación: Acceso completo",
+    "selectedRowAfterReturn": "Acceso completo"
+  },
+  "environmentBefore": {
+    "worktreeChecked": "false",
+    "branches": [
+      {
+        "label": "develop",
+        "selected": "true"
+      },
+      {
+        "label": "release/2.0",
+        "selected": "false"
+      }
+    ],
+    "name": "",
+    "contextBarEnvironmentLabel": "Entorno: Este ordenador"
+  },
+  "ariaSnapshotEnvironmentBefore": "- 'button \"Proyecto: API client\"': API client\n- 'button \"Entorno: Este ordenador\" [expanded]': Este ordenador\n- paragraph: Configurar entorno local\n- group \"Entorno de ejecución\":\n  - text: Nuevo worktree\n  - switch \"Nuevo worktree\"\n  - text: Rama\n  - listbox \"Ramas\":\n    - option \"develop\" [selected]\n    - option \"release/2.0\"\n  - text: Entorno\n  - textbox \"Entorno\":\n    - /placeholder: Sin entorno",
+  "environmentAfter": {
+    "worktreeChecked": "true",
+    "branches": [
+      {
+        "label": "develop",
+        "selected": "false"
+      },
+      {
+        "label": "release/2.0",
+        "selected": "true"
+      }
+    ],
+    "name": "staging",
+    "contextBarEnvironmentLabel": "Entorno: staging"
+  },
+  "environmentEdit": {
+    "branchBefore": "develop",
+    "branchTarget": "release/2.0"
+  },
+  "environmentClosed": {
+    "popoverOpen": false,
+    "environmentChip": "Entorno: staging"
+  },
+  "branchesByProject": {
+    "Design system": [
+      "main",
+      "feat/context-bar",
+      "fix/chip-contrast"
+    ],
+    "API client": [
+      "develop",
+      "release/2.0"
+    ]
+  },
+  "plusTrigger": {
+    "before": {
+      "ariaExpanded": null,
+      "ariaHaspopup": null
+    },
+    "after": {
+      "popovers": 0,
+      "listboxes": 0,
+      "menus": 0,
+      "visibleTextAfterClick": ""
+    }
+  },
+  "keyboard": {
+    "tabOrderFromStart": [
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Alternar barra lateral",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Alternar panel derecho",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": null,
+        "text": "Archivo"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": null,
+        "text": "Edición"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": null,
+        "text": "Ver"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": null,
+        "text": "Ayuda"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Minimizar",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Maximizar",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Cerrar",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Inicio",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Proyecto: Design system",
+        "text": "Design system"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Entorno: Este ordenador",
+        "text": "Este ordenador"
+      },
+      {
+        "tag": "TEXTAREA",
+        "role": null,
+        "ariaLabel": "Mensaje",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Añadir",
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Aprobación: Solicitar aprobación",
+        "text": "Solicitar aprobación"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Proveedor: OpenCode",
+        "text": "OpenCode"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Modelo: DeepSeek V3.1",
+        "text": "DeepSeek V3.1"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "ariaLabel": "Esfuerzo: Ligero",
+        "text": "Ligero"
+      }
+    ],
+    "approvalPopover": {
+      "openedWithEnter": true,
+      "tabsToReachFirstRow": 5,
+      "focusPath": [
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": "Proveedor: OpenCode",
+          "text": "OpenCode"
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": "Modelo: DeepSeek V3.1",
+          "text": "DeepSeek V3.1"
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": "Esfuerzo: Ligero",
+          "text": "Ligero"
+        },
+        {
+          "tag": "BUTTON",
+          "role": null,
+          "ariaLabel": "Enviar",
+          "text": ""
+        },
+        {
+          "tag": "BUTTON",
+          "role": "option",
+          "ariaLabel": "Solicitar aprobación",
+          "text": "Solicitar aprobaciónPedir siempre confirmación ant"
+        }
+      ],
+      "firstRow": {
+        "tag": "BUTTON",
+        "role": "option",
+        "ariaLabel": "Solicitar aprobación",
+        "text": "Solicitar aprobaciónPedir siempre confirmación ant"
+      }
+    },
+    "afterEscapeFromRow": {
+      "tag": "BODY",
+      "role": null,
+      "ariaLabel": null,
+      "text": "ArchivoEdiciónVerAyuda¿En qué deberíamos trabajar?"
+    },
+    "afterSelectWithEnter": {
+      "rowActivated": {
+        "tag": "BUTTON",
+        "role": "option",
+        "ariaLabel": "Solicitar aprobación",
+        "text": "Solicitar aprobaciónPedir siempre confirmación ant"
+      },
+      "activeElement": {
+        "tag": "BODY",
+        "role": null,
+        "ariaLabel": null,
+        "text": "ArchivoEdiciónVerAyuda¿En qué deberíamos trabajar?"
+      },
+      "chipAfter": "Aprobación: Solicitar aprobación"
+    },
+    "projectPickerOpenedWithEnter": 1,
+    "projectPickerTabsToRow": {
+      "tabs": 2,
+      "row": {
+        "tag": "BUTTON",
+        "role": "option",
+        "ariaLabel": "Design system",
+        "text": "Design system"
+      }
+    },
+    "afterEscapeProjectPicker": {
+      "tag": "BODY",
+      "role": null,
+      "ariaLabel": null,
+      "text": "ArchivoEdiciónVerAyuda¿En qué deberíamos trabajar?"
+    },
+    "environmentOpenedWithEnter": 1,
+    "environmentFocusPath": {
+      "tabsToFirst": 1,
+      "first": {
+        "tag": "BUTTON",
+        "role": "switch",
+        "ariaLabel": "Nuevo worktree",
+        "text": ""
+      }
+    },
+    "afterEscapeEnvironment": {
+      "tag": "BODY",
+      "role": null,
+      "ariaLabel": null,
+      "text": "ArchivoEdiciónVerAyuda¿En qué deberíamos trabajar?"
+    }
+  },
+  "geometry": {
+    "homeView": {
+      "top": 49,
+      "left": 57,
+      "width": 1383,
+      "height": 846
+    },
+    "title": {
+      "top": 385,
+      "left": 557,
+      "width": 383,
+      "height": 36
+    },
+    "contextBar": {
+      "top": 444,
+      "left": 412,
+      "width": 674,
+      "height": 40
+    },
+    "composer": {
+      "top": 484,
+      "left": 396,
+      "width": 705,
+      "height": 111
+    },
+    "approvalChip": {
+      "top": 554,
+      "left": 443,
+      "width": 191,
+      "height": 31
+    },
+    "projectChip": {
+      "top": 451,
+      "left": 425,
+      "width": 157,
+      "height": 28
+    },
+    "environmentChip": {
+      "top": 454,
+      "left": 604,
+      "width": 156,
+      "height": 20
+    },
+    "composerBar": {
+      "top": 550,
+      "left": 411,
+      "width": 680,
+      "height": 38
+    },
+    "tokens": {
+      "--color-bg": "#f7f7f8",
+      "--color-panel": "#ffffff",
+      "--color-line": "#e3e3e6",
+      "--color-text": "#222222",
+      "--color-muted": "#8b8b93",
+      "--color-fill": "#ededf0",
+      "--color-warn": "#d9561e",
+      "--color-warn-soft": "#fbf0ea",
+      "--radius-md": "12px",
+      "--radius-sm": "8px",
+      "--radius-popover": "14px"
+    },
+    "contextBarStyle": {
+      "background-color": "rgb(247, 247, 248)",
+      "border-radius": "12px 12px 0px 0px",
+      "height": "40px",
+      "width": "674px",
+      "gap": "22px",
+      "padding-left": "12px",
+      "border-top-color": "rgb(227, 227, 230)"
+    },
+    "projectChipStyle": {
+      "background-color": "rgb(237, 237, 240)",
+      "border-radius": "999px",
+      "height": "28px",
+      "font-size": "14px"
+    },
+    "approvalChipStyle": {
+      "background-color": "rgb(237, 237, 240)",
+      "border-radius": "999px",
+      "height": "31px",
+      "font-size": "14px",
+      "color": "rgb(34, 34, 34)"
+    }
+  },
+  "problems": [],
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  }
+}
