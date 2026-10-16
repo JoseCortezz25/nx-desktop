@@ -177,6 +177,7 @@ nx-desktop/
 | `pnpm run lint`           | Run ESLint 9 on `src/**/*.{ts,tsx}`                                                                     |
 | `pnpm run lint:fix`       | Run ESLint 9 with automatic fixes                                                                       |
 | `pnpm run typecheck`      | Run `tsc --noEmit` strict typecheck                                                                     |
+| `pnpm test`               | Run the Vitest unit test suite (`vitest run`)                                                           |
 | `pnpm run rust:fmt`       | Format all Rust code in `src-tauri/` with `rustfmt`                                                     |
 | `pnpm run rust:fmt:check` | Check Rust formatting without modifying files                                                           |
 | `pnpm run rust:clippy`    | Run `cargo clippy` denying all warnings (`-D warnings`)                                                 |
@@ -198,7 +199,7 @@ Every change is verified by deterministic local and CI judges:
 4. **`.husky/commit-msg`**:
    - Validates Conventional Commits (`<type>(<scope>): <description>`, `<= 100` chars, no trailing period, **zero `Co-Authored-By` attribution**) via `verify-pr-conventions.mjs` and `commitlint`.
 5. **`.husky/pre-push` & `.github/workflows/pr-judge.yml`**:
-   - Enforces branch naming, PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md` with `Closes #N`), `typecheck`, `lint`, and `format:check`.
+   - Enforces branch naming, PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md` with `Closes #N`), `typecheck`, `lint`, `format:check`, and the Vitest unit tests (`pnpm test` → `vitest run`).
 
 ---
 
