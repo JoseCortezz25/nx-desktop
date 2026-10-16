@@ -27,8 +27,8 @@ Derived from `docs/wireframes/README.md` and `docs/research-tecnico/arquitectura
 | **`RunEnvironment`** | Value Object                | `useNewWorktree` (boolean), `gitBranch` (from repo branches), `environmentName`.                                                                                                                                                                                                                                                                                                          |
 | **`ToolCall`**       | `ToolCallId`                | `kind` (`search`, `command`, `list_files`, etc.), `summary`, `detail`, `status`. Rendered in collapsible `ToolActivityRow` molecules.                                                                                                                                                                                                                                                     |
 | **`Hook`**           | `HookId`                    | `name`, `isNew` (`Nuevo` badge), `origin`, `hookType` (e.g., `PreToolUse`), `command`, `timeoutMs`, `approvalStatus`. The decision about a hook is **project-scoped**: a hook the user declines (`Ahora no`) is remembered per `Project` through `HookDecision`, not per run and not globally (decision 2026-10-16).                                                                      |
-| **`Subagent`**       | `SubagentId`                | A run's child agent with its own model, effort, duration and transcript. Status is one of `processing`, `finished`, `failed`, `cancelled`—all four exist (decision 2026-10-16)—and a subagent can be stopped individually without cancelling its parent `Run` (§3.2; behaviour ticket #21).                                                                                               |
-| **`DiffFile`**       | Value Object                | `path`, `addedCount`, `removedCount`, `hunks` (`context`, `added`, `removed` lines). Rendered `unified` only; `split` is deferred (decision 2026-10-16; ticket #18).                                                                                                                                                                                                                      |
+| **`Subagent`**       | `SubagentId`                | A run's child agent with its own model, effort, duration and transcript. Status is one of `processing`, `finished`, `failed`, `cancelled`—all four exist (decision 2026-10-16)—and a subagent can be stopped individually without cancelling its parent `Run` (§3.2; behaviour ticket #14).                                                                                               |
+| **`DiffFile`**       | Value Object                | `path`, `addedCount`, `removedCount`, `hunks` (`context`, `added`, `removed` lines). Rendered `unified` only; `split` is deferred (decision 2026-10-16; ticket #13).                                                                                                                                                                                                                      |
 
 ---
 
@@ -55,7 +55,7 @@ pending / started
 - **Single Authoritative Terminal State**: A `Run` can finish in exactly one terminal state (`completed`, `failed`, or `cancelled`). Concurrent completion and cancellation races must resolve deterministically in the Rust `RunSupervisor`.
 - **Run vs Conversation Separation**: A `failed` or `cancelled` `Run` does not delete or corrupt its parent `Conversation`.
 - **Panel Close Resilience**: Closing or unmounting a UI panel (`RightPanel` or `ConversationView`) must not accidentally destroy an active `Run` in the Rust core.
-- **Subagent Control**: A `Subagent` reports one of four states (`processing`, `finished`, `failed`, `cancelled`, decision 2026-10-16) and can be stopped individually. Stopping one MUST resolve that subagent to `cancelled` without cancelling or corrupting its parent `Run` (behaviour ticket #21).
+- **Subagent Control**: A `Subagent` reports one of four states (`processing`, `finished`, `failed`, `cancelled`, decision 2026-10-16) and can be stopped individually. Stopping one MUST resolve that subagent to `cancelled` without cancelling or corrupting its parent `Run` (behaviour ticket #14).
 
 ### 3.3 Workspace & Path Authority
 
@@ -71,9 +71,9 @@ pending / started
 
 Decisions 2026-10-16 (issue #30) whose surfaces are tracked by other tickets. They are recorded here so those tickets do not have to re-ask. **None of them is implemented by this change—do not pre-build them.**
 
-1. **`DiffView` Modes** (ticket #18): `unified` only. The wireframe toolbar draws `unified` and `split`, but only `unified` is in scope; `split` is deferred.
-2. **Message Timestamp & Editing** (tickets #11–#13): both are in scope. They are buttons rendered below the message bubbles; the wireframe does not draw them yet.
-3. **`Abrir` Menu** (ticket #24): only VS Code is offered. The option MUST NOT appear when VS Code is not installed on the machine, and no other editor or shell target replaces it for now.
+1. **`DiffView` Modes** (ticket #13): `unified` only. The wireframe toolbar draws `unified` and `split`, but only `unified` is in scope; `split` is deferred.
+2. **Message Timestamp & Editing** (ticket #11): both are in scope. They are buttons rendered below the message bubbles; the wireframe does not draw them yet.
+3. **`Abrir` Menu** (ticket #12): only VS Code is offered. The option MUST NOT appear when VS Code is not installed on the machine, and no other editor or shell target replaces it for now.
 
 ---
 
