@@ -1,0 +1,93 @@
+{
+  "issue": 7,
+  "pr": 35,
+  "round": "qa-1",
+  "commitUnderReview": "8ebce25cefa700fe06e0ce06080605a589b9026f",
+  "branchUnderReview": "feat/issue-7-provider-model-effort-selectors",
+  "validationType": "scoped-visual",
+  "scope": "composer provider/model/effort chips and their three popovers, inside the composer at the bottom of the home view (/)",
+  "viewport": { "name": "desktop", "width": 1440, "height": 900 },
+  "deviceScaleFactor": 1,
+  "engine": {
+    "tool": "agent-browser 0.26.0",
+    "browser": "HeadlessChrome 152.0.0.0 (Chromium 152)",
+    "transport": "CDP"
+  },
+  "captureMode": "viewport",
+  "captureModeNote": "Screenshots are viewport captures at 1440x900; element clips (*-clip.png, diff-*.png) are cropped to the composer or popover bounding box.",
+  "dynamicAreasIgnored": [],
+  "baseline": {
+    "source": "docs/wireframes/16-provider-selector.html, 17-model-selector-by-provider.html, 08-effort-selector.html",
+    "commit": "8ebce25cefa700fe06e0ce06080605a589b9026f",
+    "renderedBy": "local static server (python3 -m http.server) over docs/wireframes at http://localhost:8099",
+    "viewport": "1440x900",
+    "files": {
+      "16-provider-composer": "baseline-16-provider-composer.png",
+      "16-composer-clip": "baseline-16-composer-clip.png",
+      "16-provider-popover-clip": "baseline-16-provider-popover-clip.png",
+      "17-model-popover": "baseline-17-model-popover.png",
+      "17-model-popover-clip": "baseline-17-model-popover-clip.png",
+      "08-effort-popover": "baseline-08-effort-popover.png",
+      "08-effort-popover-clip": "baseline-08-effort-popover-clip.png"
+    }
+  },
+  "current": {
+    "route": "http://localhost:1420/",
+    "files": {
+      "default-chips": "current-01-default-chips.png",
+      "effort-deepseek-v3.1-3stops": "current-02-effort-deepseek-v3.1-3stops.png",
+      "model-popover-opencode": "current-03-model-popover-opencode.png",
+      "before-switch-opencode-glm-maximum": "current-04-before-switch-opencode-glm-maximum.png",
+      "provider-popover": "current-05-provider-popover.png",
+      "after-switch-codex-gpt5codex-5stops": "current-06-after-switch-codex-gpt5codex-5stops.png",
+      "before-switchB-kimi-k2-2stops": "current-07-before-switchB-kimi-k2-2stops.png",
+      "after-switchB-claude-opus-4stops": "current-08-after-switchB-claude-opus-4stops.png",
+      "model-popover-claude": "current-09-model-popover-claude.png",
+      "effort-claude-haiku-1stop": "current-10-effort-claude-haiku-1stop.png"
+    }
+  },
+  "diffs": [
+    {
+      "name": "composer-chips",
+      "file": "diff-composer-chips.png",
+      "baselineSize": "810x108",
+      "currentSize": "705x111",
+      "normalizedCanvas": "810x111",
+      "diffPixels": 6097,
+      "diffRatio": 0.0678,
+      "dimensionMatch": false
+    },
+    {
+      "name": "provider-popover",
+      "file": "diff-provider-popover.png",
+      "baselineSize": "320x207",
+      "currentSize": "330x222",
+      "normalizedCanvas": "330x222",
+      "diffPixels": 8064,
+      "diffRatio": 0.1101,
+      "dimensionMatch": false
+    },
+    {
+      "name": "model-popover",
+      "file": "diff-model-popover.png",
+      "baselineSize": "330x262",
+      "currentSize": "330x256",
+      "normalizedCanvas": "330x262",
+      "diffPixels": 9272,
+      "diffRatio": 0.1072,
+      "dimensionMatch": false
+    },
+    {
+      "name": "effort-popover",
+      "file": "diff-effort-popover.png",
+      "baselineSize": "282x110",
+      "currentSize": "282x107",
+      "normalizedCanvas": "282x110",
+      "diffPixels": 2029,
+      "diffRatio": 0.0654,
+      "dimensionMatch": false
+    }
+  ],
+  "diffNote": "The wireframe baselines are layout references with placeholder copy and placeholder canvas geometry, so the numeric ratio is not the verdict: the composer renders at 705px against the wireframe's fixed 810px design canvas, and content differs by design (placeholder Spanish labels vs mock catalog data). The judgement is the geometry/token comparison below and the read diff",
+  "verdict": "passed"
+}
