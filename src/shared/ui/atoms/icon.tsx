@@ -12,6 +12,7 @@ export const ICON_NAMES = [
   'close',
   'home',
   'plus',
+  'send',
   'search',
   'bell',
   'chevron-down',
@@ -61,6 +62,17 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
     </>
   ),
   plus: <path d="M12 5v14M5 12h14" />,
+  // Send glyph as drawn in the composer's send control (`docs/wireframes/01-home.html`).
+  send: (
+    <>
+      <path d="M2 10v3" />
+      <path d="M6 6v11" />
+      <path d="M10 3v18" />
+      <path d="M14 8v7" />
+      <path d="M18 5v13" />
+      <path d="M22 10v3" />
+    </>
+  ),
   search: (
     <>
       <circle cx="11" cy="11" r="7" />

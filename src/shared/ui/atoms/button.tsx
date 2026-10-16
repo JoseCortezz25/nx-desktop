@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import './button.css';
 
-export type ButtonVariant = 'text' | 'icon' | 'list';
+export type ButtonVariant = 'text' | 'icon' | 'plain' | 'list' | 'solid';
 
 export interface ButtonProps {
   /** Visual variant. Placement and spacing belong to the parent. */

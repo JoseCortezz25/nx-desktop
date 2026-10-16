@@ -32,4 +32,10 @@ describe('shared messages accessor', () => {
       help: 'Ayuda'
     });
   });
+
+  it('builds the composer prompt placeholder from the provider name', () => {
+    expect(getSharedMessages().composer.promptPlaceholder('OpenCode')).toBe(
+      'Trabaja con OpenCode'
+    );
+  });
 });

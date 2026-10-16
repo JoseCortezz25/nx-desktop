@@ -59,6 +59,20 @@ export const sharedMessages = {
   },
   rightPanel: {
     closeLabel: 'Cerrar panel'
+  },
+  // Home view and composer (#6). The wireframe draws the prompt placeholder as
+  // a phrase naming a concrete provider; that is placeholder text, never product
+  // copy (`docs/wireframes/README.md`, ground rules; `.claude/knowledge/business-logic.md`
+  // §3.4). The placeholder is therefore built at runtime from the active
+  // provider's display name instead of naming a provider here.
+  home: {
+    title: '¿En qué deberíamos trabajar?'
+  },
+  composer: {
+    promptLabel: 'Mensaje',
+    addLabel: 'Añadir',
+    sendLabel: 'Enviar',
+    promptPlaceholder: (providerName: string) => `Trabaja con ${providerName}`
   }
 } as const;
 

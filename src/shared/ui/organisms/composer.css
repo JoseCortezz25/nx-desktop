@@ -1,0 +1,15 @@
+/* Box matches `docs/wireframes/01-home.html` (`.composer`), expressed through
+   the shared tokens. The 27px row gap is the wireframe's `.bar` margin-top; the
+   spacing lives on the organism so the molecule keeps no outer margin. */
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 27px;
+  width: 705px;
+  max-width: 100%;
+  padding: 16px 9px 6px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  background: var(--color-panel);
+  box-shadow: var(--shadow-md);
+}

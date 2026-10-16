@@ -57,3 +57,19 @@
 .button--list:hover:not(:disabled) {
   background: var(--color-bg);
 }
+
+/* Bare glyph control: no fixed box and no hover fill, so it sits flush inside a
+   dense toolbar (the composer's `+`, #6). */
+.button--plain {
+  color: var(--color-text);
+}
+
+/* Solid primary control: the composer's send button (#6). Consumes the
+   `--color-accent` token the shell reserved for it. */
+.button--solid {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-panel);
+}
