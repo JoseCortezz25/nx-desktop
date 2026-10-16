@@ -1,0 +1,489 @@
+{
+  "url": "http://127.0.0.1:5199/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "step": "Active row selected from the PINNED group (Fijados)",
+      "group": "pinned group \"Fijados\"",
+      "name": "Composer selection chain",
+      "before": {
+        "activeRows": [],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": null,
+          "activeClass": false
+        }
+      },
+      "after": {
+        "activeRows": [
+          "Composer selection chain",
+          "Composer selection chain"
+        ],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": "page",
+          "activeClass": true
+        }
+      },
+      "activeRowFill": "rgb(237, 237, 240)",
+      "persistedAfterMs": 700,
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "step": "Active row selected NESTED inside project group (API client)",
+      "group": "project group \"API client\"",
+      "name": "Hooks review",
+      "before": {
+        "activeRows": [
+          "Composer selection chain",
+          "Composer selection chain"
+        ],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": null,
+          "activeClass": false
+        }
+      },
+      "after": {
+        "activeRows": [
+          "Hooks review",
+          "Hooks review"
+        ],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": "page",
+          "activeClass": true
+        }
+      },
+      "activeRowFill": "rgb(237, 237, 240)",
+      "persistedAfterMs": 700,
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "step": "Active row selected from the RECENTS group (Recientes)",
+      "group": "recents group \"Recientes\"",
+      "name": "Diff review panel",
+      "before": {
+        "activeRows": [
+          "Hooks review",
+          "Hooks review"
+        ],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": null,
+          "activeClass": false
+        }
+      },
+      "after": {
+        "activeRows": [
+          "Diff review panel",
+          "Diff review panel"
+        ],
+        "row": {
+          "present": true,
+          "count": 1,
+          "ariaCurrent": "page",
+          "activeClass": true
+        }
+      },
+      "activeRowFill": "rgb(237, 237, 240)",
+      "persistedAfterMs": 700,
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "step": "brand follows provider",
+      "brandBefore": "OpenCode",
+      "brandAfter": "Codex",
+      "composerChipBefore": "Proveedor: OpenCode",
+      "composerChipAfter": "Proveedor: Codex"
+    },
+    {
+      "step": "collapse/expand",
+      "collapsed": {
+        "sidebarCount": 0,
+        "toggleVisible": true,
+        "togglePressed": "false"
+      },
+      "reopened": {
+        "labelTexts": 3,
+        "rows": 7,
+        "activeRows": [
+          "Diff review panel",
+          "Diff review panel"
+        ]
+      }
+    },
+    {
+      "step": "keyboard",
+      "focusOrder": [
+        {
+          "label": "Alternar barra lateral",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Alternar panel derecho",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Archivo",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Edición",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Ver",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Ayuda",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Minimizar",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Maximizar",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Cerrar",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Inicio",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Notificaciones",
+          "text": "",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": "Buscar",
+          "text": "",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Nuevo chat",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Composer selection chain",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Hooks review",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Composer selection chain",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Diff review panel",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Hooks review",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": null,
+          "text": "Diff review panel",
+          "inSidebar": true,
+          "isFirst": false
+        },
+        {
+          "label": "Proyecto: Design system",
+          "text": "Design system",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Entorno: Este ordenador",
+          "text": "Este ordenador",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Mensaje",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Añadir",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Aprobación: Solicitar aprobación",
+          "text": "Solicitar aprobación",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Proveedor: OpenCode",
+          "text": "OpenCode",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Modelo: DeepSeek V3.1",
+          "text": "DeepSeek V3.1",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Esfuerzo: Ligero",
+          "text": "Ligero",
+          "inSidebar": false,
+          "isFirst": false
+        },
+        {
+          "label": "Enviar",
+          "text": "",
+          "inSidebar": false,
+          "isFirst": false
+        }
+      ],
+      "focusedText": "Composer selection chain",
+      "kbActive": [
+        "Composer selection chain",
+        "Composer selection chain"
+      ]
+    },
+    {
+      "step": "long-name probe (temporary DOM text injection)",
+      "probe": {
+        "sidebarClientWidth": 318,
+        "sidebarScrollWidth": 318,
+        "rowClientWidth": 262,
+        "rowTitleClientWidth": 246,
+        "rowTitleScrollWidth": 719,
+        "rowTitleWhiteSpace": "nowrap",
+        "rowTitleOverflow": "hidden",
+        "rowTitleTextOverflow": "ellipsis",
+        "rowTitleWraps": false,
+        "projectNameClientWidth": 286,
+        "projectNameScrollWidth": 286,
+        "projectNameHeight": 30,
+        "projectNameWhiteSpace": "normal",
+        "projectNameOverflow": "visible",
+        "projectSpanClientWidth": 259,
+        "projectSpanScrollWidth": 259,
+        "projectSpanInnerText": "Plataforma de orquestación de agentes y contratos compartidos",
+        "projectSpanRectHeight": 40.59375,
+        "projectSpanLineCount": 2,
+        "nameRectTop": 318,
+        "nameRectBottom": 348,
+        "nestedRowTop": 348,
+        "overlapsNestedRow": true
+      }
+    }
+  ],
+  "captures": [
+    {
+      "file": "current-01-initial-no-active.png",
+      "label": "Sidebar, initial (no conversation selected)",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "region contains paragraph \"Fijados\"/\"Proyectos\"/\"Recientes\" and zero rows with class button--active",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-02-active-pinned-row.png",
+      "label": "Active row selected from the PINNED group (Fijados)",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "button \"Composer selection chain\" within pinned group \"Fijados\"",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-03-active-project-nested-row.png",
+      "label": "Active row selected NESTED inside project group (API client)",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "button \"Hooks review\" within project group \"API client\"",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-04-active-recents-row.png",
+      "label": "Active row selected from the RECENTS group (Recientes)",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "button \"Diff review panel\" within recents group \"Recientes\"",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-05-brand-follows-provider.png",
+      "label": "Sidebar brand after switching the composer provider OpenCode -> Codex",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "sidebar brand span (text \"Codex\") verified together with button \"Proveedor: Codex\"",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-06-collapsed-toggle-reachable.png",
+      "label": "Sidebar collapsed: toggle still reachable in the title bar",
+      "scope": "window shell (title bar + body)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "viewport",
+      "assertedAccessibleName": "button \"Alternar barra lateral\" visible with aria-pressed=\"false\" while .sidebar is absent",
+      "pixelSize": "1440x900"
+    },
+    {
+      "file": "current-07-reopened-restored.png",
+      "label": "Sidebar reopened after collapse: groups, rows and the active row restored",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "paragraphs \"Fijados\"/\"Proyectos\"/\"Recientes\", 7 buttons, rows with class button--active = [\"Diff review panel\",\"Diff review panel\"]",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-08-keyboard-focus-selects.png",
+      "label": "Keyboard: focus ring on a project-nested row and Enter selects it",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "button \"Composer selection chain\" within project group \"Design system\", focused then activated",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    },
+    {
+      "file": "current-09-long-name-long-title.png",
+      "label": "Long project name + long conversation title at 1440x900 (temporary DOM probe)",
+      "scope": "sidebar region (role=complementary)",
+      "viewport": "1440x900 desktop",
+      "captureMode": "clip (.sidebar)",
+      "assertedAccessibleName": "project group \"Design system\" (name text replaced) and its nested row (title text replaced)",
+      "pixelSize": "318x852",
+      "box": {
+        "x": 56,
+        "y": 48,
+        "width": 318,
+        "height": 852
+      }
+    }
+  ],
+  "structure": {
+    "labelTexts": [
+      "Fijados",
+      "Proyectos",
+      "Recientes"
+    ],
+    "projectNames": [
+      "Design system",
+      "API client"
+    ],
+    "ariaSnapshot": "- complementary:\n  - text: OpenCode\n  - button \"Notificaciones\"\n  - button \"Buscar\"\n  - button \"Nuevo chat\"\n  - paragraph: Fijados\n  - button \"Composer selection chain\"\n  - button \"Hooks review\"\n  - paragraph: Proyectos\n  - text: Design system\n  - button \"Composer selection chain\"\n  - button \"Diff review panel\"\n  - text: API client\n  - button \"Hooks review\"\n  - paragraph: Recientes\n  - button \"Diff review panel\""
+  }
+}

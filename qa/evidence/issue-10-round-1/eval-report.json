@@ -1,0 +1,30 @@
+{
+  "url": "http://127.0.0.1:5199/ (sidebar clip)",
+  "baselineDir": "/tmp/opencode/qa/issue-10/baseline",
+  "outDir": "/tmp/opencode/qa/issue-10/eval",
+  "capture": "clip(.sidebar)",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "passed": null,
+  "results": [
+    {
+      "viewport": "desktop",
+      "baseline": "/tmp/opencode/qa/issue-10/baseline/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-10/current/current-01-initial-no-active.png",
+      "diff": "/tmp/opencode/qa/issue-10/eval/desktop/desktop.diff.png",
+      "diffPixels": 24997,
+      "diffRatio": 0.09226164112557947,
+      "totalPixels": 270936,
+      "size": {
+        "width": 318,
+        "height": 852
+      },
+      "note": "Baseline is the wireframe 02 sidebar (placeholder copy, collapsed Proyectos, 12 pinned + 11 recents). Current is the app sidebar (real mock copy, expanded Proyectos, 2 pinned + 2 projects + 1 recent). Content deliberately differs; the diff is dominated by copy and row-count differences.",
+      "createdAt": "2026-10-16T20:50:44.075Z"
+    }
+  ],
+  "createdAt": "2026-10-16T20:50:44.075Z"
+}
