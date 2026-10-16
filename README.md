@@ -199,7 +199,7 @@ Every change is verified by deterministic local and CI judges:
 4. **`.husky/commit-msg`**:
    - Validates Conventional Commits (`<type>(<scope>): <description>`, `<= 100` chars, no trailing period, **zero `Co-Authored-By` attribution**) via `verify-pr-conventions.mjs` and `commitlint`.
 5. **`.husky/pre-push` & `.github/workflows/pr-judge.yml`**:
-   - Enforces branch naming, PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md` with `Closes #N`), `typecheck`, `lint`, and `format:check`.
+   - Enforces branch naming, PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md` with `Closes #N`), `typecheck`, `lint`, `format:check`, and the Vitest unit tests (`pnpm test` → `vitest run`).
 
 ---
 
