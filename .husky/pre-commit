@@ -1,0 +1,6 @@
+node scripts/verify-pr-conventions.mjs --branch
+./node_modules/.bin/lint-staged
+
+if git diff --cached --name-only | grep -qE '^src-tauri/.*\.rs$'; then
+  cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check
+fi

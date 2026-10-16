@@ -1,0 +1,2 @@
+node scripts/verify-pr-conventions.mjs --commit-msg "$1"
+./node_modules/.bin/commitlint --edit "$1"

@@ -1,0 +1,3 @@
+node scripts/verify-pr-conventions.mjs --branch
+pnpm run typecheck
+pnpm run lint
