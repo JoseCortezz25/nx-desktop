@@ -1,22 +1,19 @@
 /**
- * Effort levels of the composer selection chain.
+ * Effort stops of the composer selection chain.
  *
- * The wireframes render a five-stop effort slider whose first stop is "light"
- * (`docs/wireframes/08-effort-selector.html`). Which stops a given model accepts
- * is an explicit open product question (`.claude/knowledge/business-logic.md`
- * §4, item 1), so this module declares only the canonical ladder and each
- * `Model` advertises the subset it supports through `supportedEffortLevels`.
+ * The stop set belongs to the **provider/model pair**, not to this module: two
+ * models on different providers may expose a different number of stops, and a
+ * model's stops are discovered from its provider at runtime (decision
+ * 2026-10-16, issue #30; `.claude/knowledge/business-logic.md` §2 `EffortLevel`
+ * and §3.1, item 4).
  *
- * Display labels are intentionally absent: the wireframe wording is a
- * placeholder and real UI copy goes through i18n when the popover ships.
+ * There is deliberately no global ladder constant and no fixed count — a
+ * universal enumeration would re-introduce the scale that decision rejects.
+ * Catalog data that exists before the real mapping is delivered is placeholder
+ * data, not truth.
+ *
+ * The concrete per-provider/per-model mapping is still open and is the
+ * deliverable of the effort-level research ticket (#31); the provider adapter
+ * tickets (#25–#27) consume it.
  */
-export const EFFORT_LEVELS = [
-  'light',
-  'standard',
-  'high',
-  'extended',
-  'maximum'
-] as const;
-
-/** A single stop on the effort scale. */
-export type EffortLevel = (typeof EFFORT_LEVELS)[number];
+export type EffortLevel = string;

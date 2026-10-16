@@ -61,9 +61,9 @@ Every screen is a composition of the same regions:
 | `Dialog` | 05, 06, 14, 15 | Title, close, body, footer actions |
 | `ToolActivityRow` | 03, 11-13, 18 | Icon + short description of an executed tool; collapsible group header |
 | `FileChip` | 11-13, 18 | Inline link to a file inside a message; opens the right panel |
-| `MessageActions` | 11-13, 18 | Copy, read aloud, feedback, share. Timestamp and edit are requested but not yet drawn |
+| `MessageActions` | 11-13, 18 | Copy, read aloud, feedback, share. Timestamp and edit are in scope as buttons below the bubble but are not drawn yet |
 | `RightPanel` | 03, 13, 18 | Tabs + breadcrumb + toolbar + one of: `DocumentView`, `CodeView`, `DiffView` |
-| `DiffView` | 18 | Per-file collapsible sections, hunk headers, unified or split |
+| `DiffView` | 18 | Per-file collapsible sections, hunk headers, `unified` only (`split` is deferred) |
 | `HookRow` | 14, 15 | Checkbox, name, `Nuevo` badge, expandable details |
 | `SubagentList` | 21 | Group header "Activados · N"; row = avatar, name, status, elapsed time |
 | `SubagentDetail` | 22 | Back, avatar, name, model and effort, scrollable transcript with a collapsed "N mensajes anteriores" |
@@ -78,26 +78,30 @@ These are the abstractions the wireframes need. Names are suggestions, not decis
 |---------|----------------------------------|
 | `Provider` | id, display name, icon, subtitle, available models |
 | `Model` | id, display name, provider, supported effort levels |
-| `ApprovalMode` | 3 levels: ask always, auto-approve, full access |
+| `ApprovalMode` | 3 levels: ask always, auto-approve, full access (scope: per project) |
 | `Project` | name, one or more source folders (workspace), conversations |
 | `Conversation` | title, project, messages, pinned flag |
 | `ToolCall` | kind (search, command, list files), summary, expandable detail |
 | `RunEnvironment` | new worktree flag, git branch (from the repo's branches), environment name |
 | `Hook` | name, status (`Nuevo`), origin, hook type (e.g. `PreToolUse`), command, timeout |
 | `DiffFile` | path, added/removed counts, hunks, lines (context / added / removed) |
-| `Subagent` | id, name, avatar, status (e.g. processing, finished), elapsed time, model, effort, transcript |
-| `OpenTarget` | editor (default VS Code), view source, search in file, reveal in file manager (OS dependent), copy path |
+| `Subagent` | id, name, avatar, status (processing, finished, failed, cancelled), elapsed time, model, effort, transcript. Can be stopped individually |
+| `OpenTarget` | editor (VS Code only, hidden when it is not installed), view source, search in file, reveal in file manager (OS dependent), copy path |
 
-Selection chain in the composer: **provider -> model -> effort**. Changing the provider must reset the model to a valid one for that provider.
+Selection chain in the composer: **provider -> model -> effort**. Changing the provider must reset the model to a valid one for that provider, and keeps the same session context. The effort stops come from the selected provider/model; there is no universal ladder.
 
 ## Open questions
 
-- Which effort levels exist per model? The slider shows 5 stops with the first labeled "Ligero".
-- Is the approval mode global, per project or per conversation?
-- Does changing provider mid-conversation start a new session, or can it continue?
-- Hooks: what happens to a hook that is not allowed (`Ahora no`)? Is it re-prompted, and where is it managed (the modal mentions Ajustes)?
-- Diff: unified only, or split as well? The toolbar in 18 draws both modes but only unified is rendered.
-- Message timestamp and message editing were requested and are not drawn yet.
-- Subagents: what other states exist besides "Procesando" (finished, failed, cancelled)? Can the user stop one individually?
-- "Abrir": which editors are offered besides VS Code, and is the choice remembered? 24 is derived from a description, not from a screenshot.
-- OpenCode model names in 20 are examples; real models come from OpenCode's own configuration.
+The maintainer answered these product questions on 2026-10-16 (issue #30). They are locked behaviour, recorded in `.claude/knowledge/business-logic.md` (mirrored in `.opencode/knowledge/`) in the section that owns each one. They stay listed here with their answer so the wireframe notes and the spec stay in sync.
+
+1. **Effort levels per model** (the slider shows 5 stops with the first labeled "Ligero"). Answered: levels are **per provider and per model**, discovered from the provider; the count varies and there is no universal ladder. Still open: the concrete per-provider/per-model mapping (research ticket #31).
+2. **Approval mode scope.** Answered: per `Project`.
+3. **Provider switch mid-conversation.** Answered: it continues the same session context.
+4. **Declined hooks (`Ahora no`).** Answered: a project-scoped decision, remembered per `Project` and not re-prompted for that project.
+5. **Diff modes.** Answered: `unified` only; `split` is deferred.
+6. **Message timestamp and editing** (requested and not drawn yet). Answered: both are in scope, as buttons below the message bubbles; the drawing is still pending.
+7. **Subagent states and individual stop.** Answered: all four states exist (`processing`, `finished`, `failed`, `cancelled`) and a subagent can be stopped individually.
+8. **"Abrir" editors.** Answered: VS Code only, offered only when VS Code is installed on the machine.
+9. **OpenCode model names.** Answered: the provider's real models, sourced from the provider's own configuration.
+
+Still open: only the effort mapping in item 1, which is the deliverable of the effort-level research ticket (#31).
