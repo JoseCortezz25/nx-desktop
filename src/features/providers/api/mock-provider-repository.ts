@@ -7,12 +7,21 @@
  * hardcoded inside components (`docs/wireframes/README.md`, ground rules).
  *
  * The catalog is intentionally uneven: each provider owns a different set of
- * models, and each model supports a different slice of the effort scale, so the
+ * models, and each model advertises a different number of effort stops, so the
  * composer selection chain has real work to reconcile.
+ *
+ * **The `supportedEffortLevels` subsets are placeholders, not data.** Decision
+ * 2026-10-16 (issue #30; `.claude/knowledge/business-logic.md` §2 `EffortLevel`
+ * and §3.1, item 4): a model's effort stops come from its provider, the count
+ * varies per provider and per model, and there is no universal ladder. The
+ * stops below were invented to exercise the selection chain; the real
+ * per-provider/per-model mapping is the deliverable of research ticket #31 and
+ * MUST replace them. Do not treat these values as product truth.
  */
 import type { Provider } from '@/shared/domain/provider.types';
 import type { ProviderRepository } from './provider-repository';
 
+// Placeholder effort stops — see the header note. Real per-model values come from #31.
 const providers: readonly Provider[] = [
   {
     id: 'opencode',

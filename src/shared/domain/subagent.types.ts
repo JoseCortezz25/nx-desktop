@@ -2,9 +2,8 @@
  * A subagent spawned by a run, with its own transcript and selection chain.
  *
  * Rendered by the `SubagentList` and `SubagentDetail` components
- * (`docs/wireframes/README.md`, screens 21–22). The status list covers the
- * states named in the open questions; it is provisional until the product
- * confirms the full set (§4, last item).
+ * (`docs/wireframes/README.md`, screens 21–22; `.claude/knowledge/business-logic.md`
+ * §2 `Subagent` and §3.2).
  */
 import type { EffortLevel } from './effort-level.types';
 import type { ConversationMessage } from './conversation.types';
@@ -17,7 +16,13 @@ export const SUBAGENT_STATUSES = [
   'cancelled'
 ] as const;
 
-/** Lifecycle state of a subagent. */
+/**
+ * Lifecycle state of a subagent.
+ *
+ * Locked rule (decision 2026-10-16, issue #30): all four states exist. A
+ * subagent can also be stopped individually, resolving to `cancelled` without
+ * cancelling its parent `Run`; that behaviour belongs to ticket #21.
+ */
 export type SubagentStatus = (typeof SUBAGENT_STATUSES)[number];
 
 export interface Subagent {

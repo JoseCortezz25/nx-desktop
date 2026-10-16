@@ -2,9 +2,7 @@
  * A configured lifecycle hook reviewed before a tool runs.
  *
  * Surfaced by the hooks review modal (`docs/wireframes/README.md`, screens
- * 14–15; `.claude/knowledge/business-logic.md` §2 `Hook`). The approval status
- * values are provisional pending the open question about declined hooks (§4,
- * item 4).
+ * 14–15; `.claude/knowledge/business-logic.md` §2 `Hook`).
  */
 import type { HookId } from './value-objects.types';
 
@@ -32,5 +30,19 @@ export interface Hook {
   readonly hookType: HookType;
   readonly command: string;
   readonly timeoutMs: number;
+  readonly approvalStatus: HookApprovalStatus;
+}
+
+/**
+ * The decision a `Project` remembers about one hook.
+ *
+ * Locked rule (decision 2026-10-16, issue #30; `.claude/knowledge/business-logic.md`
+ * §2 `Hook`): declining a hook (`Ahora no`) is remembered at **project** scope —
+ * not for a single run and not globally. A `Project` therefore owns one
+ * `HookDecision` per reviewed hook, so the next run in that project does not
+ * re-prompt for a hook the user already declined.
+ */
+export interface HookDecision {
+  readonly hookId: HookId;
   readonly approvalStatus: HookApprovalStatus;
 }

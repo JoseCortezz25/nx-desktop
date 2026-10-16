@@ -1,6 +1,10 @@
 /**
  * In-memory project list used until the Rust core exposes `list_projects`.
  *
+ * Each project carries the two settings locked as project-scoped on 2026-10-16
+ * (issue #30): the tool approval policy (`approvalMode`) and the remembered
+ * decision per reviewed hook (`hookDecisions`).
+ *
  * Projects reference conversations by id only; the conversations module owns the
  * history, so the sidebar can group them without duplicating data.
  */
@@ -12,12 +16,18 @@ const projects: readonly Project[] = [
     id: 'proj-design-system',
     name: 'Design system',
     workspaceFolders: ['/workspace/design-system'],
+    approvalMode: 'ask_always',
+    hookDecisions: [],
     conversationIds: ['conv-composer-chain', 'conv-diff-review']
   },
   {
     id: 'proj-api-client',
     name: 'API client',
     workspaceFolders: ['/workspace/api-client', '/workspace/shared-contracts'],
+    approvalMode: 'auto_approve',
+    hookDecisions: [
+      { hookId: 'hook-lint-on-write', approvalStatus: 'rejected' }
+    ],
     conversationIds: ['conv-hooks-review']
   }
 ];
