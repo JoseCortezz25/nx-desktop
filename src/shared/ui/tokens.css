@@ -1,0 +1,53 @@
+/**
+ * Design tokens for the nx-desktop window shell.
+ *
+ * Single source of truth, derived from the wireframe stylesheet
+ * (`docs/wireframes/assets/wireframe.css`). Every value is declared exactly once
+ * here; components consume them through `var(--token)` and never repeat a raw
+ * value. The comment on each token records where it is consumed.
+ *
+ * Two tokens (`--color-warn`, `--shadow-md`) are part of the wireframe palette
+ * but belong to surfaces owned by later tickets (the composer, #6), so they are
+ * declared here for completeness and marked reserved.
+ */
+:root {
+  /* Palette (wireframe: --bg, --panel, --line, --line-strong, --text, --muted,
+     --fill, --accent, --warn, --focus). */
+  --color-bg: #f7f7f8; /* window background — .window-shell, rail hover */
+  --color-panel: #ffffff; /* sidebar / main pane / right panel surfaces */
+  --color-line: #e3e3e6; /* hairline borders and separators */
+  --color-line-strong: #6b6b72; /* icon strokes and menu text */
+  --color-text: #222222; /* primary text and active icons */
+  --color-muted: #8b8b93; /* inactive icons and window controls */
+  --color-fill: #ededf0; /* active / hover fills */
+  --color-accent: #222222; /* solid primary fills — reserved (composer send) */
+  --color-warn: #d9561e; /* attention copy — reserved (composer, #6) */
+  --color-focus: #2f6fed; /* keyboard focus ring — base button */
+
+  /* Radius (wireframe: --radius). */
+  --radius-sm: 8px; /* controls, list rows */
+  --radius-md: 12px; /* sidebar surface */
+  --radius-lg: 14px; /* main pane surface */
+
+  /* Elevation (wireframe: --shadow-sm, --shadow-md). */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06); /* sidebar and main pane */
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1); /* reserved (composer, #6) */
+
+  /* Typography (wireframe body font). */
+  --font-sans:
+    Inter, 'Segoe UI', system-ui, sans-serif; /* .window-shell, base */
+  --font-size-base: 14px; /* base copy */
+  --line-height-base: 1.45; /* base copy */
+
+  /* Geometry (wireframe: .window min-width, .titlebar height, .rail width,
+     .sidebar width). */
+  --window-min-width: 900px; /* .window-shell */
+  --title-bar-height: 40px; /* .title-bar */
+  --rail-width: 56px; /* .rail */
+  --sidebar-width: 318px; /* .sidebar */
+  --right-panel-width: 520px; /* .right-panel — added here, the wireframe
+                                 leaves the panel flexible */
+  --region-gutter: 8px; /* top inset of the panel surfaces (screens 01/02) */
+  --control-size: 32px; /* square hit area for title-bar controls; the rail
+                           re-scopes it to 38px */
+}

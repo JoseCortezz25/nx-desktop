@@ -23,4 +23,13 @@ describe('shared messages accessor', () => {
   it('returns the same map instance as the exported literal', () => {
     expect(getSharedMessages()).toBe(sharedMessages);
   });
+
+  it('carries the wireframe window menus as the copy source', () => {
+    expect(getSharedMessages().window.menus).toEqual({
+      file: 'Archivo',
+      edit: 'Edición',
+      view: 'Ver',
+      help: 'Ayuda'
+    });
+  });
 });

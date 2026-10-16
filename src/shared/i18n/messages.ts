@@ -25,6 +25,40 @@ export const sharedMessages = {
       'The selected agent provider is currently unavailable.',
     cancelled: 'The run was cancelled.',
     internal_error: 'An unexpected internal error occurred.'
+  },
+  // Window-shell chrome. The wireframe wording is the copy source
+  // (`docs/wireframes/README.md`, "Ground rules for implementation", and
+  // `docs/wireframes/01-home.html`); identifiers stay English.
+  window: {
+    menus: {
+      file: 'Archivo',
+      edit: 'Edición',
+      view: 'Ver',
+      help: 'Ayuda'
+    },
+    navigation: {
+      backLabel: 'Atrás',
+      forwardLabel: 'Adelante',
+      toggleSidebarLabel: 'Alternar barra lateral',
+      toggleRightPanelLabel: 'Alternar panel derecho'
+    },
+    controls: {
+      minimize: 'Minimizar',
+      maximize: 'Maximizar',
+      close: 'Cerrar'
+    }
+  },
+  rail: {
+    navigationLabel: 'Navegación principal',
+    homeLabel: 'Inicio'
+  },
+  sidebar: {
+    newChat: 'Nuevo chat',
+    notificationsLabel: 'Notificaciones',
+    searchLabel: 'Buscar'
+  },
+  rightPanel: {
+    closeLabel: 'Cerrar panel'
   }
 } as const;
 

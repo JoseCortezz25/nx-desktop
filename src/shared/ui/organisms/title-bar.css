@@ -1,0 +1,23 @@
+.title-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--title-bar-height);
+  padding: 0 12px;
+  color: var(--color-muted);
+  font-size: var(--font-size-base);
+}
+
+.title-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-bar__menus {
+  margin-left: 14px;
+}
+
+.title-bar__controls {
+  margin-left: auto;
+}

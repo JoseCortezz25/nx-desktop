@@ -1,0 +1,54 @@
+{
+  "default": "/tmp/opencode/artifacts/issue-4/01-default-closed.png",
+  "defaultRegions": {
+    "shell": {
+      "width": 1440,
+      "height": 900
+    },
+    "titleBar": {
+      "width": 1440,
+      "height": 40
+    },
+    "rail": {
+      "width": 56,
+      "height": 860
+    },
+    "mainPane": {
+      "width": 1384,
+      "height": 848
+    },
+    "sidebarPresent": false,
+    "rightPanelPresent": false,
+    "tokenSidebarWidth": "318px",
+    "tokenTitleBarHeight": "40px",
+    "tokenRailWidth": "56px",
+    "menuCopy": [
+      "Archivo",
+      "Edición",
+      "Ver",
+      "Ayuda"
+    ]
+  },
+  "sidebarOpen": "/tmp/opencode/artifacts/issue-4/02-sidebar-open.png",
+  "sidebarBrand": "OpenCode",
+  "sidebarChrome": {
+    "widthPx": 318,
+    "brand": "OpenCode",
+    "newChat": "Nuevo chat"
+  },
+  "bothOpen": "/tmp/opencode/artifacts/issue-4/03-sidebar-and-right-panel-open.png",
+  "bothVisible": true,
+  "rightPanelOpen": "/tmp/opencode/artifacts/issue-4/04-right-panel-open.png",
+  "rightPanelOnly": {
+    "sidebarPresent": false,
+    "rightPanelPresent": true,
+    "rightPanelWidth": 520
+  },
+  "exceptions": [],
+  "screenshots": [
+    "/tmp/opencode/artifacts/issue-4/01-default-closed.png",
+    "/tmp/opencode/artifacts/issue-4/02-sidebar-open.png",
+    "/tmp/opencode/artifacts/issue-4/03-sidebar-and-right-panel-open.png",
+    "/tmp/opencode/artifacts/issue-4/04-right-panel-open.png"
+  ]
+}
