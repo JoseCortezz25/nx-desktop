@@ -1,0 +1,45 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "formatter": {
+    "prettier": {
+      "command": ["npx", "prettier", "--write", "--ignore-unknown", "$FILE"]
+    },
+    "rustfmt": {
+      "command": ["rustfmt", "--edition", "2024", "$FILE"],
+      "extensions": [".rs"]
+    }
+  },
+  "mcp": {
+    "chrome-devtools": {
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": true,
+      "type": "local"
+    },
+    "playwright": {
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "type": "local"
+    },
+    "shadcn": {
+      "command": ["npx", "-y", "shadcn@latest", "mcp"],
+      "enabled": true,
+      "type": "local"
+    },
+    "context7": {
+      "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
+      "enabled": true,
+      "type": "local"
+    },
+    "figma-desktop": {
+      "enabled": true,
+      "type": "remote",
+      "url": "http://127.0.0.1:3845/mcp"
+    },
+    "engram": {
+      "command": ["engram", "mcp", "--tools=agent"],
+      "enabled": true,
+      "type": "local"
+    }
+  },
+  "share": "disabled"
+}
