@@ -5,6 +5,7 @@
  * runs (`.claude/knowledge/business-logic.md` §2, §3.2). It links back to its
  * project by id so project data never duplicates conversation history.
  */
+import type { FileReference } from './file-reference.types';
 import type { ToolCall } from './tool-call.types';
 import type {
   ConversationId,
@@ -25,6 +26,12 @@ export interface ConversationMessage {
   readonly content: string;
   readonly createdAt: IsoTimestamp;
   readonly toolCalls: readonly ToolCall[];
+  /**
+   * Files the message links to inline, rendered as `FileChip`s that emit an
+   * open-file request (`docs/wireframes/README.md`, "Reusable components").
+   * Optional so a message with nothing to open stays valid.
+   */
+  readonly fileReferences?: readonly FileReference[];
 }
 
 /** A conversation as listed in the sidebar and opened in the main pane. */

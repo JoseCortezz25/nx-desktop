@@ -183,6 +183,30 @@ export const sharedMessages = {
     branchListLabel: 'Ramas',
     name: 'Entorno',
     namePlaceholder: 'Sin entorno'
+  },
+  // Conversation region (#11): the collapsible tool-activity group, the inline
+  // file chips and the actions row below each message
+  // (`docs/wireframes/11-chat-conversation-sidebar.html`,
+  // `12-chat-conversation-full.html`; `.claude/knowledge/business-logic.md` §3.5
+  // item 2). Message text, conversation title and file paths are runtime data,
+  // never hardcoded here.
+  conversation: {
+    toolActivity: {
+      count: (total: number) =>
+        `${total} ${total === 1 ? 'acción' : 'acciones'}`,
+      expandLabel: 'Expandir actividad de herramientas',
+      collapseLabel: 'Contraer actividad de herramientas'
+    },
+    fileChip: {
+      openLabel: (path: string) => `Abrir ${path}`
+    },
+    message: {
+      copyLabel: 'Copiar mensaje',
+      feedbackLabel: 'Enviar comentarios',
+      shareLabel: 'Compartir mensaje',
+      timestampLabel: (time: string) => `Enviado a las ${time}`,
+      editLabel: 'Editar mensaje'
+    }
   }
 } as const;
 

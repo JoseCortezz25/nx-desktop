@@ -1,0 +1,41 @@
+/* Inline file link inside a message (`docs/wireframes/23-file-viewer-markdown.html`,
+   `.file-chip`). Geometry and colour resolve through the shared tokens; the
+   chip carries no outer margin — its parent places it. */
+.file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  max-width: 100%;
+  padding: 0 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-panel);
+  color: var(--color-focus);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.file-chip:hover {
+  border-color: var(--color-focus);
+}
+
+.file-chip:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+/* The chip whose file was requested, marked in place the way the sidebar marks
+   the open conversation. */
+.file-chip--active {
+  background: var(--color-fill);
+  border-color: var(--color-line-strong);
+}
+
+.file-chip__path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

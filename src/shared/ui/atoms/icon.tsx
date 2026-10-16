@@ -30,7 +30,14 @@ export const ICON_NAMES = [
   'monitor',
   'settings',
   'terminal',
-  'worktree'
+  'worktree',
+  // Conversation region (#11): the inline file chip and the message actions row
+  // (`docs/wireframes/11-chat-conversation-sidebar.html`,
+  // `12-chat-conversation-full.html`, `23-file-viewer-markdown.html`).
+  'file',
+  'copy',
+  'thumb-up',
+  'share'
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -181,6 +188,36 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
       <circle cx="6" cy="6" r="3" />
       <circle cx="18" cy="6" r="3" />
       <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9M12 12v3" />
+    </>
+  ),
+  // File chip glyph (`docs/wireframes/23-file-viewer-markdown.html`,
+  // `.file-chip`).
+  file: (
+    <>
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+      <path d="M14 3v6h6" />
+    </>
+  ),
+  // Message action: copy (`docs/wireframes/12-chat-conversation-full.html`,
+  // `.msg-actions`).
+  copy: (
+    <>
+      <rect x="9" y="9" width="11" height="11" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </>
+  ),
+  // Message action: feedback.
+  'thumb-up': (
+    <>
+      <path d="M7 10v11H3V10z" />
+      <path d="M7 10l4-7a2.5 2.5 0 0 1 2.5 2.5V9h6.2a2 2 0 0 1 2 2.3l-1.4 7.5A2 2 0 0 1 18.3 21H7" />
+    </>
+  ),
+  // Message action: share.
+  share: (
+    <>
+      <path d="m15 14 5-5-5-5" />
+      <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
     </>
   )
 };

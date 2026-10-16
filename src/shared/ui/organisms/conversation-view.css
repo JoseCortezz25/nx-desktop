@@ -1,0 +1,45 @@
+/* The conversation region that fills the main pane
+   (`docs/wireframes/11-chat-conversation-sidebar.html`, `.main`). The region
+   itself never sets an outer margin; the main pane places it. */
+.conversation-view {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Conversation header (`docs/wireframes/11-chat-conversation-sidebar.html`,
+   `.main .header`). */
+.conversation-view__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  height: 60px;
+  padding: 0 22px;
+  color: var(--color-text);
+}
+
+.conversation-view__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* The scrolling message area; the column inside is capped so the pane reflows
+   with and without the sidebar. */
+.conversation-view__scroll {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  padding: 8px 24px 24px;
+  overflow-y: auto;
+}
+
+/* The composer dock the shell composes under the conversation. */
+.conversation-view__composer {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  padding: 0 24px 24px;
+}

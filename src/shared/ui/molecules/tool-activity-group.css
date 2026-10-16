@@ -1,0 +1,22 @@
+/* Collapsible tool-activity group (`docs/wireframes/11-chat-conversation-sidebar.html`,
+   `.chat .log`). The group carries no outer margin — the message places it. */
+.tool-activity-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--color-muted);
+}
+
+.tool-activity-group__summary {
+  font-size: 14px;
+}
+
+/* The disclosure header keeps the muted, tight treatment the wireframe draws for
+   the group's first line, and hugs its content on the left rather than stretching
+   the full column. */
+.tool-activity-group > .button {
+  align-self: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
+  color: var(--color-muted);
+}

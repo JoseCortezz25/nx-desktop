@@ -1,0 +1,9 @@
+/* Actions row under an assistant message
+   (`docs/wireframes/12-chat-conversation-full.html`, `.msg-actions`). No outer
+   margin: the message footer places it. */
+.message-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+}
