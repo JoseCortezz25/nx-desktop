@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 Modo de aprobación</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  .frame { position: relative; width: 925px; height: 332px; margin: 24px auto; overflow: hidden; background: #fff; }
+
+  /* Barra de contexto detrás del compositor */
+  .frame .strip { position: absolute; left: 117px; top: 147px; width: 780px; height: 40px; background: #fff; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; box-shadow: var(--shadow-sm); }
+  .frame .strip svg.i { width: 16px; height: 16px; color: var(--text); }
+
+  /* Compositor */
+  .frame .composer { position: absolute; left: 102px; top: 187px; width: 810px; height: 125px; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-md); }
+  .composer .placeholder { height: 26px; line-height: 26px; font-size: 15px; color: var(--muted); }
+  .composer .bar { display: flex; align-items: center; gap: 16px; height: 28px; margin-top: 29px; }
+  .composer .bar .right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+  .composer .bar svg.i { color: var(--text); }
+  .composer .bar .plus { width: 16px; height: 16px; }
+  .composer .bar .pill { display: flex; align-items: center; gap: 6px; height: 25px; padding: 0 9px 0 8px; background: var(--fill); border-radius: 999px; font-size: 13px; color: var(--warn); white-space: nowrap; }
+  .composer .bar .pill svg.i { width: 14px; height: 14px; color: var(--warn); }
+  .composer .bar .model { display: flex; align-items: center; gap: 5px; font-size: 13px; white-space: nowrap; }
+  .composer .bar .model .muted { color: var(--muted); }
+  .composer .bar .model svg.i { width: 12px; height: 12px; color: var(--muted); }
+  .composer .bar .mic { width: 16px; height: 16px; }
+  .composer .bar .dotted { position: relative; display: inline-flex; }
+  .composer .bar .dotted::after { content: ""; position: absolute; top: -2px; right: -3px; width: 5px; height: 5px; border-radius: 50%; background: var(--warn); }
+  .composer .bar .send { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; }
+  .composer .bar .send svg.i { width: 16px; height: 16px; color: #fff; stroke-width: 2; }
+
+  /* Menú emergente: modo de aprobación */
+  .frame .popover { left: 148px; top: 75px; width: 553px; padding: 8px; border-radius: 14px; }
+  .popover .head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; line-height: 17px; padding: 3px 6px 5px; }
+  .popover .head u { text-decoration: underline; text-underline-offset: 2px; }
+  .popover .opt { display: flex; align-items: center; gap: 8px; padding: 6px; border-radius: 10px; }
+  .popover .opt > svg.i { width: 16px; height: 16px; color: var(--text); }
+  .popover .opt .txt { display: flex; flex-direction: column; min-width: 0; }
+  .popover .opt .txt b { font-size: 13px; line-height: 18px; font-weight: 600; color: var(--text); }
+  .popover .opt .desc { font-size: 12px; line-height: 16px; color: var(--muted); white-space: nowrap; }
+  .popover .opt .end { margin-left: auto; display: inline-flex; }
+  .popover .opt .end svg.i { width: 16px; height: 16px; color: var(--warn); }
+  .popover .opt.warn { background: #fbf0ea; color: var(--warn); }
+  .popover .opt.warn > svg.i { color: var(--warn); }
+  .popover .opt.warn .txt b, .popover .opt.warn .desc { color: var(--warn); }
+
+  /* Barra de tareas (sin texto) */
+  .frame .taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 17px; background: #2b2b31; display: flex; align-items: center; justify-content: space-evenly; padding: 0 24px; }
+  .frame .taskbar svg.i { width: 11px; height: 11px; stroke: none; fill: currentColor; }
+</style>
+</head>
+<body>
+<div class="window">
+
+  <div class="body">
+    <main class="main no-sidebar">
+      <div class="frame">
+
+        <!-- Barra de contexto detrás del compositor -->
+        <div class="strip">
+          <svg class="i" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        </div>
+
+        <!-- Compositor -->
+        <div class="composer">
+          <div class="placeholder">Dime</div>
+          <div class="bar">
+            <svg class="i plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="pill warn">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Acceso completo
+            </span>
+            <span class="dotted">
+              <svg class="i" viewBox="0 0 24 24" style="width:15px;height:15px"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+            </span>
+            <div class="right">
+              <span class="model">
+                <span>GPT-6.1 Sol</span>
+                <span class="muted">Ligero</span>
+                <svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+              <svg class="i mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg>
+              <span class="send">
+                <svg class="i" viewBox="0 0 24 24"><path d="M2 10v3M6 6v11M10 3v18M14 8v7M18 5v13M22 10v3"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menú emergente: modo de aprobación -->
+        <div class="popover">
+          <div class="head">
+            <span>¿Cómo deben aprobarse las acciones de ChatGPT?</span>
+            <u>Más información</u>
+          </div>
+
+          <div class="opt">
+            <svg class="i" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+            <span class="txt">
+              <b>Solicitar aprobación</b>
+              <span class="desc">Pedir siempre confirmación antes de editar archivos externos y usar internet</span>
+            </span>
+          </div>
+
+          <div class="opt">
+            <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 9 3 3-3 3"/><path d="M13 15h4"/></svg>
+            <span class="txt">
+              <b>Aprobar automáticamente</b>
+              <span class="desc">Solicitar aprobación solo para las acciones detectadas como potencialmente inseguras</span>
+            </span>
+          </div>
+
+          <div class="opt warn active">
+            <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span class="txt">
+              <b>Acceso completo</b>
+              <span class="desc">Acceder sin restricciones a internet y a cualquier archivo de tu ordenador</span>
+            </span>
+            <span class="end">
+              <svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Barra de tareas (sin texto) -->
+        <div class="taskbar">
+          <svg class="i" viewBox="0 0 24 24" style="color:#5b8def"><rect x="2" y="2" width="9" height="9" rx="2"/><rect x="13" y="2" width="9" height="9" rx="2"/><rect x="2" y="13" width="9" height="9" rx="2"/><rect x="13" y="13" width="9" height="9" rx="2"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#e4572e"><circle cx="12" cy="12" r="9"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#f2f2f2"><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#f2b233"><rect x="3" y="3" width="18" height="18" rx="9"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#3aa0e0"><circle cx="12" cy="12" r="9"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#7ac943"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#c084fc"><circle cx="12" cy="12" r="9"/></svg>
+          <svg class="i" viewBox="0 0 24 24" style="color:#f5d00a"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>
+</body>
+</html>

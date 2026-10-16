@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wireframe 12 - Conversación completa</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+  <style>
+    /* Mid-fidelity layout tweaks for this screen only; shared kit classes are reused. */
+    .titlebar { padding: 0 12px 0 10px; gap: 0; color: var(--text); }
+    .titlebar svg.i { width: 16px; height: 16px; color: var(--text); }
+    .titlebar .fwd { opacity: .35; margin-left: 22px; }
+    .titlebar .tb-next { margin-left: 22px; }
+    .titlebar .menu { margin-left: 31px; gap: 25px; color: #4a4a50; }
+    .titlebar .controls { margin-left: auto; gap: 32px; letter-spacing: 0; }
+    .titlebar .controls svg.i { width: 14px; height: 14px; }
+
+    .rail { gap: 10px; padding: 18px 0 14px; }
+    .rail .icon { width: 38px; height: 38px; }
+    .rail .icon svg.i { width: 21px; height: 21px; color: var(--text); }
+    .rail .icon.active svg.i { color: var(--text); }
+
+    .main { margin-top: 8px; }
+    .main.no-sidebar { border-top-left-radius: 12px; }
+    .main .header { padding: 16px 16px; gap: 16px; font-size: 15px; font-weight: 500; border-bottom: 0; flex: none; }
+    .main .header .edit { margin-right: 4px; }
+    .main .header .spacer { margin-left: auto; letter-spacing: 0; color: var(--text); display: flex; align-items: center; gap: 7px; }
+    .hbtn { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; }
+    .hbtn.on { background: var(--fill); }
+    .hbtn svg.i { width: 18px; height: 18px; color: var(--text); }
+    .hbtn.plus { margin-left: 8px; }
+
+    .float-card { top: 66px; right: 6px; width: 330px; padding: 16px 30px 16px 22px; box-shadow: var(--shadow-md); border-color: var(--line); }
+    .fc-row { display: flex; align-items: center; justify-content: space-between; color: #333; font-size: 14px; line-height: 20px; }
+    .fc-row + .fc-row { margin-top: 15px; justify-content: flex-start; gap: 13px; }
+    .fc-row svg.i { width: 18px; height: 18px; color: var(--text); }
+
+    .chat { padding: 0 0 20px; }
+    .chat .user { margin-top: -4px; font-size: 14px; line-height: 20px; color: #555; padding: 6px 14px; background: var(--fill); }
+    .chat p { margin: 16px 0; line-height: 25px; }
+    .chat p.first { margin-top: 20px; }
+    .chat code { font-size: 13px; padding: 1px 6px; background: #ececef; color: #333; }
+    .chat strong { font-weight: 700; }
+    .chat ul { margin: 16px 0 8px; padding-left: 31px; }
+    .chat li { margin: 0 0 2px; line-height: 25px; }
+
+    .act { display: flex; align-items: center; gap: 6px; color: var(--muted); margin-top: 56px; padding-bottom: 5px; border-bottom: 1px solid var(--line); line-height: 20px; }
+    .act svg.i { width: 15px; height: 15px; color: var(--muted); }
+
+    .tools { display: flex; flex-direction: column; gap: 7.5px; color: var(--muted); padding: 3px 0 0; margin: 0 0 20px; }
+    .tools .tool-row { margin: 0; line-height: 20px; white-space: nowrap; gap: 8px; }
+    .tools .tool-row svg.i { width: 15px; height: 15px; color: var(--muted); }
+    .tools .tool-row .chev { width: 13px; height: 13px; margin-left: 2px; }
+
+    .lnk { color: #1d6fb8; display: inline-flex; align-items: center; gap: 4px; }
+    .lnk svg.i { width: 15px; height: 15px; color: #1d6fb8; }
+
+    .chat .msg-actions { display: flex; gap: 15px; margin-top: 12px; color: var(--muted); }
+    .chat .msg-actions svg.i { width: 15px; height: 15px; color: var(--muted); }
+
+    .main .composer { width: min(810px, 92%); margin: 0 auto 20px; padding: 18px 10px 13px 14px; border-radius: 20px; box-shadow: 0 4px 18px rgba(0,0,0,.08); border-color: var(--line); flex: none; }
+    .composer .placeholder { min-height: 22px; margin-bottom: 35px; color: #9a9aa2; font-size: 15px; }
+    .composer .bar { gap: 20px; height: 22px; }
+    .composer .bar svg.i { width: 18px; height: 18px; color: var(--text); }
+    .composer .alert { display: inline-flex; align-items: center; gap: 8px; color: var(--warn); }
+    .composer .alert svg.i { width: 14px; height: 14px; color: var(--warn); }
+    .composer .anchor { margin-left: 8px; }
+    .composer .bar .right { margin-left: auto; gap: 15px; font-size: 14px; }
+    .composer .model { color: var(--text); display: inline-flex; align-items: center; gap: 4px; }
+    .composer .model .soft { color: var(--muted); }
+    .composer .bar .right svg.i.sm { width: 12px; height: 12px; color: var(--muted); }
+    .composer .spin svg.i { width: 14px; height: 14px; color: var(--muted); }
+    .send { width: 30px; height: 30px; background: #111; flex: none; }
+    .send svg.i { width: 16px; height: 16px; color: #fff; }
+  </style>
+</head>
+<body>
+<div class="window">
+
+  <!-- Titlebar -->
+  <div class="titlebar">
+    <svg class="i" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    <svg class="i fwd" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    <svg class="i tb-next" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+    <div class="menu">
+      <span>Archivo</span>
+      <span>Edición</span>
+      <span>Ver</span>
+      <span>Ayuda</span>
+    </div>
+    <div class="controls">
+      <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+      <svg class="i" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/></svg>
+      <svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Rail -->
+    <nav class="rail">
+      <div class="icon active"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 21 7v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 6l4 1-3 13-4-1z"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></div>
+      <div class="sep"></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M6 8v8M18 16V9a3 3 0 0 0-3-3h-3"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v13M5 13H3a9 9 0 0 0 18 0h-2M9 8h6"/></svg></div>
+      <div class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M9 3h3v6H9a3 3 0 0 1 0-6z"/><path d="M12 3h3a3 3 0 0 1 0 6h-3z"/><path d="M9 9h3v6H9a3 3 0 0 1 0-6z"/><path d="M9 15h3v3a3 3 0 1 1-3-3z"/></svg></div>
+      <div class="avatar"></div>
+    </nav>
+
+    <!-- Main conversation -->
+    <main class="main no-sidebar">
+
+      <div class="header">
+        <svg class="i edit" viewBox="0 0 24 24"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+        <svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Describe el proyecto</span>
+        <div class="spacer">
+          <span class="hbtn"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg></span>
+          <span class="hbtn on"><svg class="i" viewBox="0 0 24 24"><path d="M11 6h9M11 12h9M11 18h9"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg></span>
+          <span class="hbtn plus"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg></span>
+        </div>
+      </div>
+
+      <!-- Floating changes card -->
+      <div class="float-card">
+        <div class="fc-row">
+          <span>nx-desktop</span>
+          <svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px;color:var(--muted)"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg>
+        </div>
+        <div class="fc-row">
+          <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 16V8M8.5 11.5 12 8l3.5 3.5M8 17h8"/></svg>
+          <span>Cambios</span>
+        </div>
+      </div>
+
+      <section class="chat">
+
+        <div class="user">De que trata este proyecto?</div>
+
+        <div class="act">
+          <span>Ha trabajado durante 22s</span>
+          <svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+
+        <p class="first">Voy a revisar la estructura y la documentación del proyecto para explicarte qué hace y cómo está organizado.</p>
+
+        <div class="tools">
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Ha leído archivos y ha ejecutado comandos</span><svg class="i chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m7 11 2-2-2-2M11 13h4"/></svg><span>Se ha ejecutado pwd &amp;&amp; rg --files -g 'README*' -g 'package.json' -g 'AGENTS.md' -g 'nx.json' -g 'Cargo.toml' -...</span></div>
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Se ha buscado nx-desktop|fabrica en MEMORY.md</span></div>
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m7 11 2-2-2-2M11 13h4"/></svg><span>Se ha ejecutado cat README.md package.json src-tauri/Cargo.toml</span></div>
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Archivos enumerados</span></div>
+          <div class="tool-row"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m7 11 2-2-2-2M11 13h4"/></svg><span>Se ha ejecutado cat src/App.tsx src-tauri/src/lib.rs src-tauri/tauri.conf.json</span></div>
+        </div>
+
+        <p>Este proyecto, <strong>nx-desktop</strong>, es una base para crear una aplicación de escritorio con <strong>Tauri 2</strong>, <strong>React</strong> y <strong>TypeScript</strong>. Actualmente conserva la plantilla inicial; todavía no tiene funcionalidades de negocio que permitan identificar un propósito más específico.</p>
+
+        <p>Su estructura principal es:</p>
+
+        <ul>
+          <li><strong>Interfaz en React</strong> (<code>src/</code>): muestra una bienvenida y un formulario para escribir tu nombre.</li>
+          <li><strong>Código nativo en Rust</strong> (<code>src-tauri/</code>): recibe ese nombre y devuelve un saludo.</li>
+          <li><strong>Vite</strong>: sirve la interfaz durante el desarrollo y genera sus archivos de producción.</li>
+          <li><strong>Tauri</strong>: integra la interfaz con Rust dentro de una ventana de escritorio.</li>
+        </ul>
+
+        <p>La demostración actual sigue este flujo: <strong>escribes un nombre → React llama al comando <code>greet</code> de Rust → aparece el saludo</strong>. Puedes verlo en <a class="lnk" href="#"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.8" fill="currentColor"/><ellipse cx="12" cy="12" rx="9" ry="3.6"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(-60 12 12)"/></svg>App.tsx</a> y <a class="lnk" href="#"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>lib.rs</a>.</p>
+
+        <p>Aunque se llama “nx-desktop”, el manifiesto revisado no incluye Nx como herramienta. El nombre, por sí solo, no indica una integración con ese sistema.</p>
+
+        <div class="msg-actions">
+          <svg class="i" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="M7 10v11H3V10z"/><path d="M7 10l4-7a2.5 2.5 0 0 1 2.5 2.5V9h6.2a2 2 0 0 1 2 2.3l-1.4 7.5A2 2 0 0 1 18.3 21H7"/></svg>
+          <svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+        </div>
+
+      </section>
+
+      <!-- Composer -->
+      <div class="composer">
+        <div class="placeholder">Trabaja con Codex</div>
+        <div class="bar">
+          <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="alert"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Acceso completo</span>
+          <svg class="i anchor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v13M5 13H3a9 9 0 0 0 18 0h-2M9 8h6"/><circle cx="19" cy="4" r="2.2" fill="#e8b10c" stroke="none"/></svg>
+          <div class="right">
+            <span class="spin"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/></svg></span>
+            <span class="model">GPT-6.1 Sol <span class="soft">Ligero</span><svg class="i sm" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+            <svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            <span class="send"><svg class="i" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 9v6M16 4v16M20 9v6"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

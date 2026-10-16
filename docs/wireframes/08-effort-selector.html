@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 Selector de esfuerzo</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  .stage { position: relative; width: min(700px, 90%); margin: 0 auto; }
+  .stage .context-bar { width: 100%; margin: 0 auto; align-items: center; padding: 9px 16px; gap: 26px; font-size: 13px; }
+  .stage .context-bar span { gap: 9px; }
+  .stage .context-bar svg.i { width: 16px; height: 16px; color: var(--text); }
+  .stage .composer { width: 100%; margin-top: -12px; position: relative; z-index: 1; border-radius: 18px; padding: 16px 18px 14px; box-shadow: 0 8px 28px rgba(0,0,0,.08), var(--shadow-sm); }
+  .stage .composer .placeholder { font-size: 15px; color: #9a9aa2; min-height: 30px; padding-top: 2px; }
+  .stage .composer .bar { gap: 14px; }
+  .stage .composer .bar > svg.i { width: 18px; height: 18px; color: var(--text); }
+  .stage .composer .warn { font-size: 13px; font-weight: 500; }
+  .stage .composer .warn svg.i { width: 16px; height: 16px; color: var(--warn); stroke-width: 1.8; }
+  .stage .composer .right { gap: 12px; }
+  .stage .composer .right > svg.i { width: 17px; height: 17px; color: var(--text); }
+  .effort { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px 5px 14px; color: var(--muted); background: #fff; font-size: 13px; box-shadow: var(--shadow-sm); }
+  .effort svg.i { width: 13px; height: 13px; color: var(--muted); stroke-width: 2; }
+  .send { width: 32px; height: 32px; background: #111; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+  .send svg.i { width: 17px; height: 17px; color: #fff; stroke-width: 2; }
+
+  .effort-pop { top: -52px; right: 30px; width: 282px; padding: 12px 14px 14px; border-radius: 16px; border-color: #e6e6ea; box-shadow: 0 12px 32px rgba(0,0,0,.14), var(--shadow-sm); }
+  .effort-pop .head { display: flex; align-items: center; justify-content: space-between; }
+  .effort-pop .head svg.i { width: 17px; height: 17px; color: var(--muted); }
+  .effort-pop .title { font-size: 15px; font-weight: 700; text-align: center; margin: 0; flex: 1; color: var(--focus); }
+  .effort-pop .sub { display: flex; align-items: center; justify-content: center; gap: 3px; text-align: center; color: var(--text); font-size: 12px; margin-top: 3px; }
+  .effort-pop .sub svg.i { width: 12px; height: 12px; color: var(--muted); stroke-width: 2; }
+  .effort-pop .slider { position: relative; margin-top: 12px; height: 28px; border: 0; border-radius: 999px; background: var(--fill); display: flex; align-items: center; justify-content: space-between; padding: 0 14px; box-shadow: inset 0 0 0 1px #e2e2e6; }
+  .effort-pop .slider .knob { position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid #d6d6dc; box-shadow: 0 1px 3px rgba(0,0,0,.16); z-index: 1; }
+  .effort-pop .slider .stop { width: 5px; height: 5px; border-radius: 50%; background: #b9b9c0; position: relative; z-index: 0; }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="body">
+    <main class="main no-sidebar">
+      <div class="center" style="justify-content: flex-end;">
+        <div class="stage">
+          <div class="context-bar">
+            <span><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>NX Desktop</span>
+            <span><svg class="i" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg>Este ordenador</span>
+          </div>
+
+          <div class="composer">
+            <div class="placeholder">Dime qué quieres hacer</div>
+            <div class="bar" style="margin-top: 10px;">
+              <svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span class="warn" style="display:inline-flex; align-items:center; gap:8px;"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Acceso completo</span>
+              <div class="right">
+                <span class="effort">Selecciona el esfuerzo <svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+                <svg class="i" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+                <span class="send"><svg class="i" viewBox="0 0 24 24"><path d="M2 10v3M6 6v11M10 3v18M14 8v8M18 5v13M22 10v3"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="popover effort-pop">
+            <div class="head">
+              <svg class="i" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <p class="title">Ligero</p>
+              <svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+            </div>
+            <div class="sub">GPT-6.1 Sol <svg class="i" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></div>
+            <div class="slider">
+              <span class="knob"></span>
+              <span class="stop"></span><span class="stop"></span><span class="stop"></span><span class="stop"></span><span class="stop"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>18 - Chat con diff (wireframe)</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+  <style>
+    .row-line { color: var(--muted); }
+    .chatcol { width: 512px; flex: none; display: flex; flex-direction: column; padding: 12px 0 0; border-top-left-radius: 12px; overflow: hidden; }
+    .chatcol h2 { padding: 0 16px; align-items: center; }
+    .chatcol h2 .l { display: flex; align-items: center; gap: 12px; }
+    .chatcol h2 .r { display: flex; gap: 16px; align-items: center; color: var(--muted); }
+    .chatcol .scroll { flex: 1; overflow: hidden; padding: 0 16px; }
+    .chatcol .chat { width: auto; margin: 0; padding: 6px 0 0; flex: none; overflow: visible; }
+    .chatcol .chat p { margin: 12px 0; }
+    .chatcol .chat ul { margin: 8px 0; padding-left: 22px; }
+    .chatcol .chat li { margin: 10px 0; }
+    .chatcol .chat code { font-size: 13px; }
+    .chatcol .composer-wrap { padding: 12px 16px 16px; }
+    .chatcol .composer { width: 100%; }
+    .chatcol .composer .bar .model { font-weight: 600; }
+    .chatcol .composer .bar .model small { color: var(--muted); font-weight: 400; }
+    .chatcol .composer .bar .right svg.i.sm { color: var(--text); }
+    .outline { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; background: #fff; color: var(--text); }
+    .outline svg.i { width: 14px; height: 14px; }
+    .main .tabs { align-items: center; padding: 8px 10px; }
+    .main .tabs .tab.active.cambios { width: 160px; justify-content: flex-start; font-style: normal; }
+    .main .tabs .tab.file { color: var(--text); padding: 5px 12px; }
+    .main .tabs .tab.file .x { margin-left: 4px; color: var(--muted); display: inline-flex; }
+    .main .tabs .tab.add { color: var(--text); padding: 2px 12px; }
+    .main .tabs .spacer { margin-left: auto; display: flex; gap: 14px; align-items: center; padding-right: 6px; color: var(--text); }
+    .main .tabs .tab.active { border: 1px solid var(--line); }
+    .main .tabs .tab svg.i.sm { width: 14px; height: 14px; }
+    .main .tabs .tab.active svg.i.sm { color: var(--text); }
+    .main .diffbar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); color: var(--text); }
+    .main .diffbar .name { color: var(--text); font-weight: 600; }
+    .main .diffbar .add { color: #1f7a3a; font-weight: 600; font-family: ui-monospace, monospace; }
+    .main .diffbar .del { color: #b42318; font-weight: 600; font-family: ui-monospace, monospace; }
+    .main .diffbar .right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+    .main .diffbar .icbtn { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--text); }
+    .main .diffbar .icbtn svg.i { width: 16px; height: 16px; }
+    .main .diffbar .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: #fff; padding: 2px; }
+    .main .diffbar .seg span { padding: 4px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); }
+    .main .diffbar .seg span.on { background: var(--fill); color: var(--text); font-weight: 600; }
+    .main .diffbar .split { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: #fff; }
+    .main .diffbar .split svg.i { width: 16px; height: 16px; }
+    .main .diffbar .split .sep-v { width: 1px; height: 16px; background: var(--line); }
+    .main .diffbar .split svg.i.sm { width: 14px; height: 14px; }
+    .diffbody { flex: 1; overflow: hidden; min-height: 0; }
+    .filesec { border-bottom: 1px solid var(--line); }
+    .filehead { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--bg); font-weight: 600; color: var(--text); }
+    .filehead svg.i { width: 16px; height: 16px; color: var(--muted); }
+    .filehead svg.i.chev { width: 14px; height: 14px; }
+    .filehead .counts { margin-left: auto; font-family: ui-monospace, monospace; font-weight: 600; display: flex; gap: 8px; }
+    .filehead .counts .add { color: #1f7a3a; }
+    .filehead .counts .del { color: #b42318; }
+    .filesec.collapsed .filehead { border-bottom: 0; }
+    table.diff { width: 100%; border-collapse: collapse; table-layout: fixed; font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 12.5px; line-height: 1.6; color: var(--text); }
+    table.diff td { padding: 0 8px; white-space: pre; vertical-align: top; overflow: hidden; }
+    table.diff td.gn { text-align: right; color: var(--muted); width: 44px; padding-right: 6px; user-select: none; }
+    table.diff td.mk { width: 26px; text-align: center; color: var(--muted); user-select: none; }
+    table.diff td.code { color: var(--text); }
+    table.diff tr.hunk td { background: #e9eef6; color: #4a5a72; padding-top: 2px; padding-bottom: 2px; }
+    table.diff tr.del td { background: #fdecec; }
+    table.diff tr.del td.code { color: #9b1c1c; }
+    table.diff tr.del td.mk { color: #b42318; font-weight: 700; }
+    table.diff tr.add td { background: #e8f6ec; }
+    table.diff tr.add td.code { color: #1d5c34; }
+    table.diff tr.add td.mk { color: #1f7a3a; font-weight: 700; }
+    table.diff tr.ctx td.code { color: var(--text); }
+    table.diff .kw { color: #3f5f8a; }
+    table.diff .str { color: #5f5f67; }
+    table.diff .cm { color: #9a9aa3; font-style: italic; }
+    .titlebar svg.i { color: var(--muted); }
+    .titlebar .controls { letter-spacing: 0; gap: 18px; display: flex; align-items: center; }
+    .titlebar .controls svg.i { width: 14px; height: 14px; }
+    .titlebar .nav { display: flex; gap: 14px; align-items: center; }
+    .rail .icon svg.i { width: 18px; height: 18px; }
+    .rail .icon.active svg.i { color: var(--text); }
+    .rail .avatar { display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 600; }
+    .rail .sep { margin: 4px 0; }
+  </style>
+</head>
+<body>
+<div class="window">
+
+  <!-- Barra de título -->
+  <div class="titlebar">
+    <span class="nav">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+    </span>
+    <div class="menu">
+      <span>Archivo</span>
+      <span>Edición</span>
+      <span>Ver</span>
+      <span>Ayuda</span>
+    </div>
+    <div class="controls">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Rail de iconos -->
+    <nav class="rail">
+      <span class="icon active"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18M3 12h18"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+      <span class="sep"></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8M18 8a6 6 0 0 1-6 6H8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-3M12 13v8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13H3a9 9 0 0 0 18 0h-2M9 10h6"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="6" height="6" rx="3"/><rect x="6" y="9" width="6" height="6" rx="3"/><rect x="6" y="15" width="6" height="6" rx="3"/><circle cx="15" cy="12" r="3"/></svg></span>
+      <span class="avatar">AC</span>
+    </nav>
+
+    <!-- Columna de chat -->
+    <aside class="sidebar chatcol">
+      <h2>
+        <span class="l">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>Describe el proyecto</span>
+        </span>
+        <span class="r">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h2M3 12h2M3 18h2M9 6h12M9 12h12M9 18h12"/></svg>
+        </span>
+      </h2>
+
+      <div class="scroll">
+        <div class="chat">
+          <div class="tool-row" style="opacity:.55;"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Ha leído archivos y ha ejecutado comandos <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Se ha ejecutado git diff --stat HEAD</div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Se ha buscado useState en src/App.tsx</div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Se ha ejecutado git diff -- src/App.tsx src-tauri/src/lib.rs...</div>
+
+          <p>He añadido un selector de proveedor en <b>src/App.tsx</b> y enviado el mensaje a un nuevo comando en <b>lib.rs</b>. Los cambios están listos para revisar en el panel de la derecha.</p>
+          <ul>
+            <li><b>Frontend</b> (<code>src/App.tsx</code>): estado <code>provider</code> y <code>model</code>, y la llamada a <code>send_message</code>.</li>
+            <li><b>Rust</b> (<code>src-tauri/src/lib.rs</code>): recibe proveedor, modelo y mensaje, y devuelve la respuesta.</li>
+          </ul>
+          <p>Puedes revisar cada archivo en <span class="outline"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Cambios</span> o abrirlo en el editor.</p>
+
+          <div class="msg-actions muted">
+            <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+            <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v11H3V10z"/><path d="M7 10l4-7a2 2 0 0 1 2 2v4h6.5a2 2 0 0 1 2 2.3l-1.4 7.5A2 2 0 0 1 17.1 21H7"/></svg>
+            <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="composer-wrap">
+        <div class="composer">
+          <div class="placeholder">Trabaja con Codex</div>
+          <div class="bar" style="margin-top:12px;">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--warn);"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M12 8v4M12 16h.01"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13H3a9 9 0 0 0 18 0h-2M9 10h6"/></svg>
+            <div class="right">
+              <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>
+              <span class="model">GPT-6.1 Sol <small>Ligero</small></span>
+              <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              <span class="send"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4M9 7v10M13 4v16M17 8v8M21 11v2"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Panel de diff -->
+    <main class="main">
+      <div class="tabs">
+        <span class="tab active cambios">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></svg>Cambios
+        </span>
+        <span class="tab file">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>App.tsx
+          <span class="x"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+        </span>
+        <span class="tab add"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--text);"><path d="M12 5v14M5 12h14"/></svg></span>
+        <div class="spacer">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></svg>
+        </div>
+      </div>
+
+      <!-- Barra de resumen y herramientas -->
+      <div class="diffbar">
+        <span class="name">nx-desktop · 2 archivos cambiados</span>
+        <span class="add">+14</span>
+        <span class="del">−6</span>
+        <div class="right">
+          <span class="icbtn"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg></span>
+          <span class="seg"><span>Vista dividida</span><span class="on">Vista unificada</span></span>
+          <span class="split">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3l4 2v14l-4 2-9-8-4 3V8l4 3z"/></svg>Abrir
+            <span class="sep-v"></span>
+            <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="diffbody">
+
+        <!-- Archivo 1: expandido -->
+        <section class="filesec">
+          <div class="filehead">
+            <svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M14 3v6h6"/></svg>
+            <span>src/App.tsx</span>
+            <span class="counts"><span class="add">+9</span><span class="del">−4</span></span>
+          </div>
+
+          <table class="diff">
+            <colgroup>
+              <col style="width:44px"><col style="width:44px"><col style="width:26px"><col>
+            </colgroup>
+            <tbody>
+              <tr class="hunk"><td colspan="4" class="code">@@ -6,7 +6,12 @@ function App()</td></tr>
+              <tr class="ctx"><td class="gn">6</td><td class="gn">6</td><td class="mk"></td><td class="code">function App() {</td></tr>
+              <tr class="del"><td class="gn">7</td><td class="gn"></td><td class="mk">−</td><td class="code">  <span class="kw">const</span> [greetMsg, setGreetMsg] = useState(<span class="str">""</span>);</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">7</td><td class="mk">+</td><td class="code">  <span class="kw">const</span> [provider, setProvider] = useState(<span class="str">"claude"</span>);</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">8</td><td class="mk">+</td><td class="code">  <span class="kw">const</span> [model, setModel] = useState(<span class="str">"sonnet"</span>);</td></tr>
+              <tr class="ctx"><td class="gn">8</td><td class="gn">9</td><td class="mk"></td><td class="code">  <span class="kw">const</span> [name, setName] = useState(<span class="str">""</span>);</td></tr>
+              <tr class="ctx"><td class="gn">9</td><td class="gn">10</td><td class="mk"></td><td class="code"></td></tr>
+              <tr class="ctx"><td class="gn">10</td><td class="gn">11</td><td class="mk"></td><td class="code">  <span class="kw">async function</span> greet() {</td></tr>
+              <tr class="ctx"><td class="gn">11</td><td class="gn">12</td><td class="mk"></td><td class="code">    <span class="cm">// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/</span></td></tr>
+              <tr class="del"><td class="gn">12</td><td class="gn"></td><td class="mk">−</td><td class="code">    setGreetMsg(<span class="kw">await</span> invoke(<span class="str">"greet"</span>, { name }));</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">13</td><td class="mk">+</td><td class="code">    <span class="kw">const</span> reply = <span class="kw">await</span> invoke&lt;<span class="str">string</span>&gt;(<span class="str">"send_message"</span>, {</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">14</td><td class="mk">+</td><td class="code">      provider, model, name,</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">15</td><td class="mk">+</td><td class="code">    });</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">16</td><td class="mk">+</td><td class="code">    setGreetMsg(reply);</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">17</td><td class="mk">+</td><td class="code">    setName(<span class="str">""</span>);</td></tr>
+
+              <tr class="hunk"><td colspan="4" class="code">@@ -48,3 +50,3 @@ return (</td></tr>
+              <tr class="ctx"><td class="gn">48</td><td class="gn">50</td><td class="mk"></td><td class="code">      &lt;form className=<span class="str">"row"</span>&gt;</td></tr>
+              <tr class="del"><td class="gn">49</td><td class="gn"></td><td class="mk">−</td><td class="code">        &lt;input id=<span class="str">"greet-input"</span> onChange={(e) =&gt; setName(e.currentTarget.value)} /&gt;</td></tr>
+              <tr class="del"><td class="gn">50</td><td class="gn"></td><td class="mk">−</td><td class="code">        &lt;button type=<span class="str">"submit"</span>&gt;Greet&lt;/button&gt;</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">51</td><td class="mk">+</td><td class="code">        &lt;input id=<span class="str">"user-input"</span> value={name} placeholder=<span class="str">"Escribe tu mensaje..."</span> /&gt;</td></tr>
+              <tr class="add"><td class="gn"></td><td class="gn">52</td><td class="mk">+</td><td class="code">        &lt;button type=<span class="str">"submit"</span>&gt;Enviar&lt;/button&gt;</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Archivo 2: colapsado -->
+        <section class="filesec collapsed">
+          <div class="filehead">
+            <svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M14 3v6h6"/></svg>
+            <span>src-tauri/src/lib.rs</span>
+            <span class="counts"><span class="add">+5</span><span class="del">−2</span></span>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 Home - Wireframe</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  /* Home-specific layout only. Shared look lives in assets/wireframe.css. */
+  .window { background: var(--bg); }
+  .titlebar { padding: 0 12px 0 13px; color: var(--line-strong); }
+  .titlebar .nav { display: flex; gap: 22px; align-items: center; }
+  .titlebar .menu { margin-left: 30px; gap: 26px; color: #5a5a62; font-size: 14px; }
+  .titlebar .win { display: flex; gap: 29px; align-items: center; margin-left: auto; }
+  .titlebar svg.i { width: 16px; height: 16px; }
+  .titlebar .win svg.i { width: 12px; height: 12px; }
+  .titlebar .nav svg.i.dim { opacity: .45; }
+
+  .rail { gap: 10px; padding: 18px 0 16px; }
+  .rail .icon { position: relative; }
+  .rail .icon svg.i { width: 20px; height: 20px; color: #3f3f46; }
+  .rail .icon.active svg.i { color: #111; }
+  .rail .avatar { width: 26px; height: 26px; display: grid; place-items: center; overflow: hidden; background: #2b2b2e; }
+  .rail .avatar svg { width: 26px; height: 26px; display: block; }
+
+  .main.no-sidebar { margin: 8px 0 4px 0; border: 1px solid #ececef; border-right: 0; border-radius: 14px 0 0 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .main > svg.i.corner { position: absolute; top: 20px; right: 22px; width: 16px; height: 16px; color: #6b6b72; }
+
+  .home-center { justify-content: flex-start; padding-top: 376px; padding-bottom: 0; gap: 0; }
+  .home-center .title { font-size: 30px; font-weight: 400; line-height: 36px; letter-spacing: -0.01em; color: #0d0d0d; margin: 0 0 23px; }
+
+  .composer { width: 705px; border-radius: 20px; border: 1px solid #e6e6ea; padding: 16px 9px 6px 14px; box-shadow: 0 2px 6px rgba(0,0,0,.035), 0 12px 36px rgba(0,0,0,.07); }
+  .composer .placeholder { min-height: 22px; line-height: 22px; font-size: 15px; color: #a4a4ab; padding-left: 1px; }
+  .composer .bar { margin-top: 27px; height: 38px; gap: 20px; }
+  .composer .plus { display: flex; align-items: center; }
+  .composer .plus svg.i { width: 20px; height: 20px; color: #222; }
+  .composer .bar .warn { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #e0551f; }
+  .composer .bar .warn svg.i { width: 15px; height: 15px; color: #e0551f; }
+  .composer .bar .anchor { position: relative; display: flex; }
+  .composer .bar .anchor svg.i { width: 17px; height: 17px; color: #4a4a52; }
+  .composer .bar .anchor .dot { position: absolute; top: -3px; right: -3px; width: 6px; height: 6px; border-radius: 50%; background: #f4c21b; }
+  .composer .bar .right { gap: 18px; }
+  .composer .bar .model { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #1a1a1a; font-weight: 500; }
+  .composer .bar .model .light { color: #8f8f96; font-weight: 400; }
+  .composer .bar .model svg.i { width: 13px; height: 13px; color: #6b6b72; margin-left: 1px; }
+  .composer .bar .right > svg.i.mic { width: 18px; height: 18px; color: #222; }
+  .send { width: 30px; height: 30px; background: #111; box-shadow: none; }
+  .send svg.i { width: 16px; height: 16px; color: #fff; stroke-width: 2; }
+
+  .context-bar { width: 674px; height: 44px; padding: 0 12px 0 16px; gap: 31px; margin-top: 0; background: #f4f4f6; border-radius: 0 0 16px 16px; font-size: 14px; color: #222; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+  .context-bar .item { display: inline-flex; align-items: center; gap: 8px; }
+  .context-bar svg.i { width: 15px; height: 15px; color: #3f3f46; }
+  .context-bar .right { margin-left: auto; }
+
+  .suggestions { width: 674px; gap: 0; margin-top: 22px; color: #8c8c94; font-size: 14px; }
+  .suggestions .row { height: 44px; display: flex; align-items: center; gap: 18px; padding-left: 11px; line-height: 1.3; }
+  .suggestions .row svg.i { width: 16px; height: 16px; color: #6b6b72; }
+</style>
+</head>
+<body>
+<div class="window">
+
+  <div class="titlebar">
+    <div class="nav">
+      <svg class="i" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+      <svg class="i dim" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      <svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
+    </div>
+    <div class="menu">
+      <span>Archivo</span>
+      <span>Edición</span>
+      <span>Ver</span>
+      <span>Ayuda</span>
+    </div>
+    <div class="win">
+      <svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+      <svg class="i" viewBox="0 0 24 24"><rect x="4" y="8" width="12" height="12" rx="1.5"/><path d="M8 8V4.5h11.5V16H16"/></svg>
+      <svg class="i" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <nav class="rail">
+      <span class="icon active"><svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><rect x="6" y="2" width="16" height="16" rx="3"/><path d="M2 8.5V18a3 3 0 0 0 3 3h11"/><path d="m22 16-4.5-4.5L9 18"/><circle cx="14" cy="7.5" r="1.8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v16"/><path d="M8 4v16"/><path d="m15 5 4.5 15"/><path d="M12 4v16" opacity="0"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></span>
+      <span class="sep"></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M6 8.2v7.6"/><path d="M18 15.8V10a3 3 0 0 0-3-3h-3"/><path d="m14 4-2.5 3L14 10"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24"><rect x="5" y="5" width="6" height="6" rx="3"/><rect x="13" y="5" width="6" height="6" rx="3"/><rect x="5" y="13" width="6" height="6" rx="3"/><rect x="13" y="13" width="6" height="6" rx="3"/></svg></span>
+      <span class="avatar"><svg viewBox="0 0 26 26"><rect width="26" height="26" fill="#2b2b2e"/><circle cx="13" cy="10" r="4.5" fill="#e9e4dc"/><path d="M4.5 24c1.5-5 4.6-7 8.5-7s7 2 8.5 7z" fill="#e9e4dc"/><path d="M8.5 7.5c.6-2.6 2.5-4 4.5-4s3.9 1.4 4.5 4c-1.6-.9-3-1.2-4.5-1.2S10.1 6.6 8.5 7.5z" fill="#3a3a3e"/></svg></span>
+    </nav>
+
+    <main class="main no-sidebar">
+
+      <svg class="i corner" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
+
+      <section class="center home-center">
+        <h1 class="title">¿En qué deberíamos trabajar?</h1>
+
+        <div class="composer">
+          <div class="placeholder">Trabaja con ChatGPT</div>
+          <div class="bar">
+            <div class="plus"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+            <div class="warn">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5"/><path d="M12 16h.01"/></svg>
+              <span>Acceso completo</span>
+            </div>
+            <span class="anchor">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+              <span class="dot"></span>
+            </span>
+            <div class="right">
+              <div class="model">
+                <span>GPT-6.1 Sol</span>
+                <span class="light">Ligero</span>
+                <svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
+              <svg class="i mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
+              <span class="send"><svg class="i" viewBox="0 0 24 24"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-bar">
+          <div class="item"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Elegir proyecto</span></div>
+          <div class="item"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v16"/><path d="M8 4v16"/><path d="m15 5 4.5 15"/></svg><span>Archivos</span></div>
+          <div class="item"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg><span>Complementos</span></div>
+          <svg class="i right" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
+        </div>
+
+        <div class="suggestions">
+          <div class="row">
+            <svg class="i" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            <span>PR #47 sigue abierto. Completa la revisión visual</span>
+          </div>
+          <div class="row">
+            <svg class="i" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" fill="#cfe6fb" stroke="#7fb3e3" stroke-width="1.2"/><path d="M8 21h8" stroke="#9a9aa3"/></svg>
+            <span>Dame una práctica breve cada semana sobre backend, escalado y observabilidad</span>
+          </div>
+          <div class="row">
+            <svg class="i" viewBox="0 0 24 24"><polygon points="8,3 16,3 22,14 14,14" fill="#ffba00"/><polygon points="8,3 2,14 6,21 12,10" fill="#00ac47"/><polygon points="6,21 18,21 22,14 14,14" fill="#4285f4"/></svg>
+            <span>Ponme al día sobre los cambios en mis archivos importantes</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+</div>
+</body>
+</html>

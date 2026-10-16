@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crear proyecto - wireframe</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+  <style>
+    .window { position: relative; }
+    .window .body { flex: 1; display: flex; min-height: 0; }
+    .window .main { background: var(--panel); }
+
+    /* Rail: app shell behind the dialog */
+    .rail .icon { display: grid; place-items: center; }
+    .rail .icon svg.i { color: inherit; }
+    .rail .icon.active { background: var(--fill); color: var(--text); }
+    .rail .sep { margin: 4px 0; }
+
+    /* Composer behind the dialog (shell context) */
+    .composer .placeholder { font-size: 14px; color: var(--muted); min-height: 0; margin-bottom: 14px; }
+    .composer .bar { gap: 12px; }
+    .composer .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--fill); font-size: 13px; color: var(--text); }
+    .composer .bar svg.i { color: var(--text); }
+    .composer .mic { color: var(--text); }
+    .send { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); }
+
+    /* Backdrop over whole window so the shell is dimmed too */
+    .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.11); z-index: 10; }
+    .window .bg-text { position: fixed; top: 508px; left: 1246px; z-index: 1; font-size: 28px; color: var(--text); white-space: nowrap; }
+
+    /* Dialog: sized and spaced to the reference image */
+    .dialog { width: 572px; padding: 24px 22px 22px; border-radius: 18px; background: #fff; border: 1px solid rgba(0,0,0,.04); box-shadow: 0 10px 30px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.05); }
+    .dialog h3 { margin: 0 0 14px; font-size: 22px; line-height: 29px; font-weight: 600; letter-spacing: -.2px; align-items: center; }
+    .dialog h3 .x { display: grid; place-items: center; width: 28px; height: 28px; margin-right: -4px; border-radius: 8px; color: var(--muted); }
+    .dialog h3 .x svg.i { width: 15px; height: 15px; color: var(--text); }
+
+    .dialog .input { display: flex; align-items: center; gap: 12px; height: 43px; padding: 0 14px 0 14px; border-radius: 12px; border: 1px solid var(--line); background: #fff; box-shadow: var(--shadow-sm); color: var(--muted); }
+    .dialog .input svg.i { color: var(--text); width: 18px; height: 18px; }
+    .dialog .input .sep { width: 1px; height: 20px; background: var(--line); }
+    .dialog .input .ph { font-size: 14px; color: var(--muted); }
+
+    .dialog .label-row { margin-top: 14px; font-size: 13px; line-height: 19px; font-weight: 600; color: var(--text); }
+    .dialog .label-row .r { gap: 8px; font-size: 14px; font-weight: 400; color: var(--muted); }
+    .dialog .label-row .r svg.i { color: var(--muted); width: 18px; height: 18px; }
+
+    .dialog .box { margin-top: 10px; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow-sm); overflow: hidden; background: #fff; }
+    .dialog .box .row { display: flex; align-items: center; gap: 11px; height: 53px; padding: 0 20px 0 14px; border-bottom: 1px solid var(--line); color: var(--text); font-size: 14px; }
+    .dialog .box .row:last-child { border-bottom: 0; height: 54px; }
+    .dialog .box .row svg.i { color: var(--text); width: 18px; height: 18px; }
+    .dialog .box .row .x { margin-left: auto; color: var(--muted); width: 14px; height: 14px; }
+    .dialog .box .row.add { color: var(--text); }
+    .dialog .box .row.add svg.i { color: var(--text); }
+
+    .dialog .actions { margin-top: 36px; gap: 32px; color: var(--muted); font-size: 14px; }
+    .dialog .actions .ghost { color: var(--muted); font-weight: 500; }
+    .dialog .btn { display: inline-flex; align-items: center; justify-content: center; height: 35px; padding: 0 20px; border-radius: 10px; font-weight: 500; font-size: 14px; background: #0b0b0c; color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="body">
+      <nav class="rail" aria-label="Navegación">
+        <span class="icon active" aria-label="Inicio">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+        </span>
+        <span class="icon" aria-label="Proyectos">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        </span>
+        <span class="icon" aria-label="Buscar">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </span>
+        <span class="icon" aria-label="Notificaciones">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg>
+        </span>
+        <span class="sep"></span>
+        <span class="icon" aria-label="Nuevo">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <span class="icon" aria-label="Ajustes">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        </span>
+        <span class="avatar" aria-hidden="true"></span>
+      </nav>
+
+      <div class="main no-sidebar">
+        <span class="bg-text">fabrica-skills?</span>
+
+        <div class="center">
+          <div class="composer">
+            <div class="placeholder">Describe lo que quieres construir…</div>
+            <div class="bar">
+              <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              <span class="chip">
+                <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/></svg>
+                Este equipo
+                <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+              <div class="right">
+                <svg class="i mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+                <span class="send">
+                  <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay">
+      <div class="dialog" role="dialog" aria-label="Crear proyecto">
+        <h3>
+          <span>Crear proyecto</span>
+          <span class="x" aria-label="Cerrar">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </span>
+        </h3>
+
+        <div class="input field">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="sep"></span>
+          <span class="ph">Nombre del proyecto</span>
+        </div>
+
+        <div class="label-row">
+          <span>Carpetas de origen</span>
+          <span class="r">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/></svg>
+            Este equipo
+          </span>
+        </div>
+
+        <div class="box">
+          <div class="row">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>nx-desktop</span>
+            <svg class="i x" viewBox="0 0 24 24" aria-label="Quitar" role="img"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </div>
+          <div class="row add">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2v1"/><path d="M3 7v11a2 2 0 0 0 2 2h8"/><path d="M18 15v6M15 18h6"/></svg>
+            <span>Añadir carpeta</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <span class="ghost">Cancelar</span>
+          <span class="btn">Crear proyecto</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

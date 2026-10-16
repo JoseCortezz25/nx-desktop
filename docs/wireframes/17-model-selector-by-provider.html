@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>17 Selector de modelo por proveedor</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  /* Inline additions only: crop frame, composer geometry, provider chip and model popover sizing. */
+  body { padding: 24px; background: #fff; }
+  .frame { position: relative; width: 905px; height: 445px; margin: 0 auto; background: #fff; overflow: hidden; border-radius: 6px; }
+
+  /* Context strip sitting on top of the composer */
+  .ctx-strip { position: absolute; left: 69px; top: 277px; width: 780px; height: 41px; display: flex; align-items: center; gap: 30px; padding: 0 16px; background: #f3f3f4; border-radius: 14px 14px 0 0; color: var(--text); font-size: 14px; }
+  .ctx-strip > span { display: inline-flex; align-items: center; gap: 10px; }
+  .ctx-strip svg.i { width: 15px; height: 15px; color: var(--text); }
+  .ctx-strip .clip { margin-left: auto; color: var(--muted); padding-right: 6px; }
+
+  /* Composer */
+  .composer { position: absolute; left: 55px; top: 319px; width: 810px; height: 108px; background: #fff; border: 1px solid #e4e4e7; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+  .composer .placeholder { position: absolute; left: 12px; top: 19px; font-size: 15px; line-height: 18px; color: var(--muted); }
+  .composer .bar { position: absolute; left: 0; right: 0; top: 68px; height: 32px; display: flex; align-items: center; padding: 0 9px 0 12px; }
+  .composer .bar > .plus { width: 20px; height: 20px; color: var(--text); }
+  .composer .warn { display: inline-flex; align-items: center; gap: 8px; margin-left: 21px; font-size: 14px; color: var(--warn); }
+  .composer .warn svg.i { width: 14px; height: 14px; color: var(--warn); }
+  .composer .bar .right { margin-left: auto; display: flex; align-items: center; }
+
+  /* Provider chip: quieter outline pill placed right before the model button */
+  .provider-chip { display: inline-flex; align-items: center; gap: 7px; height: 31px; margin-right: 8px; padding: 0 10px 0 10px; border: 1px solid var(--line); border-radius: 999px; background: #fff; font-size: 14px; color: var(--text); }
+  .provider-chip svg.i { width: 14px; height: 14px; color: var(--text); }
+  .provider-chip svg.i.chev { width: 12px; height: 12px; color: var(--muted); margin-left: 2px; }
+
+  /* Model button: pressed state while its popover is open */
+  .model-pill { display: inline-flex; align-items: center; gap: 8px; height: 31px; padding: 0 14px 0 20px; background: var(--fill); border-radius: 999px; font-size: 14px; color: var(--text); }
+  .model-pill.pressed { background: #dcdce1; box-shadow: inset 0 1px 2px rgba(0,0,0,.10); }
+  .model-pill .sub { color: var(--muted); }
+  .model-pill svg.i { width: 12px; height: 12px; color: var(--muted); margin-left: 4px; }
+  .composer .mic { margin-left: 8px; width: 17px; height: 17px; color: var(--text); }
+  .send { margin-left: 18px; width: 30px; height: 30px; border-radius: 50%; background: #0b0b0c; display: grid; place-items: center; color: #fff; box-shadow: var(--shadow-sm); }
+  .send svg.i { width: 16px; height: 16px; color: #fff; stroke-width: 2.2; }
+
+  /* Model selector popover, open above the composer over the model button */
+  .popover.model-list { left: 535px; top: 116px; width: 330px; height: 262px; padding: 12px 5px 8px; border: 1px solid #e6e6e9; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.12); }
+  .popover.model-list .hdr { height: 16px; line-height: 16px; padding: 0 9px; font-size: 13px; color: var(--muted); }
+  .popover.model-list .provider-line { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0 9px; height: 24px; font-size: 12.5px; color: var(--text); }
+  .popover.model-list .provider-line svg.i { width: 13px; height: 13px; color: var(--muted); }
+  .popover.model-list .provider-line .change { margin-left: auto; color: var(--muted); text-decoration: underline; text-underline-offset: 2px; }
+  .popover.model-list .lead { margin-top: 10px; padding: 0 9px; height: 38px; }
+  .popover.model-list .lead .t { display: block; height: 20px; line-height: 20px; font-size: 14px; color: var(--text); }
+  .popover.model-list .lead .desc { display: block; margin-top: 2px; height: 16px; line-height: 16px; font-size: 12.5px; color: var(--muted); }
+  .popover.model-list .opt { display: flex; align-items: center; gap: 10px; height: 31px; margin: 0; padding: 0 9px; border-radius: 8px; font-size: 14px; color: var(--text); }
+  .popover.model-list .opt.first { margin-top: 6px; }
+  .popover.model-list .opt.active { background: var(--fill); }
+  .popover.model-list .opt .end { width: 14px; height: 14px; margin-left: auto; color: var(--text); }
+  .popover.model-list .foot { margin-top: 8px; padding: 0 9px; white-space: nowrap; height: 16px; line-height: 16px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- Context strip above the composer -->
+  <div class="ctx-strip">
+    <span>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+      NX Desktop
+    </span>
+    <span>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
+      Este ordenador
+    </span>
+    <span class="clip">3</span>
+  </div>
+
+  <!-- Composer -->
+  <div class="composer">
+    <div class="placeholder">Dime qué quieres hacer</div>
+    <div class="bar">
+      <svg class="i plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      <span class="warn">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        Acceso completo
+      </span>
+      <div class="right">
+        <span class="provider-chip">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9Z"/></svg>
+          Claude
+          <svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+        <span class="model-pill pressed" aria-expanded="true">
+          Claude Sonnet <span class="sub">Ligero</span>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+        <svg class="i mic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
+        <span class="send">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10v4"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model selector popover (open above the model button; lists the current provider only) -->
+  <div class="popover model-list" role="listbox" aria-label="Seleccionar modelo">
+    <div class="hdr">Seleccionar modelo</div>
+    <div class="provider-line">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+      Proveedor: Claude
+      <span class="change">Cambiar</span>
+    </div>
+    <div class="lead">
+      <span class="t">Predeterminado</span>
+      <span class="desc">Selección recomendada de modelos</span>
+    </div>
+    <div class="opt first" role="option">Claude Opus</div>
+    <div class="opt active" role="option" aria-selected="true">Claude Sonnet
+      <svg class="i end" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    <div class="opt" role="option">Claude Haiku</div>
+    <div class="foot">Los modelos cambian según el proveedor seleccionado</div>
+  </div>
+
+</div>
+</body>
+</html>

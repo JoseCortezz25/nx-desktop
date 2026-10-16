@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>15 Revisar hooks expandido</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  /* Lienzo completo 1916x1030; geometría tomada de la imagen de referencia (desplazada +375 x, +53 y) */
+  .window { position: relative; width: 1916px; height: 1030px; min-width: 0; overflow: hidden; display: block; }
+  body { background: var(--bg); }
+
+  /* Encabezado parcial detrás del modal */
+  .window .bg-text { position: absolute; right: 538px; top: 472px; z-index: 1; font-size: 30px; line-height: 36px; color: var(--text); white-space: nowrap; text-decoration: underline; text-underline-offset: 4px; }
+
+  /* Barra de contexto detrás del compositor */
+  .ctx { position: absolute; left: 711px; top: 815px; width: 780px; height: 41px; background: var(--fill); border-radius: 14px 14px 0 0; display: flex; align-items: center; padding: 0 20px 0 15px; color: var(--text); font-size: 13px; }
+  .ctx span { display: inline-flex; align-items: center; gap: 6px; }
+  .ctx .sp { margin-right: 28px; }
+  .ctx svg.i { width: 16px; height: 16px; color: var(--text); }
+  .ctx .gear { margin-left: auto; }
+
+  /* Compositor */
+  .composer { position: absolute; left: 697px; top: 856px; width: 809px; height: 109px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-md); }
+  .composer .placeholder { position: absolute; left: 13px; top: 18px; font-size: 15px; line-height: 20px; color: var(--muted); }
+  .composer .bar { position: absolute; left: 14px; right: 9px; top: 71px; height: 28px; display: flex; align-items: center; gap: 22px; }
+  .composer .bar svg.i { color: var(--text); }
+  .composer .bar .plus { width: 16px; height: 16px; }
+  .composer .bar .pill { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--warn); white-space: nowrap; }
+  .composer .bar .pill svg.i { width: 14px; height: 14px; color: var(--warn); }
+  .composer .bar .hook { position: relative; display: inline-flex; }
+  .composer .bar .hook::after { content: ""; position: absolute; top: -2px; right: -3px; width: 6px; height: 6px; border-radius: 50%; background: #f2b233; }
+  .composer .bar .right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+  .composer .bar .model { display: flex; align-items: center; gap: 5px; font-size: 13px; white-space: nowrap; color: var(--text); }
+  .composer .bar .model .muted { color: var(--muted); }
+  .composer .bar .model svg.i { width: 12px; height: 12px; color: var(--muted); }
+  .composer .bar .mic { width: 16px; height: 16px; }
+  .composer .bar .send { width: 28px; height: 28px; border-radius: 50%; background: #0b0b0c; display: grid; place-items: center; }
+  .composer .bar .send svg.i { width: 16px; height: 16px; color: #fff; stroke-width: 2; }
+
+  /* Capa de atenuación y modal */
+  .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.11); z-index: 10; }
+  .dialog { position: absolute; left: 542px; top: 175px; width: 748px; height: 592px; padding: 22px; display: flex; flex-direction: column; border-radius: 18px; background: #fff; border: 1px solid rgba(0,0,0,.04); box-shadow: 0 10px 30px rgba(0,0,0,.14), 0 2px 6px rgba(0,0,0,.05); }
+  .dialog h3 { margin: 0 0 14px; font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -.2px; }
+
+  /* Casilla tipo cuadro */
+  .cb { width: 16px; height: 16px; flex: none; border: 1.5px solid #c9c9c9; border-radius: 4px; background: #fff; }
+
+  /* Distintivo "Nuevo" */
+  .badge.new { background: #dcf5e4; color: #1f7a3f; font-size: 12px; line-height: 18px; font-weight: 500; padding: 2px 9px; }
+
+  /* Fila de hook */
+  .hook { flex: none; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .hook .head { height: 43px; display: flex; align-items: center; gap: 12px; padding: 0 28px 0 15px; font-size: 14px; font-weight: 600; color: var(--text); }
+  .hook .chev { margin-left: auto; width: 12px; height: 12px; color: var(--muted); }
+
+  /* Detalle expandido */
+  .hook .detail { height: 135px; border-top: 1px solid var(--line); padding: 10px 27px 0; }
+  .hook .detail .r { display: flex; align-items: center; height: 29px; font-size: 13px; }
+  .hook .detail .k { width: 131px; flex: none; color: var(--muted); }
+  .hook .detail .v { color: var(--text); }
+  .hook .detail .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+
+  /* Pie del modal */
+  .dialog .foot { margin-top: auto; display: flex; align-items: center; height: 35px; }
+  .dialog .foot .note { flex: 1; font-size: 12px; color: #555; }
+  .dialog .foot .note u { text-underline-offset: 2px; }
+  .dialog .actions { display: flex; gap: 13px; }
+  .dialog .btn { height: 35px; padding: 0; border-radius: 10px; font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; background: #f1f1f1; color: #222; box-shadow: none; }
+  .dialog .btn.w1 { width: 100px; }
+  .dialog .btn.w2 { width: 127px; }
+  .dialog .btn.off { width: 172px; background: #9b9b9b; color: #fff; }
+</style>
+</head>
+<body>
+<div class="window">
+
+  <!-- Encabezado parcial detrás del modal -->
+  <span class="bg-text">...sktop?</span>
+
+  <!-- Barra de contexto -->
+  <div class="ctx">
+    <span class="sp">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4.2l2 2.5H19a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      NX Desktop
+    </span>
+    <span class="sp">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 20h20"/></svg>
+      Este ordenador
+    </span>
+    <svg class="i gear" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+  </div>
+
+  <!-- Compositor -->
+  <div class="composer">
+    <div class="placeholder">Dime qué quieres hacer</div>
+    <div class="bar">
+      <svg class="i plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="pill">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Acceso completo
+      </span>
+      <span class="hook">
+        <svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+      </span>
+      <div class="right">
+        <span class="model">
+          <span>GPT-6.1 Sol</span>
+          <span class="muted">Ligero</span>
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+        <svg class="i mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <span class="send">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v4M10 7v10M13 5v14M16 8v8M19 10v4"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capa de atenuación con el modal -->
+  <div class="overlay">
+    <div class="dialog" role="dialog" aria-label="Revisar hooks">
+      <h3>Revisar hooks</h3>
+
+      <!-- Hook 1 expandido -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 1</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Contraer" role="img"><path d="m18 15-6-6-6 6"/></svg>
+        </div>
+        <div class="detail">
+          <div class="r"><span class="k">Origen</span><span class="v">Configuración de usuario</span></div>
+          <div class="r"><span class="k">Tipo de hook</span><span class="v">PreToolUse</span></div>
+          <div class="r"><span class="k">Comando</span><span class="v mono">C:\Users\VICTUS\.orca\agent-hooks\codex-hook.cmd</span></div>
+          <div class="r"><span class="k">Tiempo de espera</span><span class="v">600s</span></div>
+        </div>
+      </div>
+
+      <!-- Hook 2 -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 2</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Expandir" role="img"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Hook 3 -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 3</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Expandir" role="img"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Hook 4 -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 4</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Expandir" role="img"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Hook 5 -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 5</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Expandir" role="img"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Hook 6 -->
+      <div class="hook">
+        <div class="head">
+          <span class="cb" aria-hidden="true"></span>
+          <span>Hook 6</span>
+          <span class="badge new">Nuevo</span>
+          <svg class="i chev" viewBox="0 0 24 24" aria-label="Expandir" role="img"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <!-- Pie -->
+      <div class="foot">
+        <span class="note">Puedes cambiarlo más tarde en <u>Ajustes</u></span>
+        <div class="actions">
+          <span class="btn w1">Ahora no</span>
+          <span class="btn w2">Permitir todo</span>
+          <span class="btn off" aria-disabled="true">Permitir la selección</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

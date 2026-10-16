@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16 Selector de proveedor</title>
+<link rel="stylesheet" href="assets/wireframe.css">
+<style>
+  /* Inline additions only: crop frame, composer geometry, provider chip and provider popover sizing. */
+  body { margin: 0; }
+  .frame { position: relative; width: 1916px; height: 1030px; margin: 0; background: #fff; overflow: hidden; }
+
+  /* Context strip sitting on top of the composer */
+  .ctx-strip { position: absolute; left: 567px; top: 739px; width: 780px; height: 41px; display: flex; align-items: center; gap: 30px; padding: 0 16px; background: #f3f3f4; border-radius: 14px 14px 0 0; color: var(--text); font-size: 14px; }
+  .ctx-strip > span { display: inline-flex; align-items: center; gap: 10px; }
+  .ctx-strip svg.i { width: 15px; height: 15px; color: var(--text); }
+  .ctx-strip .clip { margin-left: auto; color: var(--muted); padding-right: 6px; }
+
+  /* Composer */
+  .composer { position: absolute; left: 553px; top: 780px; width: 810px; height: 108px; background: #fff; border: 1px solid #e4e4e7; border-radius: 20px; box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+  .composer .placeholder { position: absolute; left: 12px; top: 19px; font-size: 15px; line-height: 18px; color: var(--muted); }
+  .composer .bar { position: absolute; left: 0; right: 0; top: 68px; height: 32px; display: flex; align-items: center; padding: 0 9px 0 12px; }
+  .composer .bar > .plus { width: 20px; height: 20px; color: var(--text); }
+  .composer .warn { display: inline-flex; align-items: center; gap: 8px; margin-left: 21px; font-size: 14px; color: var(--warn); }
+  .composer .warn svg.i { width: 14px; height: 14px; color: var(--warn); }
+  .composer .bar .right { margin-left: auto; display: flex; align-items: center; }
+
+  .composer .hook { width: 16px; height: 16px; margin-right: 10px; color: var(--text); }
+  .model-pill { display: inline-flex; align-items: center; gap: 8px; height: 31px; padding: 0 14px 0 20px; background: var(--fill); border-radius: 999px; font-size: 14px; color: var(--text); }
+  .model-pill svg.i { width: 12px; height: 12px; color: var(--muted); margin-left: 4px; }
+  .composer .mic { margin-left: 8px; width: 17px; height: 17px; color: var(--text); }
+  .send { margin-left: 18px; width: 30px; height: 30px; border-radius: 50%; background: #0b0b0c; display: grid; place-items: center; color: #fff; box-shadow: var(--shadow-sm); }
+  .send svg.i { width: 16px; height: 16px; color: #fff; stroke-width: 2.2; }
+
+  /* Provider chip, pressed/active state, placed right before the model button */
+  .provider-chip { display: inline-flex; align-items: center; gap: 7px; height: 31px; padding: 0 10px 0 11px; margin-right: 8px; border-radius: 999px; background: #dedee2; box-shadow: inset 0 1px 2px rgba(0,0,0,.10); font-size: 14px; color: var(--text); }
+  .provider-chip svg.i.prov { width: 14px; height: 14px; color: var(--text); }
+  .provider-chip svg.i.chev { width: 12px; height: 12px; color: var(--muted); }
+
+  /* Provider selector popover, anchored above the provider chip (bottom edge sits on the composer top) */
+  .popover.prov-list { left: 843px; top: 581px; width: 320px; padding: 12px 5px 7px; border: 1px solid #e6e6e9; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,.12); }
+  .popover.prov-list .hdr { height: 16px; line-height: 16px; padding: 0 9px; font-size: 13px; color: var(--muted); }
+  .popover.prov-list .opt { display: flex; align-items: center; gap: 10px; height: 46px; margin: 0; padding: 0 9px; border-radius: 8px; color: var(--text); }
+  .popover.prov-list .opt.first { margin-top: 6px; }
+  .popover.prov-list .opt.active { background: var(--fill); }
+  .popover.prov-list .opt svg.i { width: 18px; height: 18px; color: var(--text); }
+  .popover.prov-list .opt .txt { display: flex; flex-direction: column; min-width: 0; }
+  .popover.prov-list .opt .t { display: block; height: 18px; line-height: 18px; font-size: 14px; color: var(--text); }
+  .popover.prov-list .opt .desc { display: block; margin-top: 2px; height: 16px; line-height: 16px; font-size: 12.5px; color: var(--muted); }
+  .popover.prov-list .opt .end { width: 14px; height: 14px; margin-left: auto; color: var(--text); }
+  .popover.prov-list .foot { margin-top: 10px; padding: 0 9px; white-space: nowrap; height: 16px; line-height: 16px; font-size: 12.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- Provider selector popover (anchored above the provider chip in the composer bottom bar) -->
+  <div class="popover prov-list" role="listbox" aria-label="Seleccionar proveedor">
+    <div class="hdr">Seleccionar proveedor</div>
+    <div class="opt first" role="option" aria-selected="false">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+      <span class="txt">
+        <span class="t">OpenCode</span>
+        <span class="desc">Agente de código abierto</span>
+      </span>
+    </div>
+    <div class="opt" role="option" aria-selected="false">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></svg>
+      <span class="txt">
+        <span class="t">Codex</span>
+        <span class="desc">Agente de OpenAI</span>
+      </span>
+    </div>
+    <div class="opt active" role="option" aria-selected="true">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/><path d="M17 12h4"/><path d="m5.6 5.6 2.8 2.8"/><path d="m15.6 15.6 2.8 2.8"/><path d="m5.6 18.4 2.8-2.8"/><path d="m15.6 8.4 2.8-2.8"/></svg>
+      <span class="txt">
+        <span class="t">Claude</span>
+        <span class="desc">Agente de Anthropic</span>
+      </span>
+      <svg class="i end" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    <div class="foot">Los modelos disponibles dependen del proveedor</div>
+  </div>
+
+  <!-- Context strip above the composer -->
+  <div class="ctx-strip">
+    <span>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+      NX Desktop
+    </span>
+    <span>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
+      Este ordenador
+    </span>
+    <span class="clip"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span>
+  </div>
+
+  <!-- Composer -->
+  <div class="composer">
+    <div class="placeholder">Dime qué quieres hacer</div>
+    <div class="bar">
+      <svg class="i plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      <span class="warn">
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        Acceso completo
+      </span>
+      <div class="right">
+        <svg class="i hook" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"/><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"/><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"/></svg>
+        <span class="provider-chip" aria-expanded="true">
+          <svg class="i prov" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4"/><path d="M12 17v4"/><path d="M3 12h4"/><path d="M17 12h4"/><path d="m5.6 5.6 2.8 2.8"/><path d="m15.6 15.6 2.8 2.8"/><path d="m5.6 18.4 2.8-2.8"/><path d="m15.6 8.4 2.8-2.8"/></svg>
+          Claude
+          <svg class="i chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+        <span class="model-pill">
+          Claude Sonnet
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+        <svg class="i mic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></svg>
+        <span class="send">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 10v4"/></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

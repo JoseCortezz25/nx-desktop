@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>09 Local environment</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+  <style>
+    .main { background: #fff; }
+    .stage { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 13px; }
+    /* Crop box mirrors the reference image at 1:1 (887 x 361 px). */
+    .crop { position: relative; width: 887px; height: 361px; flex: none; }
+
+    .ctx { position: absolute; left: 75px; top: 198px; width: 780px; height: 40px; padding: 0 14px; display: flex; align-items: center; background: #f3f3f5; border-radius: 14px 14px 0 0; color: var(--text); font-size: 13.5px; }
+    .ctx .item { display: flex; align-items: center; gap: 8px; }
+    .ctx .item + .item { margin-left: 30px; }
+    .gear-btn { position: absolute; left: 818px; top: 206px; width: 31px; height: 26px; border-radius: 8px; background: #e9e9ec; display: grid; place-items: center; }
+    .gear-btn svg.i { width: 16px; height: 16px; color: var(--text); }
+
+    .composer { position: absolute; left: 60px; top: 240px; width: 810px; height: 108px; background: #fff; border: 1px solid #e5e5e8; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.07); }
+    .composer .ph { position: absolute; left: 13px; top: 18px; color: #9a9aa1; font-size: 15px; line-height: 20px; }
+    .composer .bar { position: absolute; left: 0; right: 0; top: 74px; height: 22px; display: flex; align-items: center; gap: 10px; padding: 0 10px 0 17px; }
+    .composer .bar svg.i { color: var(--text); }
+    .composer .plus { width: 16px; height: 16px; }
+    .composer .warn { display: flex; align-items: center; gap: 7px; margin-left: 13px; font-size: 13.5px; }
+    .composer .warn svg.i { color: var(--warn); width: 15px; height: 15px; }
+    .composer .anchor { position: relative; display: flex; margin-left: 20px; }
+    .composer .anchor svg.i { width: 15px; height: 15px; }
+    .composer .anchor .pdot { position: absolute; top: -3px; right: -4px; width: 7px; height: 7px; border-radius: 50%; background: #f2b632; }
+    .composer .right { margin-left: auto; margin-right: 10px; display: flex; align-items: center; gap: 18px; }
+    .composer .model { display: flex; align-items: center; gap: 5px; font-size: 14px; color: var(--text); margin-right: 5px; }
+    .composer .model .muted { color: var(--muted); font-size: 13.5px; }
+    .composer .model svg.i { width: 13px; height: 13px; color: var(--muted); }
+    .composer .mic { width: 16px; height: 16px; }
+    .composer .send { width: 30px; height: 30px; background: #111; }
+    .composer .send svg.i { width: 16px; height: 16px; color: #fff; }
+
+    .popover.env { left: 565px; top: 70px; width: 286px; height: 131px; padding: 8px 6px 6px; border-radius: 14px; }
+    .popover .head { color: var(--muted); font-size: 13px; padding: 4px 10px 6px; }
+    .popover.env .opt { gap: 7px; padding: 6px 10px; font-size: 14px; }
+    .popover.env .opt svg.i { width: 15px; height: 15px; }
+    .popover.env .opt .end { display: flex; align-items: center; gap: 6px; color: #5d5d64; }
+    .popover.env .opt .end svg.i { width: 13px; height: 13px; color: #8b8b93; }
+    .popover.env .opt .label { flex: 1; }
+    .popover.env .opt.dim { color: var(--muted); }
+    .popover.env .opt.dim svg.i { color: #b4b4ba; }
+    .popover.env .opt.dim .end { color: var(--muted); }
+    .popover.env .opt.dim .end svg.i { color: #b4b4ba; }
+    .popover.env .switch { flex: none; }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="body">
+      <main class="main no-sidebar">
+        <div class="stage">
+          <div class="crop">
+
+            <div class="ctx">
+              <div class="item">
+                <svg class="i sm" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>NX Desktop</span>
+              </div>
+              <div class="item">
+                <svg class="i sm" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M2 19h20"/></svg>
+                <span>Este ordenador</span>
+              </div>
+            </div>
+            <span class="gear-btn">
+              <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>
+            </span>
+
+            <div class="composer">
+              <div class="ph">Dime qué quieres hacer</div>
+              <div class="bar">
+                <svg class="i plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                <span class="warn">
+                  <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.2h.01"/></svg>
+                  <span>Acceso completo</span>
+                </span>
+                <span class="anchor">
+                  <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M12 8v13M5 13H3a9 9 0 0 0 18 0h-2M9 11h6"/></svg>
+                  <span class="pdot"></span>
+                </span>
+                <div class="right">
+                  <span class="model"><span>GPT-6.1 Sol</span> <span class="muted">Ligero</span> <svg class="i" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+                  <svg class="i mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+                  <span class="send">
+                    <svg class="i" viewBox="0 0 24 24"><path d="M4 10v4M8 6v12M12 3v18M16 8v8M20 11v2"/></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="popover env" role="dialog" aria-label="Configure local environment">
+              <div class="head">Configure local environment</div>
+              <div class="opt">
+                <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9M12 12v3"/></svg>
+                <span class="label">New worktree</span>
+                <span class="switch"></span>
+              </div>
+              <div class="opt">
+                <svg class="i" viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+                <span class="label">Branch</span>
+                <span class="end">main <svg class="i" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></span>
+              </div>
+              <div class="opt dim">
+                <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>
+                <span class="label">Environment</span>
+                <span class="end">Sin entorno <svg class="i" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
