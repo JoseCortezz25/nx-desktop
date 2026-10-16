@@ -2,10 +2,12 @@ import type { ReactNode } from 'react';
 import './popover.css';
 
 /**
- * `list` is the rows surface (provider, model); `panel` is the wider padded
- * surface the effort control draws.
+ * `list` is the rows surface (provider, model, project); `panel` is the wider
+ * padded surface the effort and environment controls draw; `wide` is the wide
+ * rows surface the approval levels need for their descriptions
+ * (`docs/wireframes/10-approval-mode.html`).
  */
-export type PopoverVariant = 'list' | 'panel';
+export type PopoverVariant = 'list' | 'panel' | 'wide';
 
 export interface PopoverProps {
   /** Muted heading drawn above the content. */

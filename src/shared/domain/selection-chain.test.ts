@@ -1,10 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  changeEnvironmentName,
+  changeGitBranch,
   changeProvider,
+  changeWorktreeFlag,
   reconcileSelection,
+  resolveApprovalMode,
+  resolveProject,
+  resolveRunEnvironment,
   resolveSelection,
   type ComposerSelection
 } from './selection-chain';
+import type { Project } from './project.types';
 import type { Provider } from './provider.types';
 
 /**
@@ -156,5 +163,142 @@ describe('resolveSelection', () => {
 
   it('returns null while the catalog is empty', () => {
     expect(resolveSelection([], null)).toBeNull();
+  });
+});
+
+/**
+ * The project context the composer resolves alongside the selection chain: the
+ * active project, the approval policy it carries, and the run environment.
+ */
+const projects: readonly Project[] = [
+  {
+    id: 'proj-one',
+    name: 'One',
+    workspaceFolders: ['/workspace/one'],
+    approvalMode: 'ask_always',
+    hookDecisions: [],
+    conversationIds: []
+  },
+  {
+    id: 'proj-two',
+    name: 'Two',
+    workspaceFolders: ['/workspace/two'],
+    approvalMode: 'full_access',
+    hookDecisions: [],
+    conversationIds: []
+  }
+];
+
+describe('resolveProject', () => {
+  it('starts from the first project when nothing is chosen yet', () => {
+    expect(resolveProject(projects, null)?.id).toBe('proj-one');
+  });
+
+  it('keeps the chosen project while it still exists', () => {
+    expect(resolveProject(projects, 'proj-two')?.id).toBe('proj-two');
+  });
+
+  it('falls back to the first project when the chosen one is gone', () => {
+    expect(resolveProject(projects, 'missing')?.id).toBe('proj-one');
+  });
+
+  it('returns null while the list is empty, so no policy is invented', () => {
+    expect(resolveProject([], 'proj-one')).toBeNull();
+  });
+});
+
+describe('resolveApprovalMode', () => {
+  it('reads the policy from the active project', () => {
+    expect(resolveApprovalMode(projects[0])).toBe('ask_always');
+    expect(resolveApprovalMode(projects[1])).toBe('full_access');
+  });
+
+  it('reports the two projects differently rather than one shared default', () => {
+    expect(resolveApprovalMode(projects[0])).not.toBe(
+      resolveApprovalMode(projects[1])
+    );
+  });
+
+  it('has no level while no project is active', () => {
+    expect(resolveApprovalMode(null)).toBeNull();
+  });
+});
+
+describe('resolveRunEnvironment', () => {
+  const base = {
+    useNewWorktree: false,
+    gitBranch: 'develop',
+    environmentName: ''
+  };
+
+  it('keeps a branch the repository reports', () => {
+    const resolved = resolveRunEnvironment(base, ['main', 'develop']);
+
+    expect(resolved.gitBranch).toBe('develop');
+  });
+
+  it('picks the repository default when no branch is chosen', () => {
+    expect(
+      resolveRunEnvironment({ ...base, gitBranch: '' }, ['main', 'develop'])
+        .gitBranch
+    ).toBe('main');
+  });
+
+  it('replaces a branch the new workspace does not have', () => {
+    expect(
+      resolveRunEnvironment({ ...base, gitBranch: 'main' }, [
+        'release/2.0',
+        'develop'
+      ]).gitBranch
+    ).toBe('release/2.0');
+  });
+
+  it('leaves the environment alone when there are no branches to choose from', () => {
+    expect(resolveRunEnvironment(base, [])).toEqual(base);
+  });
+
+  it('never touches the worktree flag or the environment name', () => {
+    const resolved = resolveRunEnvironment(
+      { useNewWorktree: true, gitBranch: 'gone', environmentName: 'staging' },
+      ['main']
+    );
+
+    expect(resolved).toEqual({
+      useNewWorktree: true,
+      gitBranch: 'main',
+      environmentName: 'staging'
+    });
+  });
+});
+
+describe('environment transitions', () => {
+  const base = {
+    useNewWorktree: false,
+    gitBranch: 'main',
+    environmentName: ''
+  };
+
+  it('edits the worktree flag and keeps the other two fields', () => {
+    expect(changeWorktreeFlag(base, true)).toEqual({
+      useNewWorktree: true,
+      gitBranch: 'main',
+      environmentName: ''
+    });
+  });
+
+  it('edits the branch and keeps the other two fields', () => {
+    expect(changeGitBranch(base, 'develop')).toEqual({
+      useNewWorktree: false,
+      gitBranch: 'develop',
+      environmentName: ''
+    });
+  });
+
+  it('edits the environment name and keeps the other two fields', () => {
+    expect(changeEnvironmentName(base, 'staging')).toEqual({
+      useNewWorktree: false,
+      gitBranch: 'main',
+      environmentName: 'staging'
+    });
   });
 });

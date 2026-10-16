@@ -6,6 +6,12 @@ import './composer-bar.css';
 
 export interface ComposerBarProps {
   /**
+   * Controls drawn next to the add trigger, before the bar's flexible gap. The
+   * approval chip lives here because the wireframes draw it on the left, apart
+   * from the provider/model/effort chips (`docs/wireframes/10-approval-mode.html`).
+   */
+  readonly leadingControls?: ReactNode;
+  /**
    * The selector chips the composer organism places between the add trigger and
    * the send control (provider, model, effort — #7).
    */
@@ -26,6 +32,7 @@ export interface ComposerBarProps {
  * place that knows the draft and when it is submittable.
  */
 export function ComposerBar({
+  leadingControls,
   controls,
   onAddPress,
   onSendPress
@@ -34,13 +41,16 @@ export function ComposerBar({
 
   return (
     <div className="composer-bar">
-      <Button
-        variant="plain"
-        label={messages.composer.addLabel}
-        onPress={onAddPress}
-      >
-        <Icon name="plus" size="lg" />
-      </Button>
+      <div className="composer-bar__leading">
+        <Button
+          variant="plain"
+          label={messages.composer.addLabel}
+          onPress={onAddPress}
+        >
+          <Icon name="plus" size="lg" />
+        </Button>
+        {leadingControls}
+      </div>
       <div className="composer-bar__controls">
         {controls}
         <Button

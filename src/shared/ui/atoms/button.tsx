@@ -4,9 +4,18 @@ import './button.css';
 export type ButtonVariant =
   'text' | 'icon' | 'plain' | 'list' | 'pill' | 'solid';
 
+/**
+ * `warn` is the caution treatment the wireframe gives the unrestricted approval
+ * level and the chip that carries it (`docs/wireframes/10-approval-mode.html`);
+ * `neutral` is every other control.
+ */
+export type ButtonTone = 'neutral' | 'warn';
+
 export interface ButtonProps {
   /** Visual variant. Placement and spacing belong to the parent. */
   readonly variant?: ButtonVariant;
+  /** Colour treatment. Placement and spacing belong to the parent. */
+  readonly tone?: ButtonTone;
   /** Accessible name for icon-only buttons. */
   readonly label?: string;
   /** Visual highlight for the current or toggled state. */
@@ -32,6 +41,7 @@ export interface ButtonProps {
 /** Indivisible interactive primitive: a native button with visual variants. */
 export function Button({
   variant = 'text',
+  tone = 'neutral',
   label,
   isActive = false,
   isPressed,
@@ -44,8 +54,8 @@ export function Button({
   children
 }: ButtonProps) {
   const className = `button button--${variant}${
-    isActive ? ' button--active' : ''
-  }`;
+    tone === 'warn' ? ' button--warn' : ''
+  }${isActive ? ' button--active' : ''}`;
 
   return (
     <button

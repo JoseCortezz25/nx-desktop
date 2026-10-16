@@ -1,3 +1,39 @@
+/* The context bar and the composer box are one dock: the wireframes draw the bar
+   sitting flush on the box's top edge (`docs/wireframes/04-project-picker.html`,
+   `.dock`), so the dock, not the box, is the composer organism's root. The
+   molecule and the box carry no outer margin; centring lives here. */
+.composer-dock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* Positioning context for the context bar's popovers, so they anchor to the bar
+   and leave the composer box's own popover placement untouched. */
+.composer-dock__context {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.composer-dock__popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 5;
+}
+
+/* The environment popover sits at the bar's trailing edge, as the wireframe
+   draws it (`docs/wireframes/09-local-environment.html`, `.popover.env`). */
+.composer-dock__popover--end {
+  left: auto;
+  right: 0;
+}
+
 /* Box matches `docs/wireframes/01-home.html` (`.composer`), expressed through
    the shared tokens. The 27px row gap is the wireframe's `.bar` margin-top; the
    spacing lives on the organism so the molecule keeps no outer margin. */
@@ -22,4 +58,11 @@
   right: 0;
   bottom: calc(100% + 8px);
   z-index: 5;
+}
+
+/* The approval chip sits on the box's left, so its popover opens from that edge
+   instead of the right one (`docs/wireframes/10-approval-mode.html`). */
+.composer__popover--start {
+  right: auto;
+  left: 0;
 }

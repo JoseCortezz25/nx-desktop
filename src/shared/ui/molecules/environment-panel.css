@@ -1,0 +1,41 @@
+.environment-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* One labelled field row: glyph, label, trailing control
+   (`docs/wireframes/09-local-environment.html`, `.popover.env .opt`). */
+.environment-panel__field {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 0 2px;
+  color: var(--color-text);
+}
+
+.environment-panel__field .icon {
+  color: var(--color-muted);
+}
+
+.environment-panel__label {
+  flex: 1;
+  font-size: 14px;
+}
+
+/* The worktree switch sits at the row end, mirroring the wireframe's `.switch`. */
+.environment-panel__field .switch {
+  margin-left: auto;
+}
+
+/* Branch rows are compact list rows inside the padded panel, not the full-width
+   rows the provider/model popovers draw. */
+.environment-panel .select-list__options .button--list {
+  min-height: 30px;
+  font-size: 14px;
+}
+
+.environment-panel .select-list__options .button--list:hover:not(:disabled) {
+  background: var(--color-fill);
+}

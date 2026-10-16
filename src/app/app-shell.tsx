@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
+import { useWorkspaceBranches } from '@/features/projects/hooks/use-workspace-branches';
 import { useProviderCatalog } from '@/features/providers/hooks/use-provider-catalog';
 import {
   INITIAL_REGION_VISIBILITY,
@@ -15,8 +17,9 @@ import './app-shell.css';
 
 /**
  * Window-shell composition root (`docs/wireframes/README.md`, "Layout
- * regions"). It owns the ephemeral region visibility, resolves the active
- * provider through the typed port, and slots the content each later ticket
+ * regions"). It owns the ephemeral region visibility, resolves the catalogs the
+ * shell and the composer read through their typed ports (providers, projects,
+ * the active workspace's branches), and slots the content each later ticket
  * fills. It holds no persisted state and calls no IPC.
  */
 export function AppShell() {
@@ -24,6 +27,9 @@ export function AppShell() {
     INITIAL_REGION_VISIBILITY
   );
   const { providers, activeProvider } = useProviderCatalog();
+  const { projects, activeProject, selectProject, changeApprovalMode } =
+    useProjectCatalog();
+  const branches = useWorkspaceBranches(activeProject?.id ?? null);
 
   function handleToggleSidebar() {
     setVisibility(current => toggleRegion(current, 'sidebar'));
@@ -54,7 +60,15 @@ export function AppShell() {
           <Sidebar providerName={activeProvider?.displayName ?? null} />
         ) : null}
         <MainPane>
-          <HomeView providers={providers} onSubmit={handleSubmitPrompt} />
+          <HomeView
+            providers={providers}
+            projects={projects}
+            activeProject={activeProject}
+            branches={branches}
+            onSelectProject={selectProject}
+            onChangeApprovalMode={changeApprovalMode}
+            onSubmit={handleSubmitPrompt}
+          />
         </MainPane>
         {visibility.rightPanel ? (
           <RightPanel onClose={handleToggleRightPanel} />

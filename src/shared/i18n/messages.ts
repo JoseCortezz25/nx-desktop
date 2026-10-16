@@ -10,6 +10,8 @@
  * Read copy through the accessors exported here (`getSharedMessages`,
  * `getSharedErrorMessage`) so lookup stays behind one seam.
  */
+import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
+
 export const sharedMessages = {
   actions: {
     save: 'Save',
@@ -110,7 +112,68 @@ export const sharedMessages = {
         extended: 'Extendido',
         maximum: 'Máximo'
       } as Readonly<Record<string, string | undefined>>
+    },
+    // Approval chip and its popover (#8). The levels come from the domain
+    // (`APPROVAL_MODES`) and this map is keyed by them, so a level added to the
+    // domain cannot ship without copy. Wording follows
+    // `docs/wireframes/10-approval-mode.html`; the header names the active
+    // provider at runtime, exactly like the prompt placeholder, because the
+    // wireframe's "ChatGPT" is placeholder text.
+    approval: {
+      listLabel: 'Modos de aprobación',
+      triggerLabel: (modeLabel: string) => `Aprobación: ${modeLabel}`,
+      header: (providerName: string) =>
+        `¿Cómo deben aprobarse las acciones de ${providerName}?`,
+      modes: {
+        ask_always: {
+          label: 'Solicitar aprobación',
+          description:
+            'Pedir siempre confirmación antes de editar archivos externos y usar internet'
+        },
+        auto_approve: {
+          label: 'Aprobar automáticamente',
+          description:
+            'Solicitar aprobación solo para las acciones detectadas como potencialmente inseguras'
+        },
+        full_access: {
+          label: 'Acceso completo',
+          description:
+            'Acceder sin restricciones a internet y a cualquier archivo de tu ordenador'
+        }
+      }
     }
+  },
+  // Context bar that sits on the composer (#8): the project picker and the
+  // environment popover (`docs/wireframes/04-project-picker.html`,
+  // `09-local-environment.html`, `10-approval-mode.html`).
+  //
+  // The wireframe writes `09`'s popover in English while `04` and `10` are in
+  // Spanish. The app's copy is Spanish throughout, so the environment field
+  // labels are Spanish here and the wireframe's English wording is not carried
+  // over (`docs/wireframes/README.md`: texts are placeholders, not final copy).
+  contextBar: {
+    project: {
+      emptyLabel: 'Elegir proyecto',
+      triggerLabel: (projectName: string) => `Proyecto: ${projectName}`,
+      listLabel: 'Proyectos',
+      header: 'Seleccionar proyecto'
+    },
+    environment: {
+      localMachine: 'Este ordenador',
+      triggerLabel: (environmentLabel: string) =>
+        `Entorno: ${environmentLabel}`,
+      listLabel: 'Entorno de ejecución',
+      header: 'Configurar entorno local'
+    }
+  },
+  // Fields of `RunEnvironment`, edited in the environment popover
+  // (`docs/wireframes/09-local-environment.html`).
+  environment: {
+    worktree: 'Nuevo worktree',
+    branch: 'Rama',
+    branchListLabel: 'Ramas',
+    name: 'Entorno',
+    namePlaceholder: 'Sin entorno'
   }
 } as const;
 
@@ -123,6 +186,16 @@ export const sharedMessages = {
  */
 export function getEffortLevelLabel(level: string): string {
   return sharedMessages.composer.effort.labels[level] ?? level;
+}
+
+/**
+ * The label and description of one approval level.
+ *
+ * The map is keyed by `ApprovalMode`, so TypeScript fails the build if the domain
+ * gains a level without copy — the union is never retyped here.
+ */
+export function getApprovalModeCopy(mode: ApprovalMode) {
+  return sharedMessages.composer.approval.modes[mode];
 }
 
 /** Stable `snake_case` error codes carried by `AppErrorDto`. */

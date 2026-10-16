@@ -1,0 +1,36 @@
+/* Binary toggle track (`docs/wireframes/09-local-environment.html`, `.switch`).
+   Geometry only: the fill and the thumb position follow the `isOn` state. */
+.switch {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  width: 34px;
+  height: 20px;
+  padding: 2px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill-strong);
+  cursor: pointer;
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.switch--on {
+  background: var(--color-accent);
+}
+
+.switch--on .switch__thumb {
+  transform: translateX(14px);
+}
+
+.switch__thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-panel);
+  box-shadow: var(--shadow-sm);
+  transition: transform 120ms ease;
+}

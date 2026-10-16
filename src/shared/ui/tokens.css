@@ -22,7 +22,8 @@
   --color-fill: #ededf0; /* active / hover fills */
   --color-fill-strong: #dcdce1; /* pressed chip fill — composer selectors (#7) */
   --color-accent: #222222; /* solid primary fills — composer send (#6) */
-  --color-warn: #d9561e; /* attention copy — reserved (approval chip, #8) */
+  --color-warn: #d9561e; /* attention copy — approval chip and unrestricted level (#8) */
+  --color-warn-soft: #fbf0ea; /* selected unrestricted approval row (#8) */
   --color-focus: #2f6fed; /* keyboard focus ring — base button, text field */
 
   /* Radius (wireframe: --radius). */

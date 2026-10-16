@@ -5,6 +5,14 @@
   height: 38px;
 }
 
+/* Add trigger plus the chips that sit beside it on the left (the approval chip,
+   #8). */
+.composer-bar__leading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 /* Selector chips plus the send control, pushed to the row end. */
 .composer-bar__controls {
   display: flex;

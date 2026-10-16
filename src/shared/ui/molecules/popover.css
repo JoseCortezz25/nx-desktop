@@ -21,6 +21,13 @@
   padding: 12px 14px 14px;
 }
 
+/* Approval levels carry a full sentence of description per row, which the
+   wireframe draws at 553px (`10-approval-mode.html`, `.popover`). */
+.popover--wide {
+  width: 553px;
+  padding: 8px;
+}
+
 .popover__header {
   margin: 0 0 9px;
   padding: 0 9px;

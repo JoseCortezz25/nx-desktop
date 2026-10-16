@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Button } from '../atoms/button';
+import type { ButtonTone } from '../atoms/button';
 import { Icon } from '../atoms/icon';
 import type { IconName } from '../atoms/icon';
 import './select-list.css';
@@ -10,6 +11,12 @@ export interface SelectOption {
   /** Secondary line drawn under the label (the provider subtitle). */
   readonly description?: string;
   readonly icon?: IconName;
+  /**
+   * Caution treatment for a row the wireframe draws as a warning — the
+   * unrestricted approval level
+   * (`docs/wireframes/10-approval-mode.html`, `.popover .opt.warn`).
+   */
+  readonly tone?: ButtonTone;
 }
 
 export interface SelectListLead {
@@ -65,6 +72,7 @@ export function SelectList({
               role="option"
               isSelected={isSelected}
               isActive={isSelected}
+              tone={option.tone}
               label={option.label}
               onPress={() => onSelect(option.id)}
             >
