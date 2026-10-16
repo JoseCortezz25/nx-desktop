@@ -1,0 +1,15 @@
+/* Content the right panel draws when no file is open yet. The viewer fills this
+   slot as soon as the shell requests a file. */
+.file-panel__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+}
+
+.file-panel__empty-text {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}

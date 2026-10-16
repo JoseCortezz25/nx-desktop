@@ -1,0 +1,54 @@
+/* File tab strip inside the right panel's tab slot
+   (`docs/wireframes/23-file-viewer-markdown.html`, `.main .tabs`): the focused
+   tab is the only one drawn as a surface, the rest are plain labels. */
+.file-tab-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.file-tab-strip__tab {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+}
+
+.file-tab-strip__tab--active {
+  border-color: var(--color-line);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+}
+
+.file-tab-strip__tab .button--plain {
+  gap: 8px;
+  min-width: 0;
+  height: 100%;
+  padding: 0 6px 0 8px;
+  color: inherit;
+  font-size: 14px;
+}
+
+.file-tab-strip__name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The close control is drawn only on the focused tab, as the wireframe does. */
+.file-tab-strip__tab .button--icon {
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  visibility: hidden;
+}
+
+.file-tab-strip__tab--active .button--icon {
+  visibility: visible;
+}

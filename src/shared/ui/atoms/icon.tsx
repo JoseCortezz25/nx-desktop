@@ -37,7 +37,12 @@ export const ICON_NAMES = [
   'file',
   'copy',
   'thumb-up',
-  'share'
+  'share',
+  // Right panel file viewer (#12): the `Abrir` split button and its menu rows
+  // (`docs/wireframes/24-file-open-menu.html`). The wireframe draws the VS Code
+  // vendor mark there; a neutral "open externally" glyph keeps a vendor logo out
+  // of the shared icon set.
+  'external'
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -218,6 +223,15 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
     <>
       <path d="m15 14 5-5-5-5" />
       <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
+    </>
+  ),
+  // Open a file outside the panel in an external target
+  // (`docs/wireframes/24-file-open-menu.html`, the `Abrir` control).
+  external: (
+    <>
+      <path d="M14 4h6v6" />
+      <path d="M20 4 12 12" />
+      <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
     </>
   )
 };

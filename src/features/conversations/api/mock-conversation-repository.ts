@@ -58,7 +58,12 @@ const conversations: readonly Conversation[] = [
         ],
         fileReferences: [
           { path: 'src/shared/domain/selection-chain.ts' },
-          { path: 'src/features/providers/hooks/use-composer-selection.ts' }
+          { path: 'src/features/providers/hooks/use-composer-selection.ts' },
+          // A Markdown reference (#12): the file mock seeds this document
+          // (`mock-file-repository.ts`, screen 23), and a chip is the only way
+          // the panel receives a request, so without it the rendered-Markdown
+          // mode could not be reached in the running app.
+          { path: 'docs/research-tecnico/arquitectura-tauri.md' }
         ]
       },
       {

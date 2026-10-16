@@ -1,0 +1,43 @@
+/* `Abrir` split control (`docs/wireframes/24-file-open-menu.html`, `.split`): one
+   pill carrying the default action, a hairline divider and the disclosure
+   chevron. No positioning lives here; the viewer anchors the list it opens. */
+.open-with-menu {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+.open-with-menu .button--plain {
+  gap: 6px;
+  height: 100%;
+  padding: 0 10px;
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.open-with-menu .button--icon {
+  width: 24px;
+  height: 100%;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+.open-with-menu .button--plain:hover:not(:disabled),
+.open-with-menu .button--icon:hover:not(:disabled) {
+  background: var(--color-fill);
+}
+
+.open-with-menu__divider {
+  width: 1px;
+  height: 16px;
+  background: var(--color-line);
+}
+
+/* Pressed while its list is open, matching the wireframe's `.split.pressed`. */
+.open-with-menu .button--icon[aria-expanded='true'] {
+  background: var(--color-fill-strong);
+}

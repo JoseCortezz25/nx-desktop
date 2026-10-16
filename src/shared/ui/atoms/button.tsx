@@ -28,9 +28,11 @@ export interface ButtonProps {
   readonly isExpanded?: boolean;
   /**
    * ARIA role override for controls that are not plain buttons. List rows in a
-   * `listbox` use `'option'`; pair it with `isSelected`.
+   * `listbox` use `'option'`, the right panel's file tabs use `'tab'` and the
+   * `Abrir` menu rows use `'menuitem'`; pair `'option'` and `'tab'` with
+   * `isSelected`.
    */
-  readonly role?: 'option';
+  readonly role?: 'option' | 'tab' | 'menuitem';
   /** Sets `aria-selected` for `role="option"` rows. */
   readonly isSelected?: boolean;
   readonly isDisabled?: boolean;
@@ -66,7 +68,9 @@ export function Button({
       aria-pressed={isPressed}
       aria-current={isCurrent ? 'page' : undefined}
       aria-expanded={isExpanded}
-      aria-selected={role === 'option' ? isSelected : undefined}
+      aria-selected={
+        role === 'option' || role === 'tab' ? isSelected : undefined
+      }
       disabled={isDisabled}
       onClick={onPress}
     >
