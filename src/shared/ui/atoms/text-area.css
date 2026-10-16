@@ -1,0 +1,29 @@
+/* Mirrors the wireframe's composer prompt line (`docs/wireframes/01-home.html`,
+   `.composer .placeholder`). */
+.text-area {
+  display: block;
+  width: 100%;
+  min-height: 22px;
+  padding: 0 0 0 1px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  line-height: 22px;
+  resize: none;
+}
+
+.text-area::placeholder {
+  color: var(--color-muted);
+}
+
+.text-area:focus {
+  outline: none;
+}
+
+.text-area:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

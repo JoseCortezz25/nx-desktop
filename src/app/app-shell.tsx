@@ -5,6 +5,7 @@ import {
   toggleRegion,
   type RegionVisibility
 } from '@/shared/ui/layout/region-visibility';
+import { HomeView } from '@/shared/ui/organisms/home-view';
 import { MainPane } from '@/shared/ui/organisms/main-pane';
 import { Rail } from '@/shared/ui/organisms/rail';
 import { RightPanel } from '@/shared/ui/organisms/right-panel';
@@ -32,6 +33,13 @@ export function AppShell() {
     setVisibility(current => toggleRegion(current, 'rightPanel'));
   }
 
+  function handleSubmitPrompt(prompt: string) {
+    // Starting the run this prompt asks for is owned by #23 (live conversation
+    // and cancel). This ticket proves the composer hands the text up; the shell
+    // holds no state for it yet.
+    void prompt;
+  }
+
   return (
     <div className="window-shell">
       <TitleBar
@@ -45,7 +53,12 @@ export function AppShell() {
         {visibility.sidebar ? (
           <Sidebar providerName={activeProvider?.displayName ?? null} />
         ) : null}
-        <MainPane />
+        <MainPane>
+          <HomeView
+            providerName={activeProvider?.displayName ?? null}
+            onSubmit={handleSubmitPrompt}
+          />
+        </MainPane>
         {visibility.rightPanel ? (
           <RightPanel onClose={handleToggleRightPanel} />
         ) : null}

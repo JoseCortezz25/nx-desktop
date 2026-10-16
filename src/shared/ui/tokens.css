@@ -18,11 +18,11 @@
   --color-line: #e3e3e6; /* hairline borders and separators */
   --color-line-strong: #6b6b72; /* icon strokes and menu text */
   --color-text: #222222; /* primary text and active icons */
-  --color-muted: #8b8b93; /* inactive icons and window controls */
+  --color-muted: #8b8b93; /* inactive icons, composer placeholder, controls */
   --color-fill: #ededf0; /* active / hover fills */
-  --color-accent: #222222; /* solid primary fills — reserved (composer send) */
-  --color-warn: #d9561e; /* attention copy — reserved (composer, #6) */
-  --color-focus: #2f6fed; /* keyboard focus ring — base button */
+  --color-accent: #222222; /* solid primary fills — composer send (#6) */
+  --color-warn: #d9561e; /* attention copy — reserved (approval chip, #8) */
+  --color-focus: #2f6fed; /* keyboard focus ring — base button, text field */
 
   /* Radius (wireframe: --radius). */
   --radius-sm: 8px; /* controls, list rows */
@@ -31,7 +31,7 @@
 
   /* Elevation (wireframe: --shadow-sm, --shadow-md). */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06); /* sidebar and main pane */
-  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1); /* reserved (composer, #6) */
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1); /* composer box (#6) */
 
   /* Typography (wireframe body font). */
   --font-sans:

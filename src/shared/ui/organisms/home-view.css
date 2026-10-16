@@ -1,0 +1,19 @@
+/* The wireframe pins the home block near the vertical centre
+   (`docs/wireframes/01-home.html`, `.home-center`), so the padding mirrors its
+   376px offset at the 1440x900 baseline the ticket was built against. */
+.home-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 376px;
+}
+
+.home-view__title {
+  margin: 0 0 23px;
+  color: var(--color-text);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+}
