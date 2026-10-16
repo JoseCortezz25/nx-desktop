@@ -1,0 +1,39 @@
+{
+  "url": "http://localhost:1420/ (app) vs file:// dense wireframes 11/12",
+  "capture": "viewport",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "passed": null,
+  "results": [
+    {
+      "state": "sidebar-open",
+      "baseline": "/tmp/opencode/qa/issue-11/baseline-open/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-11/shots/current-02-open-viewport.png",
+      "diff": "/tmp/opencode/qa/issue-11/eval/sidebar-open.diff.png",
+      "size": {
+        "width": 1440,
+        "height": 900
+      },
+      "diffPixels": 96732,
+      "diffRatio": 0.0746,
+      "threshold": 0.1
+    },
+    {
+      "state": "sidebar-closed",
+      "baseline": "/tmp/opencode/qa/issue-11/baseline-closed/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-11/shots/current-06-closed-viewport.png",
+      "diff": "/tmp/opencode/qa/issue-11/eval/sidebar-closed.diff.png",
+      "size": {
+        "width": 1440,
+        "height": 900
+      },
+      "diffPixels": 74738,
+      "diffRatio": 0.0577,
+      "threshold": 0.1
+    }
+  ],
+  "createdAt": "2026-10-16T21:29:42.744Z"
+}

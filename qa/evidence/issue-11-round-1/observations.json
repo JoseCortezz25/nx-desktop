@@ -1,0 +1,955 @@
+{
+  "viewport": {
+    "innerW": 1440,
+    "innerH": 900,
+    "dpr": 1
+  },
+  "draft": {
+    "homeBefore": {
+      "onHome": true,
+      "composerPresent": true,
+      "textareaValue": "",
+      "providerTrigger": "Proveedor: OpenCode"
+    },
+    "providerSwitch": {
+      "clicked": "clicked",
+      "providerTriggerAfter": "Proveedor: Codex"
+    },
+    "homeAfterTyping": {
+      "textareaValue": "QA-DRAFT-MARKER-do-not-lose-me"
+    },
+    "homeShot": "/tmp/opencode/qa/issue-11/shots/draft-01-home-with-draft.png",
+    "openedConversation": "clicked",
+    "afterSwitch": {
+      "onConversation": true,
+      "composerRemounted": true,
+      "textareaValue": "",
+      "providerTrigger": "Proveedor: Codex"
+    },
+    "afterSwitchShot": "/tmp/opencode/qa/issue-11/shots/draft-02-conversation-after-switch.png",
+    "backToHome": {
+      "homeControl": {
+        "hasReactProps": true,
+        "hasOnClick": false
+      },
+      "newChatControl": {
+        "hasReactProps": true,
+        "hasOnClick": false
+      }
+    }
+  },
+  "stateOpen": {
+    "innerW": 1440,
+    "innerH": 900,
+    "sidebarPresent": true,
+    "sidebar": {
+      "x": 56,
+      "y": 48,
+      "w": 318,
+      "h": 852,
+      "right": 374
+    },
+    "rail": {
+      "x": 0,
+      "y": 40,
+      "w": 56,
+      "h": 860,
+      "right": 56
+    },
+    "mainPane": {
+      "x": 374,
+      "y": 48,
+      "w": 1066,
+      "h": 848,
+      "right": 1440
+    },
+    "conversationView": {
+      "x": 375,
+      "y": 49,
+      "w": 1065,
+      "h": 846,
+      "right": 1440
+    },
+    "header": {
+      "x": 375,
+      "y": 49,
+      "w": 1065,
+      "h": 60,
+      "right": 1440
+    },
+    "title": {
+      "x": 424,
+      "y": 68,
+      "w": 170,
+      "h": 22,
+      "right": 594
+    },
+    "scrollBox": {
+      "x": 375,
+      "y": 109,
+      "w": 1065,
+      "h": 611,
+      "right": 1440
+    },
+    "messagesColumn": {
+      "x": 503,
+      "y": 117,
+      "w": 810,
+      "h": 579,
+      "right": 1313
+    },
+    "composerWrap": {
+      "x": 375,
+      "y": 720,
+      "w": 1065,
+      "h": 175,
+      "right": 1440
+    },
+    "counts": {
+      "messages": 4,
+      "groups": 2,
+      "chips": 3,
+      "actions": 2,
+      "metas": 4,
+      "groupRows": 2
+    },
+    "regionAriaLabel": "Composer selection chain",
+    "chips": [
+      {
+        "label": "Abrir src/shared/domain/selection-chain.ts",
+        "text": "src/shared/domain/selection-chain.ts",
+        "x": 503,
+        "y": 365,
+        "w": 255,
+        "right": 757,
+        "active": false
+      },
+      {
+        "label": "Abrir src/features/providers/hooks/use-composer-selection.ts",
+        "text": "src/features/providers/hooks/use-composer-selection.ts",
+        "x": 765,
+        "y": 365,
+        "w": 363,
+        "right": 1128,
+        "active": false
+      },
+      {
+        "label": "Abrir src/shared/domain/selection-chain.ts",
+        "text": "src/shared/domain/selection-chain.ts",
+        "x": 503,
+        "y": 636,
+        "w": 255,
+        "right": 757,
+        "active": false
+      }
+    ],
+    "chipRows": 2,
+    "overflow": {
+      "conversationView": {
+        "scrollW": 1065,
+        "clientW": 1065,
+        "overflowX": false
+      },
+      "messagesColumn": {
+        "scrollW": 810,
+        "clientW": 810,
+        "overflowX": false
+      },
+      "scrollBox": {
+        "scrollW": 1065,
+        "clientW": 1065,
+        "overflowX": false
+      },
+      "header": {
+        "scrollW": 1065,
+        "clientW": 1065,
+        "overflowX": false
+      }
+    },
+    "footers": [
+      {
+        "h": 32,
+        "children": 1
+      },
+      {
+        "h": 32,
+        "children": 2
+      },
+      {
+        "h": 32,
+        "children": 1
+      },
+      {
+        "h": 32,
+        "children": 2
+      }
+    ],
+    "actions": [
+      {
+        "buttons": 3,
+        "labels": [
+          "Copiar mensaje",
+          "Enviar comentarios",
+          "Compartir mensaje"
+        ]
+      },
+      {
+        "buttons": 3,
+        "labels": [
+          "Copiar mensaje",
+          "Enviar comentarios",
+          "Compartir mensaje"
+        ]
+      }
+    ],
+    "metas": [
+      {
+        "labels": [
+          "Enviado a las 09:00",
+          "Editar mensaje"
+        ],
+        "time": "09:00"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:00",
+          "Editar mensaje"
+        ],
+        "time": "09:00"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:02",
+          "Editar mensaje"
+        ],
+        "time": "09:02"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:02",
+          "Editar mensaje"
+        ],
+        "time": "09:02"
+      }
+    ],
+    "captureRegion": {
+      "file": "/tmp/opencode/qa/issue-11/shots/current-01-open-region.png",
+      "rect": {
+        "x": 375,
+        "y": 49,
+        "width": 1065,
+        "height": 846
+      }
+    },
+    "captureViewport": "/tmp/opencode/qa/issue-11/shots/current-02-open-viewport.png"
+  },
+  "payload": {
+    "beforeAnyClick": {
+      "appShellOpenFileCandidates": [
+        {
+          "source": "container-current/fiber",
+          "value": null
+        },
+        {
+          "source": "container-current/alternate",
+          "value": null
+        },
+        {
+          "source": "container-alternate/fiber",
+          "value": null
+        },
+        {
+          "source": "container-alternate/alternate",
+          "value": null
+        }
+      ],
+      "conversationMessagesOpenFileProp": [
+        {
+          "source": "container-current/fiber",
+          "value": null
+        }
+      ],
+      "conversationViewOpenFileProp": [
+        {
+          "source": "container-current/fiber",
+          "value": null
+        }
+      ],
+      "domActiveChipLabels": [],
+      "settledOpenFileRequest": null,
+      "settledKeys": null,
+      "settledSource": null
+    },
+    "chipsRendered": [
+      "Abrir src/shared/domain/selection-chain.ts",
+      "Abrir src/features/providers/hooks/use-composer-selection.ts",
+      "Abrir src/shared/domain/selection-chain.ts"
+    ],
+    "afterClickChip1": {
+      "clickedChipLabel": "Abrir src/shared/domain/selection-chain.ts",
+      "readAt350ms": {
+        "appShellOpenFileCandidates": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationMessagesOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationViewOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "domActiveChipLabels": [
+          "Abrir src/shared/domain/selection-chain.ts",
+          "Abrir src/shared/domain/selection-chain.ts"
+        ],
+        "settledOpenFileRequest": {
+          "path": "src/shared/domain/selection-chain.ts"
+        },
+        "settledKeys": [
+          "path"
+        ],
+        "settledSource": "container-current/alternate"
+      },
+      "readAt1050ms": {
+        "appShellOpenFileCandidates": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationMessagesOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationViewOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "domActiveChipLabels": [
+          "Abrir src/shared/domain/selection-chain.ts",
+          "Abrir src/shared/domain/selection-chain.ts"
+        ],
+        "settledOpenFileRequest": {
+          "path": "src/shared/domain/selection-chain.ts"
+        },
+        "settledKeys": [
+          "path"
+        ],
+        "settledSource": "container-current/alternate"
+      },
+      "readAt1850ms": {
+        "appShellOpenFileCandidates": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationMessagesOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "conversationViewOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": null
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": null
+          }
+        ],
+        "domActiveChipLabels": [
+          "Abrir src/shared/domain/selection-chain.ts",
+          "Abrir src/shared/domain/selection-chain.ts"
+        ],
+        "settledOpenFileRequest": {
+          "path": "src/shared/domain/selection-chain.ts"
+        },
+        "settledKeys": [
+          "path"
+        ],
+        "settledSource": "container-current/alternate"
+      },
+      "activeChips": [
+        "Abrir src/shared/domain/selection-chain.ts",
+        "Abrir src/shared/domain/selection-chain.ts"
+      ],
+      "capture": {
+        "file": "/tmp/opencode/qa/issue-11/shots/current-03-open-chip1-active.png",
+        "rect": {
+          "x": 502.5,
+          "y": 117,
+          "width": 810,
+          "height": 579
+        }
+      }
+    },
+    "afterClickChip2": {
+      "clickedChipLabel": "Abrir src/features/providers/hooks/use-composer-selection.ts",
+      "read": {
+        "appShellOpenFileCandidates": [
+          {
+            "source": "container-current/fiber",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          }
+        ],
+        "conversationMessagesOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          }
+        ],
+        "conversationViewOpenFileProp": [
+          {
+            "source": "container-current/fiber",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          },
+          {
+            "source": "container-current/alternate",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/fiber",
+            "value": {
+              "path": "src/shared/domain/selection-chain.ts"
+            }
+          },
+          {
+            "source": "container-alternate/alternate",
+            "value": {
+              "path": "src/features/providers/hooks/use-composer-selection.ts"
+            }
+          }
+        ],
+        "domActiveChipLabels": [
+          "Abrir src/features/providers/hooks/use-composer-selection.ts"
+        ],
+        "settledOpenFileRequest": {
+          "path": "src/features/providers/hooks/use-composer-selection.ts"
+        },
+        "settledKeys": [
+          "path"
+        ],
+        "settledSource": "container-current/fiber"
+      },
+      "activeChips": [
+        "Abrir src/features/providers/hooks/use-composer-selection.ts"
+      ]
+    }
+  },
+  "collapse": {
+    "before": {
+      "headerLabel": "Contraer actividad de herramientas",
+      "ariaExpanded": "true",
+      "rowsVisible": 3,
+      "allGroupsRowsBoxes": 2
+    },
+    "collapsed": {
+      "headerLabel": "Expandir actividad de herramientas",
+      "ariaExpanded": "false",
+      "rowsVisible": 0,
+      "allGroupsRowsBoxes": 1
+    },
+    "collapsedShot": {
+      "file": "/tmp/opencode/qa/issue-11/shots/current-04-open-group-collapsed.png",
+      "rect": {
+        "x": 375,
+        "y": 109,
+        "width": 1065,
+        "height": 611
+      }
+    },
+    "afterScroll": {
+      "headerLabel": "Expandir actividad de herramientas",
+      "ariaExpanded": "false",
+      "rowsVisible": 0,
+      "allGroupsRowsBoxes": 1
+    },
+    "expandedAgain": {
+      "headerLabel": "Contraer actividad de herramientas",
+      "ariaExpanded": "true",
+      "rowsVisible": 3,
+      "allGroupsRowsBoxes": 2
+    }
+  },
+  "affordances": {
+    "actionButtonsPerRow": [
+      3,
+      3
+    ],
+    "actionButtons": [
+      "Copiar mensaje",
+      "Enviar comentarios",
+      "Compartir mensaje",
+      "Copiar mensaje",
+      "Enviar comentarios",
+      "Compartir mensaje"
+    ],
+    "timestampButtons": [
+      "Enviado a las 09:00",
+      "Enviado a las 09:00",
+      "Enviado a las 09:02",
+      "Enviado a las 09:02"
+    ],
+    "timeVisible": [
+      "09:00",
+      "09:00",
+      "09:02",
+      "09:02"
+    ],
+    "editButtons": 4,
+    "cursorAction": "pointer",
+    "cursorTimestamp": "pointer",
+    "cursorEdit": "pointer",
+    "timestampTagName": "BUTTON",
+    "timestampDisabled": false
+  },
+  "stateClosed": {
+    "innerW": 1440,
+    "innerH": 900,
+    "sidebarPresent": false,
+    "sidebar": null,
+    "rail": {
+      "x": 0,
+      "y": 40,
+      "w": 56,
+      "h": 860,
+      "right": 56
+    },
+    "mainPane": {
+      "x": 56,
+      "y": 48,
+      "w": 1384,
+      "h": 848,
+      "right": 1440
+    },
+    "conversationView": {
+      "x": 57,
+      "y": 49,
+      "w": 1383,
+      "h": 846,
+      "right": 1440
+    },
+    "header": {
+      "x": 57,
+      "y": 49,
+      "w": 1383,
+      "h": 60,
+      "right": 1440
+    },
+    "title": {
+      "x": 106,
+      "y": 68,
+      "w": 170,
+      "h": 22,
+      "right": 276
+    },
+    "scrollBox": {
+      "x": 57,
+      "y": 109,
+      "w": 1383,
+      "h": 611,
+      "right": 1440
+    },
+    "messagesColumn": {
+      "x": 344,
+      "y": 117,
+      "w": 810,
+      "h": 579,
+      "right": 1154
+    },
+    "composerWrap": {
+      "x": 57,
+      "y": 720,
+      "w": 1383,
+      "h": 175,
+      "right": 1440
+    },
+    "counts": {
+      "messages": 4,
+      "groups": 2,
+      "chips": 3,
+      "actions": 2,
+      "metas": 4,
+      "groupRows": 2
+    },
+    "regionAriaLabel": "Composer selection chain",
+    "chips": [
+      {
+        "label": "Abrir src/shared/domain/selection-chain.ts",
+        "text": "src/shared/domain/selection-chain.ts",
+        "x": 344,
+        "y": 365,
+        "w": 255,
+        "right": 598,
+        "active": false
+      },
+      {
+        "label": "Abrir src/features/providers/hooks/use-composer-selection.ts",
+        "text": "src/features/providers/hooks/use-composer-selection.ts",
+        "x": 606,
+        "y": 365,
+        "w": 363,
+        "right": 969,
+        "active": true
+      },
+      {
+        "label": "Abrir src/shared/domain/selection-chain.ts",
+        "text": "src/shared/domain/selection-chain.ts",
+        "x": 344,
+        "y": 636,
+        "w": 255,
+        "right": 598,
+        "active": false
+      }
+    ],
+    "chipRows": 2,
+    "overflow": {
+      "conversationView": {
+        "scrollW": 1383,
+        "clientW": 1383,
+        "overflowX": false
+      },
+      "messagesColumn": {
+        "scrollW": 810,
+        "clientW": 810,
+        "overflowX": false
+      },
+      "scrollBox": {
+        "scrollW": 1383,
+        "clientW": 1383,
+        "overflowX": false
+      },
+      "header": {
+        "scrollW": 1383,
+        "clientW": 1383,
+        "overflowX": false
+      }
+    },
+    "footers": [
+      {
+        "h": 32,
+        "children": 1
+      },
+      {
+        "h": 32,
+        "children": 2
+      },
+      {
+        "h": 32,
+        "children": 1
+      },
+      {
+        "h": 32,
+        "children": 2
+      }
+    ],
+    "actions": [
+      {
+        "buttons": 3,
+        "labels": [
+          "Copiar mensaje",
+          "Enviar comentarios",
+          "Compartir mensaje"
+        ]
+      },
+      {
+        "buttons": 3,
+        "labels": [
+          "Copiar mensaje",
+          "Enviar comentarios",
+          "Compartir mensaje"
+        ]
+      }
+    ],
+    "metas": [
+      {
+        "labels": [
+          "Enviado a las 09:00",
+          "Editar mensaje"
+        ],
+        "time": "09:00"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:00",
+          "Editar mensaje"
+        ],
+        "time": "09:00"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:02",
+          "Editar mensaje"
+        ],
+        "time": "09:02"
+      },
+      {
+        "labels": [
+          "Enviado a las 09:02",
+          "Editar mensaje"
+        ],
+        "time": "09:02"
+      }
+    ],
+    "captureRegion": {
+      "file": "/tmp/opencode/qa/issue-11/shots/current-05-closed-region.png",
+      "rect": {
+        "x": 57,
+        "y": 49,
+        "width": 1383,
+        "height": 846
+      }
+    },
+    "captureViewport": "/tmp/opencode/qa/issue-11/shots/current-06-closed-viewport.png",
+    "payloadStillMarked": [
+      "Abrir src/features/providers/hooks/use-composer-selection.ts"
+    ]
+  },
+  "longContent": {
+    "chipPath": {
+      "scrollW": 765,
+      "clientW": 765,
+      "overflowX": false,
+      "rectRight": 1140,
+      "parentRight": 1151,
+      "spillsParent": false,
+      "height": 19,
+      "whiteSpace": "nowrap",
+      "overflow": "hidden",
+      "textOverflow": "ellipsis"
+    },
+    "title": {
+      "scrollW": 901,
+      "clientW": 901,
+      "overflowX": false,
+      "rectRight": 1007,
+      "parentRight": 1440,
+      "spillsParent": false,
+      "height": 22,
+      "whiteSpace": "normal",
+      "overflow": "visible",
+      "textOverflow": "clip"
+    },
+    "messageWordBreak": {
+      "scrollW": 3870,
+      "clientW": 810,
+      "overflowX": true,
+      "rectRight": 1154,
+      "parentRight": 1154,
+      "spillsParent": false,
+      "height": 50,
+      "whiteSpace": "normal",
+      "overflow": "visible",
+      "textOverflow": "clip"
+    },
+    "capture": {
+      "file": "/tmp/opencode/qa/issue-11/shots/current-07-closed-longcontent.png",
+      "rect": {
+        "x": 57,
+        "y": 49,
+        "width": 1383,
+        "height": 846
+      }
+    }
+  },
+  "ok": true
+}
