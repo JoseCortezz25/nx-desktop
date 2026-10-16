@@ -1,0 +1,45 @@
+.sidebar {
+  width: var(--sidebar-width);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--region-gutter);
+  padding: 14px 16px;
+  background: var(--color-panel);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+}
+
+.sidebar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 2px;
+  color: var(--color-text);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.sidebar__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sidebar__new-chat {
+  margin: 12px 0 16px;
+}
+
+.sidebar__content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}

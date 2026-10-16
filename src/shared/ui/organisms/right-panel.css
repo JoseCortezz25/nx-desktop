@@ -1,0 +1,33 @@
+.right-panel {
+  width: var(--right-panel-width);
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--region-gutter);
+  background: var(--color-panel);
+  border-radius: 0 var(--radius-md) 0 0;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.right-panel__tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 8px 0 12px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.right-panel__tab-slot {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.right-panel__content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}

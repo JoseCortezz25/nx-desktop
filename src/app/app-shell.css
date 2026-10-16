@@ -1,0 +1,43 @@
+/**
+ * Base reset and window-shell frame. Every color, geometry, and typography value
+ * resolves through the tokens in `src/shared/ui/tokens.css`.
+ */
+:root {
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+.window-shell {
+  display: flex;
+  flex-direction: column;
+  min-width: var(--window-min-width);
+  height: 100%;
+  background: var(--color-bg);
+}
+
+.window-shell__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
