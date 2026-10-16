@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>21 - Lista de subagentes (wireframe)</title>
+  <link rel="stylesheet" href="assets/wireframe.css">
+  <style>
+    .window { width: 1916px; height: 1030px; min-width: 0; }
+    .chatcol { width: 584px; flex: none; display: flex; flex-direction: column; padding: 12px 0 0; border-top-left-radius: 12px; overflow: hidden; }
+    .chatcol h2 { padding: 0 16px; align-items: center; margin: 4px 0 6px; }
+    .chatcol h2 .l { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .chatcol h2 .l span.t { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; max-width: 330px; }
+    .chatcol h2 .r { display: flex; gap: 16px; align-items: center; color: var(--muted); margin-left: auto; }
+    .chatcol .scroll { flex: 1; overflow: hidden; padding: 0 16px; }
+    .chatcol .chat { width: auto; margin: 0; padding: 6px 0 0; flex: none; overflow: visible; }
+    .chatcol .chat p { margin: 12px 0; font-size: 15px; line-height: 1.6; }
+    .chatcol .chat code { font-size: 13px; }
+    .chatcol .chat .tool-row { margin: 9px 0; font-size: 14px; }
+    .chatcol .chat .tool-row .chev { margin-left: 4px; }
+    .chatcol .chat .file { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+    .chatcol .chat .done { color: var(--muted); }
+    .chatcol .chat .done svg.i { color: #3f9f98; }
+    .chatcol .composer-wrap { padding: 12px 16px 16px; }
+    .chatcol .composer { width: 100%; padding: 14px 14px 12px; }
+    .chatcol .composer .placeholder { color: var(--muted); font-size: 15px; }
+    .chatcol .composer .bar { gap: 16px; }
+    .chatcol .composer .bar .right { gap: 12px; }
+    .chatcol .composer .bar .model { font-weight: 600; font-size: 14px; white-space: nowrap; }
+    .chatcol .composer .bar .model small { color: var(--muted); font-weight: 400; }
+    .chatcol .composer .bar svg.i.sm { color: var(--text); }
+    .spinner { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--line); border-top-color: var(--line-strong); display: inline-block; flex: none; }
+    .stop { width: 30px; height: 30px; border-radius: 50%; background: #111; display: grid; place-items: center; flex: none; }
+    .stop i { width: 10px; height: 10px; background: #fff; border-radius: 2px; display: block; }
+    .main .tabs { align-items: center; padding: 8px 10px; height: 60px; }
+    .main .tabs .tab.active { width: 260px; justify-content: flex-start; color: var(--text); font-style: normal; }
+    .main .tabs .tab.active .x { margin-left: auto; color: var(--muted); display: inline-flex; }
+    .main .tabs .tab.add { color: var(--text); padding: 2px 12px; font-size: 18px; }
+    .main .tabs .spacer { margin-left: auto; display: flex; gap: 22px; align-items: center; padding-right: 6px; color: var(--text); }
+    .main .tabs .spacer .split { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--fill); color: var(--text); }
+    .agents { padding: 26px 0 0; display: flex; flex-direction: column; align-items: center; }
+    .agents .list { width: 830px; }
+    .agents .group-label { color: var(--muted); font-size: 13px; margin: 0 0 22px 0; }
+    .agent-row { display: flex; align-items: center; gap: 16px; padding: 4px 0 18px; }
+    .agent-row .av { width: 24px; height: 24px; flex: none; }
+    .agent-row .meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+    .agent-row .name { font-size: 14px; color: var(--text); }
+    .agent-row .status { font-size: 14px; color: var(--muted); }
+    .agent-row .elapsed { font-size: 13px; color: var(--muted); white-space: nowrap; align-self: flex-start; padding-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="window">
+
+  <!-- Barra de título -->
+  <div class="titlebar">
+    <span class="nav">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+    </span>
+    <div class="menu">
+      <span>Archivo</span>
+      <span>Edición</span>
+      <span>Ver</span>
+      <span>Ayuda</span>
+    </div>
+    <div class="controls">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5"/></svg>
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- Rail de iconos -->
+    <nav class="rail">
+      <span class="icon active"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18M3 12h18"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg></span>
+      <span class="sep"></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M6 8v8M18 8a6 6 0 0 1-6 6H8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-3M12 13v8"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13H3a9 9 0 0 0 18 0h-2M9 10h6"/></svg></span>
+      <span class="icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="6" height="6" rx="3"/><rect x="6" y="9" width="6" height="6" rx="3"/><rect x="6" y="15" width="6" height="6" rx="3"/><circle cx="15" cy="12" r="3"/></svg></span>
+      <span class="avatar">AC</span>
+    </nav>
+
+    <!-- Columna de chat -->
+    <aside class="sidebar chatcol">
+      <h2>
+        <span class="l">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span class="t">Investiga arquitectura y buenas paut</span>
+        </span>
+        <span class="r">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h2M3 12h2M3 18h2M9 6h12M9 12h12M9 18h12"/></svg>
+        </span>
+      </h2>
+
+      <div class="scroll">
+        <div class="chat">
+          <div class="tool-row" style="opacity:.55;"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Ha buscado en la web: https://v2.tauri.app/develop/call...</div>
+          <div class="tool-row done"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7z"/></svg>La actividad de Inspect repo ha finalizado</div>
+
+          <p>La recomendación que mejor encaja hasta ahora es un monolito modular: organizar por funcionalidades y aislar las conexiones con motores de agentes, archivos, Git y almacenamiento mediante adaptadores. También documentaré la diferencia entre motor de agente y proveedor de modelos, y entre permisos de Tauri y aprobaciones de herramientas; son fronteras distintas que los contratos deben representar.</p>
+
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Ha ejecutado comandos y ha buscado en la web <svg class="i sm chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Ejecutó rg --files docs/research-tecnico 2&gt;/dev/null</div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>Ha buscado en la web: https://v2.tauri.app/develop/tes...</div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Ejecutó rg --files docs/research-tecnico 2&gt;/dev/null</div>
+
+          <p>La guía también incluirá una propuesta de carpetas y convenciones concretas para Rust y TypeScript, con un flujo completo de llamada y criterios para elegir entre <code>invoke</code>, eventos y canales de streaming. En pruebas hay un matiz relevante: la documentación actual ofrece una vía con WebdriverIO para macOS, mientras que <code>tauri-driver</code> directo se limita a Windows y Linux.</p>
+
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>Leyendo <span class="file">arquitectura-tauri.md</span> <svg class="i sm chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="tool-row"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 10 3 2-3 2M13 15h4"/></svg>Ejecutó wc -l docs/research-tecnico/* &amp;&amp; cat docs/r...</div>
+          <div class="tool-row done"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>Ha leído <span class="file">arquitectura-tauri.md</span></div>
+          <div class="tool-row done"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>Ha leído <span class="file">arquitectura-tauri.md</span></div>
+          <div class="tool-row done"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>Ha leído <span class="file">arquitectura-tauri.md</span></div>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div class="composer-wrap">
+        <div class="composer">
+          <div class="placeholder">Trabaja con Codex</div>
+          <div class="bar" style="margin-top:14px;">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--warn);"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16h.01"/></svg>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13H3a9 9 0 0 0 18 0h-2M9 10h6"/></svg>
+            <div class="right">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="model">GPT-6.1 Sol <small>Ligero</small></span>
+              <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              <span class="stop" aria-label="Detener"><i></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Panel derecho: subagentes -->
+    <main class="main">
+      <div class="tabs">
+        <span class="tab active">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 12 0v1"/></svg>Subagentes
+          <span class="x"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></span>
+        </span>
+        <span class="tab add"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--text);"><path d="M12 5v14M5 12h14"/></svg></span>
+        <div class="spacer">
+          <svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <span class="split"><svg class="i sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></svg></span>
+        </div>
+      </div>
+
+      <div class="agents">
+        <div class="list">
+          <p class="group-label">Activados · 2</p>
+
+          <div class="agent-row">
+            <svg class="av" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="11" fill="#bfe9e5"/>
+              <circle cx="12" cy="12" r="7.5" fill="none" stroke="#3f9f98" stroke-width="1.6"/>
+              <ellipse cx="12" cy="12" rx="3.2" ry="7.5" fill="none" stroke="#3f9f98" stroke-width="1.4"/>
+              <path d="M4.5 9h15M4.5 15h15" stroke="#3f9f98" stroke-width="1.2" fill="none"/>
+            </svg>
+            <div class="meta">
+              <span class="name">Inspect repo</span>
+              <span class="status">Procesando</span>
+            </div>
+            <span class="elapsed">5m 59s</span>
+          </div>
+
+          <div class="agent-row">
+            <svg class="av" viewBox="0 0 24 24" aria-hidden="true">
+              <g fill="#f2b5cf">
+                <circle cx="12" cy="6.5" r="4.5"/>
+                <circle cx="17.5" cy="10.5" r="4.5"/>
+                <circle cx="15.5" cy="17" r="4.5"/>
+                <circle cx="8.5" cy="17" r="4.5"/>
+                <circle cx="6.5" cy="10.5" r="4.5"/>
+              </g>
+              <circle cx="12" cy="12" r="3" fill="#e0679c"/>
+            </svg>
+            <div class="meta">
+              <span class="name">Tauri research</span>
+              <span class="status">Procesando</span>
+            </div>
+            <span class="elapsed">6m 13s</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+</body>
+</html>

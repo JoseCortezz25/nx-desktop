@@ -16,3 +16,4 @@ Checks: rendered each file with agent-browser and compared to reference image; f
 - [x] T10 docs/wireframes/README.md (screen index, components, data model, open questions)
 - [x] T11 remote: private repo JoseCortezz25/nx-desktop created, origin added, 9 factory labels created (no push, no tickets)
 - [ ] T12 AGENTS.md + docs/agents/* + foundation ticket, then atomic tickets (pending user go-ahead)
+- [x] T13 21 subagents list, 22 subagent detail, 23 file viewer markdown, 24 open-with menu (from images 17-19 and description); README updated; first commit pushed (3 commits), tickets deliberately NOT created

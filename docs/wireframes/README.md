@@ -36,6 +36,10 @@ Open any `.html` file directly in a browser. All files share `assets/wireframe.c
 | 18 | `18-chat-with-diff.html` | Conversation + diff view in the right panel |
 | 19 | `19-model-selector-codex.html` | Model popover for Codex |
 | 20 | `20-model-selector-opencode.html` | Model popover for OpenCode (example models) |
+| 21 | `21-subagents-list.html` | Right panel "Subagentes" tab: activated subagents with status and elapsed time |
+| 22 | `22-subagent-detail.html` | One subagent's output: model, messages, final report |
+| 23 | `23-file-viewer-markdown.html` | File opened from a message: breadcrumb, toolbar, rendered markdown |
+| 24 | `24-file-open-menu.html` | "Abrir" split button open: editor, source, search, file manager, path |
 
 ## Layout regions
 
@@ -61,6 +65,10 @@ Every screen is a composition of the same regions:
 | `RightPanel` | 03, 13, 18 | Tabs + breadcrumb + toolbar + one of: `DocumentView`, `CodeView`, `DiffView` |
 | `DiffView` | 18 | Per-file collapsible sections, hunk headers, unified or split |
 | `HookRow` | 14, 15 | Checkbox, name, `Nuevo` badge, expandable details |
+| `SubagentList` | 21 | Group header "Activados · N"; row = avatar, name, status, elapsed time |
+| `SubagentDetail` | 22 | Back, avatar, name, model and effort, scrollable transcript with a collapsed "N mensajes anteriores" |
+| `FileViewer` | 03, 13, 23 | Breadcrumb + toolbar + content; markdown rendering in 23, code in 13 |
+| `OpenWithMenu` | 23, 24 | Split button: default action "Abrir en VS Code" plus menu. File-manager entry depends on the OS (Explorer, Finder, ...) |
 
 ## State and data the UI implies
 
@@ -77,6 +85,8 @@ These are the abstractions the wireframes need. Names are suggestions, not decis
 | `RunEnvironment` | new worktree flag, git branch (from the repo's branches), environment name |
 | `Hook` | name, status (`Nuevo`), origin, hook type (e.g. `PreToolUse`), command, timeout |
 | `DiffFile` | path, added/removed counts, hunks, lines (context / added / removed) |
+| `Subagent` | id, name, avatar, status (e.g. processing, finished), elapsed time, model, effort, transcript |
+| `OpenTarget` | editor (default VS Code), view source, search in file, reveal in file manager (OS dependent), copy path |
 
 Selection chain in the composer: **provider -> model -> effort**. Changing the provider must reset the model to a valid one for that provider.
 
@@ -88,4 +98,6 @@ Selection chain in the composer: **provider -> model -> effort**. Changing the p
 - Hooks: what happens to a hook that is not allowed (`Ahora no`)? Is it re-prompted, and where is it managed (the modal mentions Ajustes)?
 - Diff: unified only, or split as well? The toolbar in 18 draws both modes but only unified is rendered.
 - Message timestamp and message editing were requested and are not drawn yet.
+- Subagents: what other states exist besides "Procesando" (finished, failed, cancelled)? Can the user stop one individually?
+- "Abrir": which editors are offered besides VS Code, and is the choice remembered? 24 is derived from a description, not from a screenshot.
 - OpenCode model names in 20 are examples; real models come from OpenCode's own configuration.
