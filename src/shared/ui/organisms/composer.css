@@ -2,6 +2,7 @@
    the shared tokens. The 27px row gap is the wireframe's `.bar` margin-top; the
    spacing lives on the organism so the molecule keeps no outer margin. */
 .composer {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 27px;
@@ -12,4 +13,13 @@
   border-radius: 20px;
   background: var(--color-panel);
   box-shadow: var(--shadow-md);
+}
+
+/* Placement of the selector popovers: anchored above the box, flush right, so
+   the surface molecules stay free of positioning. */
+.composer__popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 5;
 }

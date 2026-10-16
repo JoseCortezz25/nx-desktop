@@ -1,0 +1,47 @@
+/* Surface only: geometry, fill and elevation. Placement belongs to the parent
+   organism, so no `position`, `top`, `left` or margin is set here. */
+.popover {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-popover);
+  box-shadow: var(--shadow-popover);
+}
+
+/* Widths follow the wireframe popovers (`17-model-selector-by-provider.html`
+   330px, `08-effort-selector.html` 282px). */
+.popover--list {
+  width: 330px;
+  padding: 12px 5px 7px;
+}
+
+.popover--panel {
+  width: 282px;
+  padding: 12px 14px 14px;
+}
+
+.popover__header {
+  margin: 0 0 9px;
+  padding: 0 9px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.popover--panel .popover__header {
+  padding: 0;
+}
+
+.popover__footer {
+  margin: 10px 0 0;
+  padding: 0 9px;
+  color: var(--color-muted);
+  font-size: 12.5px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.popover--panel .popover__footer {
+  padding: 0;
+}

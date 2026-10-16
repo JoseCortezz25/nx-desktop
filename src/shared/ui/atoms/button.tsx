@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import './button.css';
 
-export type ButtonVariant = 'text' | 'icon' | 'plain' | 'list' | 'solid';
+export type ButtonVariant =
+  'text' | 'icon' | 'plain' | 'list' | 'pill' | 'solid';
 
 export interface ButtonProps {
   /** Visual variant. Placement and spacing belong to the parent. */
@@ -14,6 +15,15 @@ export interface ButtonProps {
   readonly isPressed?: boolean;
   /** Sets `aria-current="page"` for navigation buttons. */
   readonly isCurrent?: boolean;
+  /** Sets `aria-expanded` for controls that disclose a popover. */
+  readonly isExpanded?: boolean;
+  /**
+   * ARIA role override for controls that are not plain buttons. List rows in a
+   * `listbox` use `'option'`; pair it with `isSelected`.
+   */
+  readonly role?: 'option';
+  /** Sets `aria-selected` for `role="option"` rows. */
+  readonly isSelected?: boolean;
   readonly isDisabled?: boolean;
   readonly onPress?: () => void;
   readonly children: ReactNode;
@@ -26,6 +36,9 @@ export function Button({
   isActive = false,
   isPressed,
   isCurrent = false,
+  isExpanded,
+  role,
+  isSelected,
   isDisabled = false,
   onPress,
   children
@@ -38,9 +51,12 @@ export function Button({
     <button
       type="button"
       className={className}
+      role={role}
       aria-label={label}
       aria-pressed={isPressed}
       aria-current={isCurrent ? 'page' : undefined}
+      aria-expanded={isExpanded}
+      aria-selected={role === 'option' ? isSelected : undefined}
       disabled={isDisabled}
       onClick={onPress}
     >

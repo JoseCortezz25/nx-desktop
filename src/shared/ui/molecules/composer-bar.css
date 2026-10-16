@@ -4,3 +4,10 @@
   justify-content: space-between;
   height: 38px;
 }
+
+/* Selector chips plus the send control, pushed to the row end. */
+.composer-bar__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

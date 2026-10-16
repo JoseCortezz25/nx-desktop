@@ -1,0 +1,79 @@
+.effort-slider {
+  display: flex;
+  flex-direction: column;
+}
+
+.effort-slider__head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.effort-slider__title {
+  color: var(--color-focus);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.effort-slider__model {
+  margin-top: 3px;
+  color: var(--color-text);
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* Track geometry mirrors `docs/wireframes/08-effort-selector.html`
+   (`.effort-pop .slider`): a pill track with one dot per stop and a knob on the
+   current stop. */
+.effort-slider__track {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  margin-top: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.effort-slider__knob {
+  position: absolute;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-panel);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(-50%);
+}
+
+.effort-slider__stops {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 14px;
+}
+
+/* Enlarge the hit area of a stop while keeping the drawn dot small. */
+.effort-slider__stops .button {
+  width: 22px;
+  height: 22px;
+}
+
+.effort-slider__stop {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-line-strong);
+}
+
+.effort-slider__stops .button[aria-pressed='true'] .effort-slider__stop {
+  background: var(--color-text);
+}

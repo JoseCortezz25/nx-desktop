@@ -21,6 +21,29 @@ export interface ComposerSelection {
   readonly effortLevel: EffortLevel;
 }
 
+/**
+ * A reconciled chain together with the catalog rows it resolves to.
+ *
+ * The effort control renders `effortLevels` and nothing else: the stops belong
+ * to the selected model, and this is the single place the UI reads them from
+ * (§3.1, item 4).
+ */
+export interface ResolvedSelection {
+  readonly selection: ComposerSelection;
+  readonly provider: Provider;
+  readonly model: Model;
+  /** The stops the selected model exposes — never a shared ladder. */
+  readonly effortLevels: readonly EffortLevel[];
+}
+
+/** The provider's default (first) model at that model's first supported stop. */
+function defaultChain(
+  providers: readonly Provider[]
+): ComposerSelection | null {
+  const first = providers[0];
+  return first ? defaultSelection(first) : null;
+}
+
 function findProvider(
   providers: readonly Provider[],
   providerId: ProviderId
@@ -90,4 +113,37 @@ export function reconcileSelection(
   }
 
   return { providerId: provider.id, modelId: model.id, effortLevel };
+}
+
+/**
+ * Resolves the chain the composer should render for the current catalog.
+ *
+ * The caller keeps the user's last choice (`desired`) and this function derives
+ * a display-ready chain during render: the choice reconciled against the
+ * catalog, or the catalog's default when there is no choice yet or the choice no
+ * longer exists. Returns `null` only while the catalog is empty, so a
+ * late-arriving catalog becomes a valid chain without an effect.
+ */
+export function resolveSelection(
+  providers: readonly Provider[],
+  desired: ComposerSelection | null
+): ResolvedSelection | null {
+  const reconciled = desired ? reconcileSelection(providers, desired) : null;
+  const selection = reconciled ?? defaultChain(providers);
+  if (!selection) {
+    return null;
+  }
+
+  const provider = findProvider(providers, selection.providerId);
+  const model = provider ? findModel(provider, selection.modelId) : undefined;
+  if (!provider || !model) {
+    return null;
+  }
+
+  return {
+    selection,
+    provider,
+    model,
+    effortLevels: model.supportedEffortLevels
+  };
 }

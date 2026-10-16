@@ -20,6 +20,7 @@
   --color-text: #222222; /* primary text and active icons */
   --color-muted: #8b8b93; /* inactive icons, composer placeholder, controls */
   --color-fill: #ededf0; /* active / hover fills */
+  --color-fill-strong: #dcdce1; /* pressed chip fill — composer selectors (#7) */
   --color-accent: #222222; /* solid primary fills — composer send (#6) */
   --color-warn: #d9561e; /* attention copy — reserved (approval chip, #8) */
   --color-focus: #2f6fed; /* keyboard focus ring — base button, text field */
@@ -28,10 +29,13 @@
   --radius-sm: 8px; /* controls, list rows */
   --radius-md: 12px; /* sidebar surface */
   --radius-lg: 14px; /* main pane surface */
+  --radius-pill: 999px; /* pill chips — composer selectors (#7) */
+  --radius-popover: 14px; /* floating popover surface — composer selectors (#7) */
 
   /* Elevation (wireframe: --shadow-sm, --shadow-md). */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06); /* sidebar and main pane */
   --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1); /* composer box (#6) */
+  --shadow-popover: 0 8px 28px rgba(0, 0, 0, 0.12); /* floating popover (#7) */
 
   /* Typography (wireframe body font). */
   --font-sans:
