@@ -1,0 +1,34 @@
+{
+  "rectangleSource": "wireframe 01 measured rects, composer-local coordinates",
+  "middleBand": [
+    39,
+    66,
+    622,
+    38
+  ],
+  "promptLine": [
+    15,
+    17,
+    680,
+    22
+  ],
+  "sendBox": [
+    665,
+    70,
+    30,
+    30
+  ],
+  "full": 1772,
+  "middleBandOnly": 1238,
+  "promptLineOnly": 446,
+  "sendOnly": 88,
+  "residual_afterMasking_deferredBand_andPrompt_andSend": 0,
+  "totalPixels": 78255
+}
+
+Accounting:
+  full composer diff            = 1772
+  deferred chip band (middle)   = 1238
+  prompt line (placeholder copy)= 446
+  send control (fill token)     = 88
+  residual after masking all 3  = 0

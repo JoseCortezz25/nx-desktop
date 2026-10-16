@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "url": "file:///home/ajosecortes/development/fabrica/nx-desktop-worktrees/issue-6-qa/docs/wireframes/01-home.html",
+  "scope": "composer",
+  "capture": "clip",
+  "selector": ".composer",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900
+  },
+  "engine": {
+    "name": "chromium",
+    "version": "156.0.8078.4"
+  },
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": null,
+  "screenshot": "/tmp/opencode/qa/issue-6/baseline-composer/desktop/desktop.png",
+  "createdAt": "2026-10-16T18:39:40.201Z"
+}

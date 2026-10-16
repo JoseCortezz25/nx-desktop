@@ -1,0 +1,145 @@
+{
+  "appUrl": "http://localhost:1420/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "engine": {
+    "name": "chromium",
+    "version": "156.0.8078.4"
+  },
+  "initial": {
+    "value": "",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "afterAddClick": {
+    "value": "",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "button button--plain",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "afterEmptySubmit": {
+    "value": "",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "button button--solid",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "afterTyping": {
+    "value": "QA issue-6 submit probe 2026-10-16T18:45Z",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "text-area",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "afterTypedSubmit": {
+    "value": "",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "button button--solid",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "afterEnterKey": {
+    "value": "enter-key probe\n",
+    "placeholder": "Trabaja con OpenCode",
+    "activeElement": "text-area",
+    "menuNodes": 0,
+    "popoverNodes": 0,
+    "addAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "ariaExpanded": null,
+      "ariaHasPopup": null,
+      "disabled": false
+    },
+    "sendAria": {
+      "tag": "BUTTON",
+      "type": "button",
+      "disabled": false
+    },
+    "bodyText": "Archivo Edición Ver Ayuda ¿En qué deberíamos trabajar?",
+    "liveRegions": []
+  },
+  "focusOutline": {
+    "outlineStyle": "solid",
+    "outlineWidth": "2px",
+    "outlineColor": "rgb(47, 111, 237)"
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "knownStringUsed": "QA issue-6 submit probe 2026-10-16T18:45Z"
+}

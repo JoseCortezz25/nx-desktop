@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "url": "http://localhost:1420/",
+  "scope": "composer",
+  "capture": "clip",
+  "selector": ".composer",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900
+  },
+  "engine": {
+    "name": "chromium",
+    "version": "156.0.8078.4"
+  },
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": ".composer",
+  "screenshot": "/tmp/opencode/qa/issue-6/current-composer/desktop/desktop.png",
+  "createdAt": "2026-10-16T18:40:12.630Z"
+}

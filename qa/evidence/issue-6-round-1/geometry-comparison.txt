@@ -1,0 +1,125 @@
+=== GEOMETRY (wireframe 01 vs app @1440x900) ===
+composer   rect wf={"x":396,"y":484,"w":705,"h":111,"right":1101,"bottom":595} app={"x":396,"y":484,"w":705,"h":111,"right":1101,"bottom":595}
+prompt     rect wf={"x":411,"y":501,"w":680,"h":22,"right":1091,"bottom":523} app={"x":411,"y":501,"w":680,"h":22,"right":1091,"bottom":523}
+bar        rect wf={"x":411,"y":550,"w":680,"h":38,"right":1091,"bottom":588} app={"x":411,"y":550,"w":680,"h":38,"right":1091,"bottom":588}
+add        rect wf={"x":411,"y":559,"w":20,"h":20,"right":431,"bottom":579} app={"x":411,"y":559,"w":20,"h":20,"right":431,"bottom":579}
+send       rect wf={"x":1061,"y":554,"w":30,"h":30,"right":1091,"bottom":584} app={"x":1061,"y":554,"w":30,"h":30,"right":1091,"bottom":584}
+title      rect wf={"x":556.92,"y":425,"w":383.14,"h":36,"right":940.06,"bottom":461} app={"x":556.92,"y":425,"w":383.14,"h":36,"right":940.06,"bottom":461}
+homeBlock  rect wf={"x":57,"y":49,"w":1383,"h":846,"right":1440,"bottom":895} app={"x":57,"y":49,"w":1383,"h":846,"right":1440,"bottom":895}
+main       rect wf={"x":56,"y":48,"w":1384,"h":848,"right":1440,"bottom":896} app={"x":56,"y":48,"w":1384,"h":848,"right":1440,"bottom":896}
+
+=== APPLIED TOKENS / COMPUTED STYLE (key: wf | app) ===
+-- composer --
+    borderRadius   wf="20px" app="20px"
+    borderTopWidth wf="1px" app="1px"
+  * borderColor    wf="rgb(230, 230, 234)" app="rgb(227, 227, 230)"
+    padding        wf="16px 9px 6px 14px" app="16px 9px 6px 14px"
+  * rowGap         wf="normal" app="27px"
+  * gap            wf="normal" app="27px"
+    backgroundColor wf="rgb(255, 255, 255)" app="rgb(255, 255, 255)"
+    color          wf="rgb(34, 34, 34)" app="rgb(34, 34, 34)"
+  * boxShadow      wf="rgba(0, 0, 0, 0.035) 0px 2px 6px 0px, rgba(0, 0, 0, 0.07) 0px 12px 36px 0px" app="rgba(0, 0, 0, 0.1) 0px 6px 24px 0px"
+    fontSize       wf="14px" app="14px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="20.3px" app="20.3px"
+    letterSpacing  wf="normal" app="normal"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+-- prompt --
+  * borderRadius   wf="0px" app="8px"
+    borderTopWidth wf="0px" app="0px"
+  * borderColor    wf="rgb(164, 164, 171)" app="rgb(34, 34, 34)"
+    padding        wf="0px 0px 0px 1px" app="0px 0px 0px 1px"
+    rowGap         wf="normal" app="normal"
+    gap            wf="normal" app="normal"
+    backgroundColor wf="rgba(0, 0, 0, 0)" app="rgba(0, 0, 0, 0)"
+  * color          wf="rgb(164, 164, 171)" app="rgb(34, 34, 34)"
+    boxShadow      wf="none" app="none"
+    fontSize       wf="15px" app="15px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="22px" app="22px"
+    letterSpacing  wf="normal" app="normal"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+-- bar --
+    borderRadius   wf="0px" app="0px"
+    borderTopWidth wf="0px" app="0px"
+    borderColor    wf="rgb(34, 34, 34)" app="rgb(34, 34, 34)"
+    padding        wf="0px" app="0px"
+  * rowGap         wf="20px" app="normal"
+  * gap            wf="20px" app="normal"
+    backgroundColor wf="rgba(0, 0, 0, 0)" app="rgba(0, 0, 0, 0)"
+    color          wf="rgb(34, 34, 34)" app="rgb(34, 34, 34)"
+    boxShadow      wf="none" app="none"
+    fontSize       wf="14px" app="14px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="20.3px" app="20.3px"
+    letterSpacing  wf="normal" app="normal"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+-- add --
+  * borderRadius   wf="0px" app="8px"
+    borderTopWidth wf="0px" app="0px"
+    borderColor    wf="rgb(34, 34, 34)" app="rgb(34, 34, 34)"
+    padding        wf="0px" app="0px"
+    rowGap         wf="normal" app="normal"
+    gap            wf="normal" app="normal"
+    backgroundColor wf="rgba(0, 0, 0, 0)" app="rgba(0, 0, 0, 0)"
+    color          wf="rgb(34, 34, 34)" app="rgb(34, 34, 34)"
+    boxShadow      wf="none" app="none"
+    fontSize       wf="14px" app="14px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="20.3px" app="20.3px"
+    letterSpacing  wf="normal" app="normal"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+-- send --
+    borderRadius   wf="50%" app="50%"
+    borderTopWidth wf="0px" app="0px"
+    borderColor    wf="rgb(255, 255, 255)" app="rgb(255, 255, 255)"
+    padding        wf="0px" app="0px"
+    rowGap         wf="normal" app="normal"
+    gap            wf="normal" app="normal"
+  * backgroundColor wf="rgb(17, 17, 17)" app="rgb(34, 34, 34)"
+    color          wf="rgb(255, 255, 255)" app="rgb(255, 255, 255)"
+    boxShadow      wf="none" app="none"
+    fontSize       wf="14px" app="14px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="20.3px" app="20.3px"
+    letterSpacing  wf="normal" app="normal"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+-- title --
+    borderRadius   wf="0px" app="0px"
+    borderTopWidth wf="0px" app="0px"
+  * borderColor    wf="rgb(13, 13, 13)" app="rgb(34, 34, 34)"
+    padding        wf="0px" app="0px"
+    rowGap         wf="normal" app="normal"
+    gap            wf="normal" app="normal"
+    backgroundColor wf="rgba(0, 0, 0, 0)" app="rgba(0, 0, 0, 0)"
+  * color          wf="rgb(13, 13, 13)" app="rgb(34, 34, 34)"
+    boxShadow      wf="none" app="none"
+    fontSize       wf="30px" app="30px"
+    fontWeight     wf="400" app="400"
+    lineHeight     wf="36px" app="36px"
+    letterSpacing  wf="-0.3px" app="-0.3px"
+    fontFamily     wf="Inter, "Segoe UI", system-ui, sans-serif" app="Inter, "Segoe UI", system-ui, sans-serif"
+
+=== TOKENS (css vars) ===
+  colorBg      wf="" app="#f7f7f8" *
+  colorPanel   wf="" app="#ffffff" *
+  colorLine    wf="" app="#e3e3e6" *
+  colorText    wf="" app="#222222" *
+  colorMuted   wf="" app="#8b8b93" *
+  colorAccent  wf="" app="#222222" *
+  colorWarn    wf="" app="#d9561e" *
+  shadowMd     wf="0 6px 24px rgba(0,0,0,.10)" app="0 6px 24px rgba(0, 0, 0, 0.1)" *
+
+=== TEXT ===
+  wf  title: "¿En qué deberíamos trabajar?" | placeholder: "Trabaja con ChatGPT"
+  app title: "¿En qué deberíamos trabajar?" | placeholder: "Trabaja con OpenCode"
+  app composerText: ""
+
+=== DIFFS ===
+  composer/full-box          size=705x111 diffPixels=1772 ratio=0.02264
+  composer/prompt-line       size=684x26 diffPixels=446 ratio=0.02508
+  composer/add-control       size=24x24 diffPixels=0 ratio=0
+  composer/send-control      size=34x34 diffPixels=88 ratio=0.07612
+  home/title+composer-block  size=721x186 diffPixels=1772 ratio=0.01321
+  home/title                 size=399x52 diffPixels=0 ratio=0
+  home/full-1440x900         size=1440x900 diffPixels=12154 ratio=0.00938

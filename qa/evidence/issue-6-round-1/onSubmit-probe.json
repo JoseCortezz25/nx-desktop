@@ -1,0 +1,44 @@
+{
+  "appUrl": "http://localhost:1420/",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "knownString": "QA-issue-6-payload-2026-10-16T18:50Z",
+  "probeInstalled": {
+    "present": false,
+    "calls": null
+  },
+  "afterEmptySubmit": {
+    "present": false,
+    "calls": null
+  },
+  "afterAddPress": {
+    "present": false,
+    "calls": null
+  },
+  "typedValue": "QA-issue-6-payload-2026-10-16T18:50Z",
+  "afterTypedSubmit": {
+    "present": true,
+    "calls": [
+      "QA-issue-6-payload-2026-10-16T18:50Z"
+    ]
+  },
+  "fieldAfterSubmit": "",
+  "afterSecondSubmit": {
+    "present": true,
+    "calls": [
+      "QA-issue-6-payload-2026-10-16T18:50Z",
+      "second-probe-payload-2026-10-16T18:51Z"
+    ]
+  },
+  "secondString": "second-probe-payload-2026-10-16T18:51Z",
+  "pageErrors": [],
+  "verdict": {
+    "typedValueEqualsDelivered": true,
+    "deliveredCountAfterOneClick": 1,
+    "deliveredCountAfterTwoClicks": 2,
+    "emptySubmitReachedConsumer": null,
+    "addPressReachedConsumer": 0
+  }
+}
