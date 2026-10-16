@@ -1,7 +1,13 @@
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
+import type { EffortLevel } from '@/shared/domain/effort-level.types';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
-import type { ProjectId } from '@/shared/domain/value-objects.types';
+import type { ResolvedSelection } from '@/shared/domain/selection-chain';
+import type {
+  ModelId,
+  ProjectId,
+  ProviderId
+} from '@/shared/domain/value-objects.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { Composer } from './composer';
 import './home-view.css';
@@ -12,6 +18,14 @@ export interface HomeViewProps {
    * The composer's selectors read it; empty while the catalog loads.
    */
   readonly providers: readonly Provider[];
+  /**
+   * The reconciled selection chain the shell root owns, rendered by the
+   * composer's selectors and by the sidebar brand from the same value.
+   */
+  readonly selection: ResolvedSelection | null;
+  readonly onSelectProvider: (providerId: ProviderId) => void;
+  readonly onSelectModel: (modelId: ModelId) => void;
+  readonly onSelectEffort: (effortLevel: EffortLevel) => void;
   /** Project list resolved by the shell root through the project port. */
   readonly projects: readonly Project[];
   /** The project the composer's approval chip shows, or `null` while loading. */
@@ -33,6 +47,10 @@ export interface HomeViewProps {
  */
 export function HomeView({
   providers,
+  selection,
+  onSelectProvider,
+  onSelectModel,
+  onSelectEffort,
   projects,
   activeProject,
   branches,
@@ -47,6 +65,10 @@ export function HomeView({
       <h1 className="home-view__title">{messages.home.title}</h1>
       <Composer
         providers={providers}
+        selection={selection}
+        onSelectProvider={onSelectProvider}
+        onSelectModel={onSelectModel}
+        onSelectEffort={onSelectEffort}
         projects={projects}
         activeProject={activeProject}
         branches={branches}

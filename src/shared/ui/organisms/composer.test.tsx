@@ -2,6 +2,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
+import {
+  changeProvider,
+  resolveSelection
+} from '@/shared/domain/selection-chain';
 import { Composer, type ComposerProps } from './composer';
 
 /**
@@ -80,6 +84,10 @@ function renderComposer(overrides: Partial<ComposerProps> = {}) {
   return renderToStaticMarkup(
     <Composer
       providers={catalog}
+      selection={resolveSelection(catalog, null)}
+      onSelectProvider={() => undefined}
+      onSelectModel={() => undefined}
+      onSelectEffort={() => undefined}
       projects={projects}
       activeProject={projectAsk}
       branches={['main', 'develop']}
@@ -106,8 +114,21 @@ describe('composer', () => {
     expect(renderComposer()).toContain('placeholder="Trabaja con Alpha"');
   });
 
-  it('draws no placeholder while the provider catalog is loading', () => {
-    expect(renderComposer({ providers: [] })).not.toContain('placeholder=');
+  it('renders the reconciled chain it is handed, not the catalog default', () => {
+    const markup = renderComposer({
+      selection: resolveSelection(catalog, changeProvider(catalog, 'beta'))
+    });
+
+    expect(markup).toContain('placeholder="Trabaja con Beta"');
+    expect(markup).toContain('aria-label="Proveedor: Beta"');
+    expect(markup).toContain('aria-label="Modelo: Beta One"');
+    expect(markup).not.toContain('Proveedor: Alpha');
+  });
+
+  it('draws no placeholder while the selection chain is unresolved', () => {
+    expect(renderComposer({ providers: [], selection: null })).not.toContain(
+      'placeholder='
+    );
   });
 
   it('renders the provider, model and effort chips for the default selection', () => {

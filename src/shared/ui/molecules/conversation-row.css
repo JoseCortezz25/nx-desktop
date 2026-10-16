@@ -1,0 +1,11 @@
+/* One conversation row. Geometry comes from the `Button` `list` variant; the
+   title carries the sidebar's row type and truncates rather than wrapping. */
+.conversation-row__title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: 14.5px;
+  line-height: 20px;
+}

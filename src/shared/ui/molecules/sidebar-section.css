@@ -1,0 +1,13 @@
+.sidebar-section__label {
+  margin: 17px 0 8px;
+  padding: 0 2px;
+  color: var(--color-muted);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.sidebar-section__body {
+  display: flex;
+  flex-direction: column;
+}

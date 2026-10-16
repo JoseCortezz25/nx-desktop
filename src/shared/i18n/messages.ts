@@ -54,10 +54,19 @@ export const sharedMessages = {
     navigationLabel: 'Navegación principal',
     homeLabel: 'Inicio'
   },
+  // Sidebar contents (#10). Group headings and the empty-project row follow the
+  // wireframe wording (`docs/wireframes/02-home-sidebar.html`,
+  // `11-chat-conversation-sidebar.html`: "Fijados", "Proyectos", "Recientes",
+  // "Sin chats"). The brand shows the active provider at runtime, never a
+  // hardcoded placeholder.
   sidebar: {
     newChat: 'Nuevo chat',
     notificationsLabel: 'Notificaciones',
-    searchLabel: 'Buscar'
+    searchLabel: 'Buscar',
+    pinned: 'Fijados',
+    projects: 'Proyectos',
+    recents: 'Recientes',
+    emptyProject: 'Sin chats'
   },
   rightPanel: {
     closeLabel: 'Cerrar panel'
