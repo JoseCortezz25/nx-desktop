@@ -177,6 +177,7 @@ nx-desktop/
 | `pnpm run lint`           | Run ESLint 9 on `src/**/*.{ts,tsx}`                                                                     |
 | `pnpm run lint:fix`       | Run ESLint 9 with automatic fixes                                                                       |
 | `pnpm run typecheck`      | Run `tsc --noEmit` strict typecheck                                                                     |
+| `pnpm test`               | Run the Vitest unit test suite (`vitest run`)                                                           |
 | `pnpm run rust:fmt`       | Format all Rust code in `src-tauri/` with `rustfmt`                                                     |
 | `pnpm run rust:fmt:check` | Check Rust formatting without modifying files                                                           |
 | `pnpm run rust:clippy`    | Run `cargo clippy` denying all warnings (`-D warnings`)                                                 |

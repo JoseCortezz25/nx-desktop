@@ -28,6 +28,7 @@ The repository enforces code quality, formatting, and Git/PR discipline through 
 | **Frontend Formatter**   | Prettier                               | `*.{ts,tsx,js,mjs,json,css,md}`             | `.prettierrc.json`, `.prettierignore`                                                    |
 | **Frontend Linter**      | ESLint 9 (Flat Config)                 | `src/**/*.{ts,tsx}`                         | `eslint.config.mjs`                                                                      |
 | **Frontend Typecheck**   | TypeScript (`tsc --noEmit`)            | `src/**/*.{ts,tsx}`                         | `tsconfig.json`                                                                          |
+| **Frontend Unit Tests**  | Vitest                                 | `src/**/*.test.{ts,tsx}`                    | `vitest.config.ts`                                                                       |
 | **Rust Formatter**       | `rustfmt` (`cargo fmt`)                | `src-tauri/**/*.rs`                         | `src-tauri/rustfmt.toml`                                                                 |
 | **Rust Linter**          | Clippy (`cargo clippy -- -D warnings`) | `src-tauri/**/*.rs`                         | `src-tauri/Cargo.toml`                                                                   |
 | **Pre-commit Hook**      | Husky + `lint-staged`                  | Staged files + branch name check            | `.husky/pre-commit`, `package.json`                                                      |
@@ -68,6 +69,9 @@ pnpm run tauri build
 ```bash
 # TypeScript typecheck
 pnpm run typecheck
+
+# Vitest unit tests
+pnpm test
 
 # ESLint check and auto-fix
 pnpm run lint

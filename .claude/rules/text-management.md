@@ -42,6 +42,24 @@ export const sharedMessages = {
 } as const;
 ```
 
+The module also exposes typed accessors. Read copy through them instead of
+indexing the literal directly:
+
+```ts
+import {
+  getSharedErrorMessage,
+  getSharedMessages
+} from '@/shared/i18n/messages';
+
+getSharedMessages().actions.save; // 'Save'
+getSharedErrorMessage('provider_unavailable');
+// 'The selected agent provider is currently unavailable.'
+```
+
+`getSharedErrorMessage` is keyed by the public `snake_case` error codes emitted by
+the Rust `AppErrorDto` (`validation_failed`, `permission_denied`,
+`provider_unavailable`, `cancelled`, `internal_error`).
+
 ### Feature Messages (`src/features/<feature>/messages.ts`)
 
 Each feature module encapsulates its own copy in `src/features/<feature>/messages.ts` with `as const` and functions for dynamic interpolation (never string concatenation in JSX):
