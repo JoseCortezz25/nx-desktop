@@ -1,0 +1,16 @@
+/* One tool row inside a group (`docs/wireframes/11-chat-conversation-sidebar.html`,
+   `.chat .log .line`). No outer margin: the group spaces its rows. */
+.tool-activity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.tool-activity-row__summary {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

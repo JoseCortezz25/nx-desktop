@@ -1,0 +1,14 @@
+/* Timestamp and edit affordances below a message bubble
+   (`.claude/knowledge/business-logic.md` §3.5 item 2). No outer margin: the
+   message footer places them. */
+.message-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+}
+
+.message-meta__time {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}

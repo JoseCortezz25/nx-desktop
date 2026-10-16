@@ -1,0 +1,59 @@
+/* The conversation's message column (`docs/wireframes/11-chat-conversation-sidebar.html`,
+   `.chat`). The column is centred and capped so the main pane reflows cleanly
+   with and without the sidebar. */
+.conversation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 810px;
+  margin: 0 auto;
+}
+
+/* One turn. The role modifier drives the user bubble below. */
+.conversation-message {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Assistant prose (`docs/wireframes/12-chat-conversation-full.html`, `.chat p`). */
+.conversation-message--assistant .conversation-message__text {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 25px;
+}
+
+/* User turn drawn as a trailing bubble
+   (`docs/wireframes/11-chat-conversation-sidebar.html`, `.chat .user`). */
+.conversation-message--user .conversation-message__text {
+  align-self: flex-end;
+  max-width: 80%;
+  margin: 0;
+  padding: 6px 16px;
+  border-radius: 18px;
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 25px;
+}
+
+/* Inline file chips, placed under the message text. */
+.conversation-message__files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* The actions and timestamp/edit row below the message. */
+.conversation-message__footer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 12px;
+}
+
+.conversation-message--user .conversation-message__footer {
+  justify-content: flex-end;
+}
