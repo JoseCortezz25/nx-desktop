@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "url": "file:///home/ajosecortes/development/fabrica/nx-desktop-worktrees/issue-12-qa/docs/wireframes/24-file-open-menu.html",
+  "scope": "right-panel-open-menu",
+  "capture": "clip",
+  "viewports": {
+    "desktop": {
+      "version": 1,
+      "url": "file:///home/ajosecortes/development/fabrica/nx-desktop-worktrees/issue-12-qa/docs/wireframes/24-file-open-menu.html",
+      "scope": "right-panel-open-menu",
+      "capture": "clip",
+      "selector": ".main",
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "engine": {
+        "name": "chromium",
+        "version": "156.0.8078.4"
+      },
+      "deviceScaleFactor": 1,
+      "masks": [],
+      "readySelector": null,
+      "screenshot": "/tmp/opencode/qa/issue-12/baseline-24-main/desktop/desktop.png",
+      "createdAt": "2026-10-16T22:10:49.070Z"
+    }
+  },
+  "createdAt": "2026-10-16T22:10:49.085Z"
+}
