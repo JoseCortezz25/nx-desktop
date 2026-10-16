@@ -1,0 +1,26 @@
+.sidebar-project__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 2px;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Nested conversations read as one level under the project header. The root
+   `.sidebar-project` carries no outer spacing; the parent organism owns it. */
+.sidebar-project__conversations {
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
+}
+
+.sidebar-project__empty {
+  margin: 0;
+  padding: 0 2px 0 24px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 24px;
+}

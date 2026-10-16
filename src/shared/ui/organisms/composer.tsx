@@ -11,13 +11,10 @@ import {
 import {
   changeEnvironmentName,
   changeGitBranch,
-  changeProvider,
   changeWorktreeFlag,
-  reconcileSelection,
   resolveApprovalMode,
   resolveRunEnvironment,
-  resolveSelection,
-  type ComposerSelection
+  type ResolvedSelection
 } from '@/shared/domain/selection-chain';
 import type {
   ModelId,
@@ -66,6 +63,17 @@ export interface ComposerProps {
    * controls unrendered rather than naming a provider here.
    */
   readonly providers: readonly Provider[];
+  /**
+   * The reconciled `provider -> model -> effort` chain the shell root owns. The
+   * composer renders it and reports changes upward, so the sidebar brand and the
+   * selectors read one selection — never a second copy (#10 defect carried over
+   * from #7).
+   */
+  readonly selection: ResolvedSelection | null;
+  /** Hands the chosen provider up; the shell reconciles model and effort. */
+  readonly onSelectProvider: (providerId: ProviderId) => void;
+  readonly onSelectModel: (modelId: ModelId) => void;
+  readonly onSelectEffort: (effortLevel: EffortLevel) => void;
   /** The project list the picker reads, served by the project port. */
   readonly projects: readonly Project[];
   /**
@@ -90,10 +98,11 @@ export interface ComposerProps {
  * Organism: the composer and the context bar on its top edge
  * (`docs/wireframes/README.md`, "Reusable components").
  *
- * It owns the unsent draft, the `provider -> model -> effort` selection chain
- * (#7), the run environment and which popover is open. The approval chip (#8) is
- * the exception: it renders `Project.approvalMode`, so the value lives on the
- * project and this organism only shows it and reports the change upward.
+ * It owns the unsent draft, the run environment and which popover is open. The
+ * selection chain (#7) and the approval policy (#8) are the exceptions: both
+ * live outside this organism — the chain on the shell root, the policy on the
+ * project — so the composer renders what it is handed and reports changes
+ * upward instead of keeping a second copy.
  *
  * Everything resolved from catalog/port data is derived during render — a
  * late-arriving catalog or branch list becomes a valid selection instead of
@@ -101,6 +110,10 @@ export interface ComposerProps {
  */
 export function Composer({
   providers,
+  selection,
+  onSelectProvider,
+  onSelectModel,
+  onSelectEffort,
   projects,
   activeProject,
   branches,
@@ -110,17 +123,15 @@ export function Composer({
 }: ComposerProps) {
   const messages = getSharedMessages();
   const [draft, setDraft] = useState(EMPTY_COMPOSER_DRAFT);
-  const [desiredSelection, setDesiredSelection] =
-    useState<ComposerSelection | null>(null);
   const [desiredEnvironment, setDesiredEnvironment] = useState<RunEnvironment>(
     DEFAULT_RUN_ENVIRONMENT
   );
   const [openSelector, setOpenSelector] = useState<OpenSelector | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // Derived during render: the chain is always valid for the current catalog, so
-  // a late-arriving catalog becomes a usable selection without an effect.
-  const resolved = resolveSelection(providers, desiredSelection);
+  // The reconciled chain is owned by the shell root and handed down, so the
+  // sidebar brand and these selectors read one selection.
+  const resolved = selection;
 
   // Derived the same way: the approval level belongs to the active project, and
   // the environment's branch belongs to the active workspace's branch list.
@@ -204,29 +215,19 @@ export function Composer({
   }
 
   function handleProviderSelect(providerId: ProviderId) {
-    // The transition rule: a provider change resets model and effort to the new
-    // provider's valid defaults (§3.1, item 2).
-    setDesiredSelection(changeProvider(providers, providerId));
+    // The shell applies the transition rule: a provider change resets model and
+    // effort to the new provider's valid defaults (§3.1, item 2).
+    onSelectProvider(providerId);
     setOpenSelector(null);
   }
 
   function handleModelSelect(modelId: ModelId) {
-    const current = resolved?.selection;
-    if (!current) {
-      return;
-    }
-    setDesiredSelection(reconcileSelection(providers, { ...current, modelId }));
+    onSelectModel(modelId);
     setOpenSelector(null);
   }
 
   function handleEffortSelect(effortLevel: EffortLevel) {
-    const current = resolved?.selection;
-    if (!current) {
-      return;
-    }
-    setDesiredSelection(
-      reconcileSelection(providers, { ...current, effortLevel })
-    );
+    onSelectEffort(effortLevel);
   }
 
   function handleApprovalSelect(mode: ApprovalMode) {

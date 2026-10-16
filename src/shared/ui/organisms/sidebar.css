@@ -38,8 +38,12 @@
   margin: 12px 0 16px;
 }
 
+/* The pinned, project and recent groups scroll together; the header and the
+   new-chat action stay fixed above them. */
 .sidebar__content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
 }
