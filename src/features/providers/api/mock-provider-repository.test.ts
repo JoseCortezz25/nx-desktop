@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { changeProvider } from '@/shared/domain/selection-chain';
+import {
+  changeProvider,
+  reconcileSelection,
+  resolveSelection
+} from '@/shared/domain/selection-chain';
 import { createMockProviderRepository } from './mock-provider-repository';
 
 /**
@@ -59,5 +63,93 @@ describe('mock provider repository', () => {
     expect(opencode?.modelId).toBe('deepseek-v3.1');
     expect(claude?.modelId).toBe('claude-opus-4-6');
     expect(claude?.modelId).not.toBe(opencode?.modelId);
+  });
+
+  it('resets both model and effort to valid values on a provider switch, for two providers', async () => {
+    const providers = await createMockProviderRepository().listProviders();
+
+    // Before: OpenCode with its widest model at its last stop.
+    const before = resolveSelection(providers, {
+      providerId: 'opencode',
+      modelId: 'glm-4.6',
+      effortLevel: 'maximum'
+    });
+    expect(before?.selection).toEqual({
+      providerId: 'opencode',
+      modelId: 'glm-4.6',
+      effortLevel: 'maximum'
+    });
+
+    // After: the transition rule resets model AND effort for the new provider.
+    const codex = changeProvider(providers, 'codex');
+    expect(codex).toEqual({
+      providerId: 'codex',
+      modelId: 'gpt-5-codex',
+      effortLevel: 'light'
+    });
+
+    const claude = changeProvider(providers, 'claude');
+    expect(claude).toEqual({
+      providerId: 'claude',
+      modelId: 'claude-opus-4-6',
+      effortLevel: 'standard'
+    });
+
+    // Neither new model is the one that was selected before the switch.
+    expect(codex?.modelId).not.toBe(before?.selection.modelId);
+    expect(claude?.modelId).not.toBe(before?.selection.modelId);
+  });
+
+  it('reconciles a model and an effort the new provider does not have', async () => {
+    const providers = await createMockProviderRepository().listProviders();
+
+    // A chain carried over from OpenCode (glm-4.6 / maximum) against Codex:
+    // neither the model nor the stop exists there, so both reset.
+    const reconciled = reconcileSelection(providers, {
+      providerId: 'codex',
+      modelId: 'glm-4.6',
+      effortLevel: 'maximum'
+    });
+    expect(reconciled).toEqual({
+      providerId: 'codex',
+      modelId: 'gpt-5-codex',
+      effortLevel: 'light'
+    });
+  });
+
+  it('reports each model its own stop count, and the mock models differ', async () => {
+    const providers = await createMockProviderRepository().listProviders();
+    const opencode = providers.find(provider => provider.id === 'opencode');
+    const narrow = opencode?.availableModels.find(
+      model => model.id === 'kimi-k2'
+    );
+    const wide = opencode?.availableModels.find(
+      model => model.id === 'glm-4.6'
+    );
+
+    // Placeholder counts owned by the mock fixture (see the repository header).
+    expect(narrow?.supportedEffortLevels.length).toBe(2);
+    expect(wide?.supportedEffortLevels.length).toBe(4);
+    expect(narrow?.supportedEffortLevels.length).not.toBe(
+      wide?.supportedEffortLevels.length
+    );
+
+    // The resolved chain exposes the selected model's stops, never a shared set.
+    const narrowResolved = resolveSelection(providers, {
+      providerId: 'opencode',
+      modelId: 'kimi-k2',
+      effortLevel: 'light'
+    });
+    const wideResolved = resolveSelection(providers, {
+      providerId: 'opencode',
+      modelId: 'glm-4.6',
+      effortLevel: 'maximum'
+    });
+
+    expect(narrowResolved?.effortLevels).toEqual(narrow?.supportedEffortLevels);
+    expect(wideResolved?.effortLevels).toEqual(wide?.supportedEffortLevels);
+    expect(narrowResolved?.effortLevels.length).not.toBe(
+      wideResolved?.effortLevels.length
+    );
   });
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   changeProvider,
   reconcileSelection,
+  resolveSelection,
   type ComposerSelection
 } from './selection-chain';
 import type { Provider } from './provider.types';
@@ -114,5 +115,46 @@ describe('reconcileSelection', () => {
       effortLevel: 'light'
     };
     expect(reconcileSelection(catalog, desired)).toBeNull();
+  });
+});
+
+describe('resolveSelection', () => {
+  it('starts from the catalog default when nothing is chosen yet', () => {
+    const resolved = resolveSelection(catalog, null);
+
+    expect(resolved?.selection).toEqual({
+      providerId: 'alpha',
+      modelId: 'alpha-one',
+      effortLevel: 'light'
+    });
+    expect(resolved?.provider.id).toBe('alpha');
+    expect(resolved?.model.id).toBe('alpha-one');
+  });
+
+  it('reports the stops of the selected model, not a shared set', () => {
+    const resolved = resolveSelection(catalog, {
+      providerId: 'alpha',
+      modelId: 'alpha-two',
+      effortLevel: 'standard'
+    });
+
+    expect(resolved?.effortLevels).toEqual(['standard', 'high', 'extended']);
+    expect(resolved?.effortLevels).toEqual(
+      catalog[0]?.availableModels[1]?.supportedEffortLevels
+    );
+  });
+
+  it('falls back to the catalog default when the chosen provider is gone', () => {
+    const resolved = resolveSelection(catalog, {
+      providerId: 'missing',
+      modelId: 'alpha-one',
+      effortLevel: 'light'
+    });
+
+    expect(resolved?.selection.providerId).toBe('alpha');
+  });
+
+  it('returns null while the catalog is empty', () => {
+    expect(resolveSelection([], null)).toBeNull();
   });
 });

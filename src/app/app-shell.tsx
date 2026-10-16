@@ -23,7 +23,7 @@ export function AppShell() {
   const [visibility, setVisibility] = useState<RegionVisibility>(
     INITIAL_REGION_VISIBILITY
   );
-  const { activeProvider } = useProviderCatalog();
+  const { providers, activeProvider } = useProviderCatalog();
 
   function handleToggleSidebar() {
     setVisibility(current => toggleRegion(current, 'sidebar'));
@@ -54,10 +54,7 @@ export function AppShell() {
           <Sidebar providerName={activeProvider?.displayName ?? null} />
         ) : null}
         <MainPane>
-          <HomeView
-            providerName={activeProvider?.displayName ?? null}
-            onSubmit={handleSubmitPrompt}
-          />
+          <HomeView providers={providers} onSubmit={handleSubmitPrompt} />
         </MainPane>
         {visibility.rightPanel ? (
           <RightPanel onClose={handleToggleRightPanel} />

@@ -16,7 +16,10 @@ export const ICON_NAMES = [
   'search',
   'bell',
   'chevron-down',
-  'square-pen'
+  'square-pen',
+  'check',
+  'provider',
+  'bolt'
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -91,7 +94,21 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
       <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
       <path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z" />
     </>
-  )
+  ),
+  // Selected-row marker in the provider and model lists
+  // (`docs/wireframes/16-provider-selector.html`).
+  check: <path d="M20 6 9 17l-5-5" />,
+  // Generic coding-agent engine glyph. The catalog carries a per-provider icon
+  // token, but a ticketing-neutral shape keeps provider identities out of the
+  // shared UI; the chip and list rows draw this one.
+  provider: (
+    <>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4" />
+    </>
+  ),
+  // Effort stop glyph (`docs/wireframes/08-effort-selector.html`, popover head).
+  bolt: <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
 };
 
 export interface IconProps {

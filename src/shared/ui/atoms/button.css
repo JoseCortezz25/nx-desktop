@@ -64,6 +64,30 @@
   color: var(--color-text);
 }
 
+/* Pill chip: the composer's provider/model/effort triggers (#7). Geometry and
+   fill mirror the wireframe pills (`16-provider-selector.html`,
+   `.provider-chip`; `17-model-selector-by-provider.html`, `.model-pill`). */
+.button--pill {
+  height: 31px;
+  gap: 8px;
+  padding: 0 10px 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.button--pill:hover:not(:disabled) {
+  background: var(--color-fill-strong);
+}
+
+/* Pressed while the chip's popover is open
+   (`17-model-selector-by-provider.html`, `.model-pill.pressed`). */
+.button--pill[aria-expanded='true'] {
+  background: var(--color-fill-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 /* Solid primary control: the composer's send button (#6). Consumes the
    `--color-accent` token the shell reserved for it. */
 .button--solid {

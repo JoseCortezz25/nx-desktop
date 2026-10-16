@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getEffortLevelLabel,
   getSharedErrorMessage,
   getSharedMessages,
   sharedMessages
@@ -36,6 +37,25 @@ describe('shared messages accessor', () => {
   it('builds the composer prompt placeholder from the provider name', () => {
     expect(getSharedMessages().composer.promptPlaceholder('OpenCode')).toBe(
       'Trabaja con OpenCode'
+    );
+  });
+
+  it('builds the selector chip labels from runtime names', () => {
+    expect(getSharedMessages().composer.provider.triggerLabel('OpenCode')).toBe(
+      'Proveedor: OpenCode'
+    );
+    expect(getSharedMessages().composer.model.triggerLabel('Kimi K2')).toBe(
+      'Modelo: Kimi K2'
+    );
+    expect(getSharedMessages().composer.effort.triggerLabel('Ligero')).toBe(
+      'Esfuerzo: Ligero'
+    );
+  });
+
+  it('labels known effort stops and falls back to the provider token', () => {
+    expect(getEffortLevelLabel('light')).toBe('Ligero');
+    expect(getEffortLevelLabel('provider-only-stop')).toBe(
+      'provider-only-stop'
     );
   });
 });

@@ -1,17 +1,50 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import type { Provider } from '@/shared/domain/provider.types';
 import { Composer } from './composer';
 
 /**
  * Smokes the composition the unit tests cannot: that the organism renders the
- * prompt field, the add trigger, and the send control, and that the placeholder
- * comes from the active provider rather than a baked-in wireframe name. Static
- * rendering keeps this DOM-free, matching the node test environment.
+ * prompt field, the add trigger, the send control, and the three selector chips
+ * for the default selection. Static rendering keeps this DOM-free, matching the
+ * node test environment; the selection chain itself is covered in
+ * `selection-chain.test.ts` and `mock-provider-repository.test.ts`.
  */
+const catalog: readonly Provider[] = [
+  {
+    id: 'alpha',
+    displayName: 'Alpha',
+    icon: 'alpha',
+    subtitle: 'First provider',
+    availableModels: [
+      {
+        id: 'alpha-one',
+        displayName: 'Alpha One',
+        providerId: 'alpha',
+        supportedEffortLevels: ['light', 'standard']
+      }
+    ]
+  },
+  {
+    id: 'beta',
+    displayName: 'Beta',
+    icon: 'beta',
+    subtitle: 'Second provider',
+    availableModels: [
+      {
+        id: 'beta-one',
+        displayName: 'Beta One',
+        providerId: 'beta',
+        supportedEffortLevels: ['maximum']
+      }
+    ]
+  }
+];
+
 describe('composer', () => {
   it('renders the prompt field, the add trigger and the send control', () => {
     const markup = renderToStaticMarkup(
-      <Composer providerName="OpenCode" onSubmit={() => undefined} />
+      <Composer providers={catalog} onSubmit={() => undefined} />
     );
 
     expect(markup).toContain('class="composer"');
@@ -21,24 +54,39 @@ describe('composer', () => {
     expect(markup).toContain('aria-label="Enviar"');
   });
 
-  it('derives the placeholder from the active provider', () => {
-    const opencode = renderToStaticMarkup(
-      <Composer providerName="OpenCode" onSubmit={() => undefined} />
-    );
-    const claude = renderToStaticMarkup(
-      <Composer providerName="Claude" onSubmit={() => undefined} />
+  it('derives the placeholder from the selected provider', () => {
+    const markup = renderToStaticMarkup(
+      <Composer providers={catalog} onSubmit={() => undefined} />
     );
 
-    expect(opencode).toContain('placeholder="Trabaja con OpenCode"');
-    expect(claude).toContain('placeholder="Trabaja con Claude"');
-    expect(claude).not.toContain('Trabaja con OpenCode');
+    expect(markup).toContain('placeholder="Trabaja con Alpha"');
   });
 
   it('draws no placeholder while the provider catalog is loading', () => {
     const markup = renderToStaticMarkup(
-      <Composer providerName={null} onSubmit={() => undefined} />
+      <Composer providers={[]} onSubmit={() => undefined} />
     );
 
     expect(markup).not.toContain('placeholder=');
+  });
+
+  it('renders the provider, model and effort chips for the default selection', () => {
+    const markup = renderToStaticMarkup(
+      <Composer providers={catalog} onSubmit={() => undefined} />
+    );
+
+    expect(markup).toContain('class="button button--pill"');
+    expect(markup).toContain('aria-label="Proveedor: Alpha"');
+    expect(markup).toContain('aria-label="Modelo: Alpha One"');
+    expect(markup).toContain('aria-label="Esfuerzo: Ligero"');
+  });
+
+  it('names no wireframe placeholder provider or model', () => {
+    const markup = renderToStaticMarkup(
+      <Composer providers={catalog} onSubmit={() => undefined} />
+    );
+
+    expect(markup).not.toContain('ChatGPT');
+    expect(markup).not.toContain('GPT-6.1 Sol');
   });
 });
