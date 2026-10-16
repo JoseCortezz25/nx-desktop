@@ -1,4 +1,5 @@
 import { Button } from '../atoms/button';
+import type { ButtonTone } from '../atoms/button';
 import { Icon } from '../atoms/icon';
 import type { IconName } from '../atoms/icon';
 import './select-trigger.css';
@@ -13,6 +14,8 @@ export interface SelectTriggerProps {
   readonly value: string;
   /** Optional leading glyph (the provider chip draws one). */
   readonly icon?: IconName;
+  /** Optional colour treatment (the unrestricted approval chip warns). */
+  readonly tone?: ButtonTone;
   /** Whether the chip's popover is open. */
   readonly isExpanded?: boolean;
   readonly onPress?: () => void;
@@ -28,6 +31,7 @@ export function SelectTrigger({
   label,
   value,
   icon,
+  tone,
   isExpanded,
   onPress
 }: SelectTriggerProps) {
@@ -35,6 +39,7 @@ export function SelectTrigger({
     <Button
       variant="pill"
       label={label}
+      tone={tone}
       isExpanded={isExpanded}
       onPress={onPress}
     >

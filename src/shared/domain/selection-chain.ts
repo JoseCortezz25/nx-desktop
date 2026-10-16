@@ -1,18 +1,28 @@
 /**
- * Composer selection chain (`provider -> model -> effort`).
+ * What the composer resolves before it can start a run.
  *
- * Implements the invariant stated in `docs/wireframes/README.md`: "Selection
- * chain in the composer: provider -> model -> effort. Changing the provider must
- * reset the model to a valid one for that provider", expanded by
+ * Two chains meet here. The **project context** — the active `Project`, the
+ * approval policy it carries, and the `RunEnvironment` chosen in the context bar
+ * — and the **selection chain** (`provider -> model -> effort`) stated in
+ * `docs/wireframes/README.md` and expanded by
  * `.claude/knowledge/business-logic.md` §3.1.
  *
- * Every helper is pure: it reads the supplied catalog and returns a new value,
- * never mutating the input. The stale-response concurrency rule (§3.1, item 3)
- * is a client concern and deliberately lives outside these functions.
+ * Both are reconciled the same way, in this one module: every helper is pure, it
+ * reads the supplied catalog/port data, and it returns a new value without
+ * mutating the input. Deriving the result during render is what lets a
+ * late-arriving catalog become a valid selection with no effect. The
+ * stale-response concurrency rule (§3.1, item 3) is a client concern and
+ * deliberately lives outside these functions.
+ *
+ * The approval policy is **project-scoped** (decision 2026-10-16, issue #30), so
+ * it is only ever read from the `Project` here — never from a local default.
  */
+import type { ApprovalMode } from './approval-mode.types';
 import type { EffortLevel } from './effort-level.types';
+import type { Project } from './project.types';
 import type { Model, Provider } from './provider.types';
-import type { ModelId, ProviderId } from './value-objects.types';
+import type { RunEnvironment } from './run-environment.types';
+import type { ModelId, ProjectId, ProviderId } from './value-objects.types';
 
 /** A fully reconciled chain ready to be sent with a run request. */
 export interface ComposerSelection {
@@ -146,4 +156,85 @@ export function resolveSelection(
     model,
     effortLevels: model.supportedEffortLevels
   };
+}
+
+/**
+ * Resolves the active project of the composer's context bar.
+ *
+ * The list is owned by the project port, so the caller keeps only the id the
+ * user chose (`desired`) and this function derives the project to render: the
+ * chosen one while it still exists, otherwise the catalog's first, otherwise
+ * `null` while the list is still loading.
+ */
+export function resolveProject(
+  projects: readonly Project[],
+  desiredProjectId: ProjectId | null
+): Project | null {
+  if (desiredProjectId) {
+    const desired = projects.find(project => project.id === desiredProjectId);
+    if (desired) {
+      return desired;
+    }
+  }
+  return projects[0] ?? null;
+}
+
+/**
+ * The approval policy the composer must show.
+ *
+ * It is a function of the active `Project` and never a local default: the
+ * policy is project-scoped (decision 2026-10-16, issue #30) and enforced in the
+ * Rust core, so `null` while no project is active means "no level to show", not
+ * "fall back to some level".
+ */
+export function resolveApprovalMode(
+  project: Project | null
+): ApprovalMode | null {
+  return project?.approvalMode ?? null;
+}
+
+/**
+ * Reconciles a chosen run environment against the repository's branch list.
+ *
+ * The branch is picked from the repository's own branches
+ * (`.claude/knowledge/business-logic.md` §2 `RunEnvironment`), so a branch that
+ * is empty or no longer exists — the classic result of switching project — is
+ * replaced by the list's first entry. The worktree flag and the environment name
+ * are the user's and are left untouched; an empty list leaves the environment
+ * as it is until the list arrives.
+ */
+export function resolveRunEnvironment(
+  environment: RunEnvironment,
+  branches: readonly string[]
+): RunEnvironment {
+  if (environment.gitBranch && branches.includes(environment.gitBranch)) {
+    return environment;
+  }
+
+  const firstBranch = branches[0];
+  return firstBranch ? { ...environment, gitBranch: firstBranch } : environment;
+}
+
+/** The environment with the worktree flag changed; branch and name are kept. */
+export function changeWorktreeFlag(
+  environment: RunEnvironment,
+  useNewWorktree: boolean
+): RunEnvironment {
+  return { ...environment, useNewWorktree };
+}
+
+/** The environment with the branch changed; the worktree flag and name are kept. */
+export function changeGitBranch(
+  environment: RunEnvironment,
+  gitBranch: string
+): RunEnvironment {
+  return { ...environment, gitBranch };
+}
+
+/** The environment with its name changed; the worktree flag and branch are kept. */
+export function changeEnvironmentName(
+  environment: RunEnvironment,
+  environmentName: string
+): RunEnvironment {
+  return { ...environment, environmentName };
 }

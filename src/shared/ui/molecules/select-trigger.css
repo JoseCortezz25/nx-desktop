@@ -1,5 +1,6 @@
-/* Chip value text. The chevron glyph keeps the chip's inherited text color; the
-   wireframe draws it muted, which the parent pill governs through the token set. */
+/* Chip value text. The chevron glyph inherits the chip's token-driven colour.
+   `inherit` (rather than a hardcoded text colour) is what lets the chip's tone —
+   neutral or the approval warning — carry into the value. */
 .select-trigger__value {
-  color: var(--color-text);
+  color: inherit;
 }

@@ -11,3 +11,19 @@ export interface RunEnvironment {
   readonly gitBranch: string;
   readonly environmentName: string;
 }
+
+/**
+ * The environment the composer starts from: the current checkout, on the
+ * repository's default branch, with no named environment.
+ *
+ * `gitBranch` is deliberately empty instead of a hardcoded name. The branch must
+ * come from the repository's own branch list through the workspace port — the
+ * wireframe's `main` is a placeholder (`.claude/knowledge/business-logic.md`
+ * §3.4) — and the composer reconciles this default against that list during
+ * render.
+ */
+export const DEFAULT_RUN_ENVIRONMENT: RunEnvironment = {
+  useNewWorktree: false,
+  gitBranch: '',
+  environmentName: ''
+};

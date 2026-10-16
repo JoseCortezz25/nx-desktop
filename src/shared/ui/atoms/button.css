@@ -97,3 +97,13 @@
   background: var(--color-accent);
   color: var(--color-panel);
 }
+
+/* Caution treatment for the unrestricted approval level and its chip
+   (`docs/wireframes/10-approval-mode.html`, `.popover .opt.warn`). */
+.button--warn {
+  color: var(--color-warn);
+}
+
+.button--warn.button--active {
+  background: var(--color-warn-soft);
+}
