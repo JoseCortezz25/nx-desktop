@@ -9,7 +9,10 @@ export interface IconButtonProps {
   readonly size?: IconSize;
   readonly isActive?: boolean;
   readonly isPressed?: boolean;
+  /** Sets `aria-current="page"` for navigation buttons. */
   readonly isCurrent?: boolean;
+  /** Sets `aria-expanded` for icon controls that disclose a popover. */
+  readonly isExpanded?: boolean;
   readonly isDisabled?: boolean;
   readonly onPress?: () => void;
 }
@@ -22,6 +25,7 @@ export function IconButton({
   isActive,
   isPressed,
   isCurrent,
+  isExpanded,
   isDisabled,
   onPress
 }: IconButtonProps) {
@@ -32,6 +36,7 @@ export function IconButton({
       isActive={isActive}
       isPressed={isPressed}
       isCurrent={isCurrent}
+      isExpanded={isExpanded}
       isDisabled={isDisabled}
       onPress={onPress}
     >

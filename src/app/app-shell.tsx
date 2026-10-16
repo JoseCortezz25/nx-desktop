@@ -4,6 +4,8 @@ import { useComposerSelection } from '@/features/providers/hooks/use-composer-se
 import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
 import { useWorkspaceBranches } from '@/features/projects/hooks/use-workspace-branches';
 import { useProviderCatalog } from '@/features/providers/hooks/use-provider-catalog';
+import { FilePanel } from '@/features/files/ui/organisms/file-panel';
+import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
 import {
@@ -16,7 +18,6 @@ import { ConversationView } from '@/shared/ui/organisms/conversation-view';
 import { HomeView } from '@/shared/ui/organisms/home-view';
 import { MainPane } from '@/shared/ui/organisms/main-pane';
 import { Rail } from '@/shared/ui/organisms/rail';
-import { RightPanel } from '@/shared/ui/organisms/right-panel';
 import { Sidebar } from '@/shared/ui/organisms/sidebar';
 import { TitleBar } from '@/shared/ui/organisms/title-bar';
 import './app-shell.css';
@@ -34,7 +35,8 @@ import './app-shell.css';
  * once so the sidebar highlight and the conversation region read the same id,
  * and the open-file request (#11) is owned once so a file chip's click has a
  * single seam the right panel (#12) consumes without a second copy. The shell
- * stores that request and never resolves it: rendering the file belongs to #12.
+ * stores that request and never resolves it: rendering the file belongs to #12,
+ * which reads this same value.
  *
  * It holds no persisted state and calls no IPC.
  */
@@ -45,7 +47,7 @@ export function AppShell() {
   const [activeConversationId, setActiveConversationId] =
     useState<ConversationId | null>(null);
   const [openFileRequest, setOpenFileRequest] =
-    useState<OpenFileRequest | null>(null);
+    useState<OpenFileRequest | null>(INITIAL_OPEN_FILE_REQUEST);
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
@@ -88,8 +90,8 @@ export function AppShell() {
   }
 
   function handleRequestOpenFile(request: OpenFileRequest) {
-    // Stores the request for the right panel (#12). The shell neither opens the
-    // panel region nor renders the file: resolving the request is #12's.
+    // Stores the request for the right panel (#12). Opening the tab is #12's;
+    // the shell only holds the one value both consumers read.
     setOpenFileRequest(request);
   }
 
@@ -132,7 +134,10 @@ export function AppShell() {
           )}
         </MainPane>
         {visibility.rightPanel ? (
-          <RightPanel onClose={handleToggleRightPanel} />
+          <FilePanel
+            openFileRequest={openFileRequest}
+            onClose={handleToggleRightPanel}
+          />
         ) : null}
       </div>
     </div>

@@ -1,0 +1,148 @@
+import { renderToStaticMarkup } from 'react-dom/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Conversation } from '@/shared/domain/conversation.types';
+import type { Project } from '@/shared/domain/project.types';
+import type { Provider } from '@/shared/domain/provider.types';
+import { resolveSelection } from '@/shared/domain/selection-chain';
+
+/**
+ * The seam #11 built and #12 consumes: the shell owns **one** open-file request,
+ * and the right panel reads that same value. This suite renders the shell's real
+ * state and asserts the panel is handed it — deliberately not a request built by
+ * the test, which would only prove the panel component.
+ *
+ * The shell's state starts empty and a file chip is the only thing that sets it.
+ * Static rendering runs no events and no effects, so the request is seeded the way
+ * `INITIAL_REGION_VISIBILITY` is already seeded in `app-shell.test.tsx`: through
+ * the shell's own initial state, not through a copy.
+ */
+const openedFile = vi.hoisted(() => ({
+  path: 'docs/research-tecnico/arquitectura-tauri.md'
+}));
+
+const captured = vi.hoisted(() => ({
+  panel: null as Record<string, unknown> | null
+}));
+
+vi.mock('@/features/files/model/open-file-request', () => ({
+  INITIAL_OPEN_FILE_REQUEST: openedFile
+}));
+
+vi.mock('@/features/files/ui/organisms/file-panel', () => ({
+  FilePanel: (props: Record<string, unknown>) => {
+    captured.panel = props;
+    return null;
+  }
+}));
+
+/** Screen 23 draws the panel next to the conversation, so open the region. */
+vi.mock('@/shared/ui/layout/region-visibility', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>(
+    '@/shared/ui/layout/region-visibility'
+  );
+  return {
+    ...actual,
+    INITIAL_REGION_VISIBILITY: { sidebar: false, rightPanel: true }
+  };
+});
+
+const harness = vi.hoisted(() => ({
+  providers: [] as readonly Provider[],
+  conversations: [] as readonly Conversation[],
+  projects: [] as readonly Project[]
+}));
+
+vi.mock('@/features/providers/hooks/use-provider-catalog', () => ({
+  useProviderCatalog: () => ({ providers: harness.providers, isLoading: false })
+}));
+
+vi.mock('@/features/providers/hooks/use-composer-selection', async () => {
+  const { resolveSelection: resolve } =
+    await import('@/shared/domain/selection-chain');
+  return {
+    useComposerSelection: (providers: readonly Provider[]) => ({
+      resolved: resolve(providers, null),
+      selectProvider: () => undefined,
+      selectModel: () => undefined,
+      selectEffort: () => undefined
+    })
+  };
+});
+
+vi.mock('@/features/projects/hooks/use-project-catalog', () => ({
+  useProjectCatalog: () => ({
+    projects: harness.projects,
+    activeProject: null,
+    selectProject: () => undefined,
+    changeApprovalMode: () => undefined
+  })
+}));
+
+vi.mock('@/features/projects/hooks/use-workspace-branches', () => ({
+  useWorkspaceBranches: () => []
+}));
+
+vi.mock('@/features/conversations/hooks/use-conversation-catalog', () => ({
+  useConversationCatalog: () => ({
+    conversations: harness.conversations,
+    isLoading: false
+  })
+}));
+
+import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
+import { AppShell } from './app-shell';
+
+const catalog: readonly Provider[] = [
+  {
+    id: 'opencode',
+    displayName: 'OpenCode',
+    icon: 'opencode',
+    subtitle: 'Open source',
+    availableModels: [
+      {
+        id: 'glm-4.6',
+        displayName: 'GLM 4.6',
+        providerId: 'opencode',
+        supportedEffortLevels: ['light']
+      }
+    ]
+  }
+];
+
+describe('shell to right panel open-file seam', () => {
+  beforeEach(() => {
+    captured.panel = null;
+    harness.providers = catalog;
+    harness.conversations = [];
+    harness.projects = [];
+  });
+
+  it('hands the panel the same open-file request the shell owns', () => {
+    renderToStaticMarkup(<AppShell />);
+
+    expect(captured.panel).not.toBeNull();
+    // Identity, not deep equality: the panel must read the shell's state value, so
+    // a second copy of the request would fail this assertion.
+    expect(captured.panel?.openFileRequest).toBe(INITIAL_OPEN_FILE_REQUEST);
+    expect(captured.panel?.openFileRequest).toEqual(openedFile);
+  });
+
+  it('gives the panel no way to own or emit the request', () => {
+    renderToStaticMarkup(<AppShell />);
+
+    // The panel may read the request and close the region; nothing else. If it
+    // also received a setter it could drift into a second owner.
+    expect(Object.keys(captured.panel ?? {}).sort()).toEqual([
+      'onClose',
+      'openFileRequest'
+    ]);
+  });
+
+  it('resolves the shell selection chain the same way the composer does', () => {
+    // Guards the assumptions of this suite: the seeded catalog reconciles, so the
+    // rendered shell is the shell the app ships, not an empty stub.
+    expect(resolveSelection(catalog, null)?.provider.displayName).toBe(
+      'OpenCode'
+    );
+  });
+});

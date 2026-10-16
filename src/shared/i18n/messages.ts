@@ -11,6 +11,7 @@
  * `getSharedErrorMessage`) so lookup stays behind one seam.
  */
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
+import type { OpenTarget } from '@/shared/domain/open-target.types';
 
 export const sharedMessages = {
   actions: {
@@ -207,6 +208,41 @@ export const sharedMessages = {
       timestampLabel: (time: string) => `Enviado a las ${time}`,
       editLabel: 'Editar mensaje'
     }
+  },
+  // Right panel file viewer (#12): its tab strip, the breadcrumb toolbar and the
+  // `Abrir` menu (`docs/wireframes/23-file-viewer-markdown.html`,
+  // `24-file-open-menu.html`, `13-chat-with-editor.html`). The file paths and
+  // names drawn here are runtime data, never copy.
+  //
+  // `targets` is keyed by the domain's `OpenTarget` and `getOpenTargetLabel` is
+  // its one reader, so the corrected decision (`.claude/knowledge/business-logic.md`
+  // §3.5 item 3: the editor target only) has copy where it needs it and nothing
+  // advertises a target the menu no longer offers. `viewSourceLabel` and
+  // `viewDocumentLabel` are the two sides of the same toolbar toggle: the
+  // wireframe only draws "Ver código fuente", and the inverse label is the return
+  // path the same control needs.
+  fileViewer: {
+    emptyLabel: 'Abre un archivo desde el chat',
+    loadingLabel: 'Cargando el archivo…',
+    missingLabel: 'No se pudo leer este archivo',
+    breadcrumbLabel: 'Ruta del archivo',
+    tabs: {
+      listLabel: 'Archivos abiertos',
+      closeLabel: (name: string) => `Cerrar ${name}`
+    },
+    toolbar: {
+      searchLabel: 'Buscar en el archivo',
+      copyPathLabel: 'Copiar ruta del archivo',
+      viewSourceLabel: 'Ver código fuente',
+      viewDocumentLabel: 'Ver documento'
+    },
+    openMenu: {
+      triggerLabel: 'Abrir',
+      menuLabel: 'Opciones de apertura',
+      targets: {
+        editor: 'Abrir en VS Code'
+      } as Readonly<Partial<Record<OpenTarget, string>>>
+    }
   }
 } as const;
 
@@ -229,6 +265,17 @@ export function getEffortLevelLabel(level: string): string {
  */
 export function getApprovalModeCopy(mode: ApprovalMode) {
   return sharedMessages.composer.approval.modes[mode];
+}
+
+/**
+ * Resolves the visible label of one open target for the `Abrir` menu.
+ *
+ * The corrected decision offers the editor target only (§3.5 item 3), so the map
+ * is deliberately partial: a target that is not offered has no label to leak into
+ * the menu, and a target that is offered reads its label here and nowhere else.
+ */
+export function getOpenTargetLabel(target: OpenTarget): string {
+  return sharedMessages.fileViewer.openMenu.targets[target] ?? target;
 }
 
 /** Stable `snake_case` error codes carried by `AppErrorDto`. */

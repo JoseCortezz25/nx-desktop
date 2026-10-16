@@ -1,0 +1,21 @@
+/* Rows of the `Abrir` menu (`docs/wireframes/24-file-open-menu.html`,
+   `.menu-pop .opt`). One row per offered target; geometry only, so the panel can
+   place the surface anywhere. */
+.open-menu-list {
+  display: flex;
+  flex-direction: column;
+  width: 356px;
+}
+
+.open-menu-list .button--list {
+  height: auto;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+
+.open-menu-list__label {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}

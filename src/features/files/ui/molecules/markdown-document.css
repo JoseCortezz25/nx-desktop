@@ -1,0 +1,80 @@
+/* Rendered Markdown document (`docs/wireframes/23-file-viewer-markdown.html`,
+   `.doc`): body copy, headings, lists, inline code, fences and links at the
+   wireframe's proportions. */
+.markdown-document {
+  padding: 4px 22px 24px 28px;
+  color: var(--color-text);
+}
+
+.markdown-document__heading {
+  margin: 14px 0 14px;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-document h2.markdown-document__heading {
+  margin: 28px 0 12px;
+  font-size: 22px;
+}
+
+.markdown-document h3.markdown-document__heading {
+  margin: 22px 0 14px;
+  font-size: 18px;
+}
+
+.markdown-document__paragraph {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.markdown-document__list {
+  margin: 14px 0;
+  padding-left: 32px;
+  color: var(--color-muted);
+}
+
+.markdown-document__item {
+  margin: 4px 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.markdown-document__quote {
+  margin: 14px 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--color-line);
+  color: var(--color-muted);
+}
+
+.markdown-document__code {
+  margin: 16px 0;
+  padding: 12px 14px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--color-fill);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.markdown-document__inline-code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--color-fill);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12.5px;
+}
+
+.markdown-document__link {
+  color: var(--color-focus);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown-document__rule {
+  margin: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
