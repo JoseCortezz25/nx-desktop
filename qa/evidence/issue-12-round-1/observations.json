@@ -1,0 +1,1789 @@
+{
+  "viewport": {
+    "innerW": 1440,
+    "innerH": 900,
+    "dpr": 1
+  },
+  "initial": {
+    "rightPanelPresent": false,
+    "sidebarPresent": false,
+    "rightToggleCount": 1,
+    "sidebarToggleCount": 1,
+    "viewportShot": "/tmp/opencode/qa/issue-12/shots/shot-00-initial-home.png"
+  },
+  "openConversation": "clicked",
+  "onConversation": true,
+  "chipInventory": {
+    "Abrir src/shared/domain/selection-chain.ts": 2,
+    "Abrir src/features/providers/hooks/use-composer-selection.ts": 1,
+    "Abrir docs/research-tecnico/arquitectura-tauri.md": 1
+  },
+  "trap": {
+    "markdownChipCount": 1,
+    "hookChipCount": 1,
+    "chainChipCount": 2
+  },
+  "emptyState": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": false,
+    "viewerLabel": null,
+    "tabCount": 0,
+    "tabs": [],
+    "activeTab": null,
+    "selectedCount": 0,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 0,
+      "scrollW": 0,
+      "clientW": 0,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": null,
+    "breadcrumbSegments": null,
+    "contentAriaLabel": null,
+    "contentRole": null,
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": false,
+    "codeLineNumbers": null,
+    "firstCodeLines": null,
+    "toolbarButtons": [],
+    "toolbarIcons": [],
+    "emptyText": "Abre un archivo desde el chat",
+    "measure": {
+      "innerW": 1440,
+      "innerH": 900,
+      "rail": {
+        "x": 0,
+        "y": 40,
+        "w": 56,
+        "h": 860,
+        "right": 56
+      },
+      "sidebar": {
+        "x": 56,
+        "y": 48,
+        "w": 318,
+        "h": 852,
+        "right": 374
+      },
+      "mainPane": {
+        "x": 374,
+        "y": 48,
+        "w": 546,
+        "h": 848,
+        "right": 920
+      },
+      "conversationView": {
+        "x": 375,
+        "y": 49,
+        "w": 545,
+        "h": 846,
+        "right": 920
+      },
+      "rightPanel": {
+        "x": 920,
+        "y": 48,
+        "w": 520,
+        "h": 852,
+        "right": 1440
+      },
+      "overflow": {
+        "windowShell": {
+          "scrollW": 1440,
+          "clientW": 1440,
+          "overflowX": false
+        },
+        "mainPane": {
+          "scrollW": 588,
+          "clientW": 545,
+          "overflowX": true
+        },
+        "conversationView": {
+          "scrollW": 588,
+          "clientW": 545,
+          "overflowX": true
+        },
+        "rightPanel": {
+          "scrollW": 520,
+          "clientW": 520,
+          "overflowX": false
+        },
+        "tabStrip": {
+          "scrollW": 0,
+          "clientW": 0,
+          "overflowX": false
+        },
+        "viewerToolbar": null,
+        "viewerContent": null
+      }
+    },
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-01-panel-empty.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "clickMarkdown": {
+    "ok": true,
+    "count": 1
+  },
+  "afterMarkdown": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "tabCount": 1,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "true",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 169
+        }
+      }
+    ],
+    "activeTab": "docs/research-tecnico/arquitectura-tauri.md",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 197,
+      "scrollW": 197,
+      "clientW": 197,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "docs",
+      "research-tecnico",
+      "arquitectura-tauri.md"
+    ],
+    "contentAriaLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "contentRole": "tabpanel",
+    "markdownPresent": true,
+    "markdownLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "markdownHeadings": [
+      {
+        "tag": "H1",
+        "text": "Arquitectura de aplicaciones con Tauri: guía para nx-desktop"
+      },
+      {
+        "tag": "H2",
+        "text": "Índice"
+      },
+      {
+        "tag": "H2",
+        "text": "Diagnóstico y alcance"
+      },
+      {
+        "tag": "H3",
+        "text": "Lo comprobado en el repositorio"
+      }
+    ],
+    "markdownCodeFences": 1,
+    "markdownLinks": 3,
+    "codePresent": false,
+    "codeLineNumbers": null,
+    "firstCodeLines": null,
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Ver código fuente",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "viewportShot": "/tmp/opencode/qa/issue-12/shots/shot-02-first-chip-markdown.png",
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-03-markdown-rendered-panel.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "clickHook": {
+    "ok": true,
+    "count": 1
+  },
+  "afterHook": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "tabCount": 2,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 169
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "true",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1134,
+          "w": 199
+        }
+      }
+    ],
+    "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 428,
+      "scrollW": 428,
+      "clientW": 428,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "features",
+      "providers",
+      "hooks",
+      "use-composer-selection.ts"
+    ],
+    "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "firstCodeLines": [
+      "import { useState } from 'react';",
+      "import type { Provider } from '@/shared/domain/provider.types';",
+      "import { resolveSelection } from '@/shared/domain/selection-chain';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-04-two-tabs-code.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "reopenMarkdown": {
+    "ok": true,
+    "count": 1
+  },
+  "afterReopenMarkdown": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "tabCount": 2,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "true",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 169
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1134,
+          "w": 199
+        }
+      }
+    ],
+    "activeTab": "docs/research-tecnico/arquitectura-tauri.md",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 428,
+      "scrollW": 428,
+      "clientW": 428,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "docs",
+      "research-tecnico",
+      "arquitectura-tauri.md"
+    ],
+    "contentAriaLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "contentRole": "tabpanel",
+    "markdownPresent": true,
+    "markdownLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "markdownHeadings": [
+      {
+        "tag": "H1",
+        "text": "Arquitectura de aplicaciones con Tauri: guía para nx-desktop"
+      },
+      {
+        "tag": "H2",
+        "text": "Índice"
+      },
+      {
+        "tag": "H2",
+        "text": "Diagnóstico y alcance"
+      },
+      {
+        "tag": "H3",
+        "text": "Lo comprobado en el repositorio"
+      }
+    ],
+    "markdownCodeFences": 1,
+    "markdownLinks": 3,
+    "codePresent": false,
+    "codeLineNumbers": null,
+    "firstCodeLines": null,
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Ver código fuente",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null
+  },
+  "reopenHook": {
+    "ok": true,
+    "count": 1
+  },
+  "afterReopenHook": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "tabCount": 2,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 169
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "true",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1134,
+          "w": 199
+        }
+      }
+    ],
+    "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 428,
+      "scrollW": 428,
+      "clientW": 428,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "features",
+      "providers",
+      "hooks",
+      "use-composer-selection.ts"
+    ],
+    "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "firstCodeLines": [
+      "import { useState } from 'react';",
+      "import type { Provider } from '@/shared/domain/provider.types';",
+      "import { resolveSelection } from '@/shared/domain/selection-chain';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null
+  },
+  "clickChainG1": {
+    "ok": true,
+    "totalByName": 2,
+    "scopedTo": 1
+  },
+  "afterChainG1": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/shared/domain/selection-chain.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "true",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/shared/domain/selection-chain.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "shared",
+      "domain",
+      "selection-chain.ts"
+    ],
+    "contentAriaLabel": "src/shared/domain/selection-chain.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+    ],
+    "firstCodeLines": [
+      "import type { Provider } from './provider.types';",
+      "import type { EffortLevel } from './effort-level.types';",
+      "import type { ModelId, ProviderId } from './value-objects.types';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null
+  },
+  "clickChainG2": {
+    "ok": true,
+    "totalByName": 2,
+    "scopedTo": 1
+  },
+  "afterChainG2": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/shared/domain/selection-chain.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "true",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/shared/domain/selection-chain.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "shared",
+      "domain",
+      "selection-chain.ts"
+    ],
+    "contentAriaLabel": "src/shared/domain/selection-chain.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+    ],
+    "firstCodeLines": [
+      "import type { Provider } from './provider.types';",
+      "import type { EffortLevel } from './effort-level.types';",
+      "import type { ModelId, ProviderId } from './value-objects.types';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-05-three-tabs-chain.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "modeMarkdownDefault": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "true",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "docs/research-tecnico/arquitectura-tauri.md",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "docs",
+      "research-tecnico",
+      "arquitectura-tauri.md"
+    ],
+    "contentAriaLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "contentRole": "tabpanel",
+    "markdownPresent": true,
+    "markdownLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "markdownHeadings": [
+      {
+        "tag": "H1",
+        "text": "Arquitectura de aplicaciones con Tauri: guía para nx-desktop"
+      },
+      {
+        "tag": "H2",
+        "text": "Índice"
+      },
+      {
+        "tag": "H2",
+        "text": "Diagnóstico y alcance"
+      },
+      {
+        "tag": "H3",
+        "text": "Lo comprobado en el repositorio"
+      }
+    ],
+    "markdownCodeFences": 1,
+    "markdownLinks": 3,
+    "codePresent": false,
+    "codeLineNumbers": null,
+    "firstCodeLines": null,
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Ver código fuente",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-06-markdown-rendered.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "toggleToSource": {
+    "ok": true,
+    "count": 1
+  },
+  "modeMarkdownSource": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "true",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "docs/research-tecnico/arquitectura-tauri.md",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "docs",
+      "research-tecnico",
+      "arquitectura-tauri.md"
+    ],
+    "contentAriaLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32"
+    ],
+    "firstCodeLines": [
+      "# Arquitectura de aplicaciones con Tauri: guía para nx-desktop",
+      "",
+      "El punto de partida es el código de este repositorio y las restricciones de sus wireframes. Las recomendaciones de organización son propias; cuando una regla procede de Tauri, Rust, Serde o React se enlaza su fuente.",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Ver documento",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-07-markdown-source.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "toggleBackToRendered": {
+    "ok": true,
+    "count": 1
+  },
+  "modeBackToRendered": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "true",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "docs/research-tecnico/arquitectura-tauri.md",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "docs",
+      "research-tecnico",
+      "arquitectura-tauri.md"
+    ],
+    "contentAriaLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "contentRole": "tabpanel",
+    "markdownPresent": true,
+    "markdownLabel": "docs/research-tecnico/arquitectura-tauri.md",
+    "markdownHeadings": [
+      {
+        "tag": "H1",
+        "text": "Arquitectura de aplicaciones con Tauri: guía para nx-desktop"
+      },
+      {
+        "tag": "H2",
+        "text": "Índice"
+      },
+      {
+        "tag": "H2",
+        "text": "Diagnóstico y alcance"
+      },
+      {
+        "tag": "H3",
+        "text": "Lo comprobado en el repositorio"
+      }
+    ],
+    "markdownCodeFences": 1,
+    "markdownLinks": 3,
+    "codePresent": false,
+    "codeLineNumbers": null,
+    "firstCodeLines": null,
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Ver código fuente",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null
+  },
+  "modeCodeDefault": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "true",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "features",
+      "providers",
+      "hooks",
+      "use-composer-selection.ts"
+    ],
+    "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "firstCodeLines": [
+      "import { useState } from 'react';",
+      "import type { Provider } from '@/shared/domain/provider.types';",
+      "import { resolveSelection } from '@/shared/domain/selection-chain';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-08-code-source.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "openMenuClick": {
+    "ok": true,
+    "count": 1
+  },
+  "menuOpen": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "true",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": true,
+    "menuItems": [
+      "Abrir en VS Code"
+    ],
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "features",
+      "providers",
+      "hooks",
+      "use-composer-selection.ts"
+    ],
+    "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "firstCodeLines": [
+      "import { useState } from 'react';",
+      "import type { Provider } from '@/shared/domain/provider.types';",
+      "import { resolveSelection } from '@/shared/domain/selection-chain';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura",
+      "Abrir en VS Code"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-09-open-menu.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "menuClosed": false,
+  "toolbar": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "true",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "false",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "features",
+      "providers",
+      "hooks",
+      "use-composer-selection.ts"
+    ],
+    "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "firstCodeLines": [
+      "import { useState } from 'react';",
+      "import type { Provider } from '@/shared/domain/provider.types';",
+      "import { resolveSelection } from '@/shared/domain/selection-chain';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null
+  },
+  "measureOpen": {
+    "innerW": 1440,
+    "innerH": 900,
+    "rail": {
+      "x": 0,
+      "y": 40,
+      "w": 56,
+      "h": 860,
+      "right": 56
+    },
+    "sidebar": {
+      "x": 56,
+      "y": 48,
+      "w": 318,
+      "h": 852,
+      "right": 374
+    },
+    "mainPane": {
+      "x": 374,
+      "y": 48,
+      "w": 546,
+      "h": 848,
+      "right": 920
+    },
+    "conversationView": {
+      "x": 375,
+      "y": 49,
+      "w": 545,
+      "h": 846,
+      "right": 920
+    },
+    "rightPanel": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "overflow": {
+      "windowShell": {
+        "scrollW": 1440,
+        "clientW": 1440,
+        "overflowX": false
+      },
+      "mainPane": {
+        "scrollW": 588,
+        "clientW": 545,
+        "overflowX": true
+      },
+      "conversationView": {
+        "scrollW": 588,
+        "clientW": 545,
+        "overflowX": true
+      },
+      "rightPanel": {
+        "scrollW": 520,
+        "clientW": 520,
+        "overflowX": false
+      },
+      "tabStrip": {
+        "scrollW": 460,
+        "clientW": 460,
+        "overflowX": false
+      },
+      "viewerToolbar": {
+        "scrollW": 520,
+        "clientW": 520,
+        "overflowX": false
+      },
+      "viewerContent": {
+        "scrollW": 520,
+        "clientW": 520,
+        "overflowX": false
+      }
+    },
+    "viewportShot": "/tmp/opencode/qa/issue-12/shots/shot-10-panel-in-context.png"
+  },
+  "openConv2": "no-row",
+  "clickAppTsx": {
+    "ok": false,
+    "reason": "no-chip",
+    "count": 0
+  },
+  "tabOverflowState": {
+    "panelPresent": true,
+    "panelBox": {
+      "x": 920,
+      "y": 48,
+      "w": 520,
+      "h": 852,
+      "right": 1440
+    },
+    "viewerPresent": true,
+    "viewerLabel": "src/shared/domain/selection-chain.ts",
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "selected": "false",
+        "text": "arquitectura-tauri.md",
+        "box": {
+          "x": 933,
+          "w": 127
+        }
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "selected": "false",
+        "text": "use-composer-selection.ts",
+        "box": {
+          "x": 1086,
+          "w": 150
+        }
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "selected": "true",
+        "text": "selection-chain.ts",
+        "box": {
+          "x": 1263,
+          "w": 108
+        }
+      }
+    ],
+    "activeTab": "src/shared/domain/selection-chain.ts",
+    "selectedCount": 1,
+    "tabStripAriaLabel": "Archivos abiertos",
+    "stripBox": {
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflow": false
+    },
+    "menuOpen": false,
+    "menuItems": null,
+    "breadcrumbLabel": "Ruta del archivo",
+    "breadcrumbSegments": [
+      "src",
+      "shared",
+      "domain",
+      "selection-chain.ts"
+    ],
+    "contentAriaLabel": "src/shared/domain/selection-chain.ts",
+    "contentRole": "tabpanel",
+    "markdownPresent": false,
+    "markdownLabel": null,
+    "markdownHeadings": null,
+    "markdownCodeFences": 0,
+    "markdownLinks": 0,
+    "codePresent": true,
+    "codeLineNumbers": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21"
+    ],
+    "firstCodeLines": [
+      "import type { Provider } from './provider.types';",
+      "import type { EffortLevel } from './effort-level.types';",
+      "import type { ModelId, ProviderId } from './value-objects.types';",
+      ""
+    ],
+    "toolbarButtons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Abrir",
+      "Opciones de apertura"
+    ],
+    "toolbarIcons": [
+      "Buscar en el archivo",
+      "Copiar ruta del archivo",
+      "Opciones de apertura"
+    ],
+    "emptyText": null,
+    "measure": {
+      "innerW": 1440,
+      "innerH": 900,
+      "rail": {
+        "x": 0,
+        "y": 40,
+        "w": 56,
+        "h": 860,
+        "right": 56
+      },
+      "sidebar": null,
+      "mainPane": {
+        "x": 56,
+        "y": 48,
+        "w": 864,
+        "h": 848,
+        "right": 920
+      },
+      "conversationView": {
+        "x": 57,
+        "y": 49,
+        "w": 863,
+        "h": 846,
+        "right": 920
+      },
+      "rightPanel": {
+        "x": 920,
+        "y": 48,
+        "w": 520,
+        "h": 852,
+        "right": 1440
+      },
+      "overflow": {
+        "windowShell": {
+          "scrollW": 1440,
+          "clientW": 1440,
+          "overflowX": false
+        },
+        "mainPane": {
+          "scrollW": 863,
+          "clientW": 863,
+          "overflowX": false
+        },
+        "conversationView": {
+          "scrollW": 863,
+          "clientW": 863,
+          "overflowX": false
+        },
+        "rightPanel": {
+          "scrollW": 520,
+          "clientW": 520,
+          "overflowX": false
+        },
+        "tabStrip": {
+          "scrollW": 460,
+          "clientW": 460,
+          "overflowX": false
+        },
+        "viewerToolbar": {
+          "scrollW": 520,
+          "clientW": 520,
+          "overflowX": false
+        },
+        "viewerContent": {
+          "scrollW": 520,
+          "clientW": 520,
+          "overflowX": false
+        }
+      }
+    },
+    "panelClip": {
+      "file": "/tmp/opencode/qa/issue-12/shots/shot-11-tab-overflow.png",
+      "rect": {
+        "x": 920,
+        "y": 48,
+        "width": 520,
+        "height": 852
+      }
+    }
+  },
+  "closedProbe": {
+    "panelPresentBefore": false,
+    "clickHook": {
+      "ok": true,
+      "count": 1
+    },
+    "panelPresentAfterChip": false,
+    "rightTogglePressed": "false",
+    "panelAfterReopen": {
+      "panelPresent": true,
+      "panelBox": {
+        "x": 920,
+        "y": 48,
+        "w": 520,
+        "h": 852,
+        "right": 1440
+      },
+      "viewerPresent": true,
+      "viewerLabel": "src/features/providers/hooks/use-composer-selection.ts",
+      "tabCount": 1,
+      "tabs": [
+        {
+          "name": "src/features/providers/hooks/use-composer-selection.ts",
+          "selected": "true",
+          "text": "use-composer-selection.ts",
+          "box": {
+            "x": 933,
+            "w": 199
+          }
+        }
+      ],
+      "activeTab": "src/features/providers/hooks/use-composer-selection.ts",
+      "selectedCount": 1,
+      "tabStripAriaLabel": "Archivos abiertos",
+      "stripBox": {
+        "w": 227,
+        "scrollW": 227,
+        "clientW": 227,
+        "overflow": false
+      },
+      "menuOpen": false,
+      "menuItems": null,
+      "breadcrumbLabel": "Ruta del archivo",
+      "breadcrumbSegments": [
+        "src",
+        "features",
+        "providers",
+        "hooks",
+        "use-composer-selection.ts"
+      ],
+      "contentAriaLabel": "src/features/providers/hooks/use-composer-selection.ts",
+      "contentRole": "tabpanel",
+      "markdownPresent": false,
+      "markdownLabel": null,
+      "markdownHeadings": null,
+      "markdownCodeFences": 0,
+      "markdownLinks": 0,
+      "codePresent": true,
+      "codeLineNumbers": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "firstCodeLines": [
+        "import { useState } from 'react';",
+        "import type { Provider } from '@/shared/domain/provider.types';",
+        "import { resolveSelection } from '@/shared/domain/selection-chain';",
+        ""
+      ],
+      "toolbarButtons": [
+        "Buscar en el archivo",
+        "Copiar ruta del archivo",
+        "Abrir",
+        "Opciones de apertura"
+      ],
+      "toolbarIcons": [
+        "Buscar en el archivo",
+        "Copiar ruta del archivo",
+        "Opciones de apertura"
+      ],
+      "emptyText": null
+    }
+  },
+  "ok": true
+}

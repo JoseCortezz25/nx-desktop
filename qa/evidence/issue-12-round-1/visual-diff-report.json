@@ -1,0 +1,58 @@
+{
+  "url": "http://localhost:1420/ (app) vs file:// wireframes 23/24",
+  "capture": "viewport (full-frame) + clip (scoped)",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "passed": null,
+  "note": "Judged semantically: the wireframe is a fixed 1916x1030 reference (README: layout/behaviour, not final visuals), so the residual is content + declared divergence.",
+  "results": [
+    {
+      "name": "full-frame: wireframe 23 vs app markdown (sidebar+panel open)",
+      "baseline": "/tmp/opencode/qa/issue-12/baseline-23-viewport/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-12/shots/current-23-markdown-viewport.png",
+      "diff": "/tmp/opencode/qa/issue-12/eval/fullframe-23.diff.png",
+      "size": "1440x900",
+      "normalized": null,
+      "diffPixels": 141859,
+      "diffRatio": 0.1095,
+      "threshold": 0.1
+    },
+    {
+      "name": "full-frame: wireframe 24 vs app open-menu (sidebar+panel open)",
+      "baseline": "/tmp/opencode/qa/issue-12/baseline-24-viewport/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-12/shots/current-24-menu-viewport.png",
+      "diff": "/tmp/opencode/qa/issue-12/eval/fullframe-24.diff.png",
+      "size": "1440x900",
+      "normalized": null,
+      "diffPixels": 136178,
+      "diffRatio": 0.1051,
+      "threshold": 0.1
+    },
+    {
+      "name": "scoped clip: wireframe 23 right panel vs app right panel (markdown)",
+      "baseline": "/tmp/opencode/qa/issue-12/baseline-23-main/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-12/shots/shot-03-markdown-rendered-panel.png",
+      "diff": "/tmp/opencode/qa/issue-12/eval/scoped-23.diff.png",
+      "size": "520x852",
+      "normalized": "normalized 1348x990 -> 520x852",
+      "diffPixels": 53572,
+      "diffRatio": 0.1209,
+      "threshold": 0.1
+    },
+    {
+      "name": "scoped clip: wireframe 24 right panel vs app right panel (open menu)",
+      "baseline": "/tmp/opencode/qa/issue-12/baseline-24-main/desktop/desktop.png",
+      "current": "/tmp/opencode/qa/issue-12/shots/shot-09-open-menu.png",
+      "diff": "/tmp/opencode/qa/issue-12/eval/scoped-24.diff.png",
+      "size": "520x852",
+      "normalized": "normalized 1348x990 -> 520x852",
+      "diffPixels": 32259,
+      "diffRatio": 0.0728,
+      "threshold": 0.1
+    }
+  ],
+  "createdAt": "2026-10-16T22:11:30.401Z"
+}

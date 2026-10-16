@@ -1,0 +1,141 @@
+{
+  "breadcrumb": {
+    "pill": {
+      "w": 165,
+      "x": 932,
+      "right": 1097,
+      "title": "Ruta del archivo"
+    },
+    "toolbar": {
+      "w": 520,
+      "x": 920
+    },
+    "actions": {
+      "w": 321,
+      "x": 1107
+    },
+    "crumbs": [
+      {
+        "text": "docs",
+        "clientW": 10,
+        "scrollW": 27,
+        "truncated": true
+      },
+      {
+        "text": "research-tecnico",
+        "clientW": 34,
+        "scrollW": 95,
+        "truncated": true
+      },
+      {
+        "text": "arquitectura-tauri.md",
+        "clientW": 46,
+        "scrollW": 127,
+        "truncated": true
+      }
+    ],
+    "fullPath": "docs/research-tecnico/arquitectura-tauri.md",
+    "zoom": "/tmp/opencode/qa/issue-12/shots/shot-15-breadcrumb-zoom.png"
+  },
+  "composer": {
+    "mainPane": {
+      "x": 374,
+      "right": 920,
+      "w": 546
+    },
+    "composerBar": {
+      "x": 414,
+      "right": 886,
+      "scrollW": 549,
+      "clientW": 472
+    },
+    "controls": {
+      "x": 584,
+      "right": 963,
+      "w": 379
+    },
+    "buttons": [
+      {
+        "label": "Añadir",
+        "x": 414,
+        "right": 434,
+        "w": 20,
+        "clipped": false
+      },
+      {
+        "label": "Aprobación: Solicitar aprobación",
+        "x": 446,
+        "right": 584,
+        "w": 138,
+        "clipped": false
+      },
+      {
+        "label": "Proveedor: OpenCode",
+        "x": 584,
+        "right": 718,
+        "w": 134,
+        "clipped": false
+      },
+      {
+        "label": "Modelo: DeepSeek V3.1",
+        "x": 726,
+        "right": 839,
+        "w": 113,
+        "clipped": false
+      },
+      {
+        "label": "Esfuerzo: Ligero",
+        "x": 847,
+        "right": 931,
+        "w": 84,
+        "clipped": true
+      },
+      {
+        "label": "Enviar",
+        "x": 939,
+        "right": 963,
+        "w": 24,
+        "clipped": true
+      }
+    ],
+    "clippedCount": 2,
+    "zoom": "/tmp/opencode/qa/issue-12/shots/shot-16-composer-zoom.png"
+  },
+  "composerPanelClosed": {
+    "mainPaneRight": 1440,
+    "clippedCount": 0,
+    "buttons": [
+      {
+        "label": "Añadir",
+        "right": 590,
+        "clipped": false
+      },
+      {
+        "label": "Aprobación: Solicitar aprobación",
+        "right": 793,
+        "clipped": false
+      },
+      {
+        "label": "Proveedor: OpenCode",
+        "right": 975,
+        "clipped": false
+      },
+      {
+        "label": "Modelo: DeepSeek V3.1",
+        "right": 1120,
+        "clipped": false
+      },
+      {
+        "label": "Esfuerzo: Ligero",
+        "right": 1212,
+        "clipped": false
+      },
+      {
+        "label": "Enviar",
+        "right": 1250,
+        "clipped": false
+      }
+    ]
+  },
+  "ok": true
+}

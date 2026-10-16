@@ -1,0 +1,339 @@
+{
+  "threeTabs": {
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "text": "arquitectura-tauri.md",
+        "selected": "false",
+        "x": 933,
+        "right": 1060,
+        "w": 127
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "text": "use-composer-selection.ts",
+        "selected": "false",
+        "x": 1086,
+        "right": 1236,
+        "w": 150
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "text": "selection-chain.ts",
+        "selected": "true",
+        "x": 1263,
+        "right": 1371,
+        "w": 108
+      }
+    ],
+    "strip": {
+      "x": 932,
+      "right": 1392,
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflowHidden": "hidden"
+    },
+    "lastTabVisible": true,
+    "selectedCount": 1,
+    "shot": "/tmp/opencode/qa/issue-12/shots/shot-12-three-tabs.png"
+  },
+  "sidebarPresent": true,
+  "switchConv": {
+    "ok": true
+  },
+  "clickAppTsx": {
+    "ok": true,
+    "total": 1,
+    "scoped": 1
+  },
+  "fourTabs": {
+    "tabCount": 4,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "text": "arquitectura-tauri.md",
+        "selected": "false",
+        "x": 933,
+        "right": 1037,
+        "w": 104
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "text": "use-composer-selection.ts",
+        "selected": "false",
+        "x": 1062,
+        "right": 1185,
+        "w": 123
+      },
+      {
+        "name": "src/shared/domain/selection-chain.ts",
+        "text": "selection-chain.ts",
+        "selected": "false",
+        "x": 1210,
+        "right": 1298,
+        "w": 88
+      },
+      {
+        "name": "src/App.tsx",
+        "text": "App.tsx",
+        "selected": "true",
+        "x": 1323,
+        "right": 1372,
+        "w": 49
+      }
+    ],
+    "strip": {
+      "x": 932,
+      "right": 1392,
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflowHidden": "hidden"
+    },
+    "lastTabVisible": true,
+    "selectedCount": 1,
+    "shot": "/tmp/opencode/qa/issue-12/shots/shot-13-four-tabs-overflow.png",
+    "viewport": "/tmp/opencode/qa/issue-12/shots/shot-14-four-tabs-viewport.png"
+  },
+  "overflowCause": {
+    "mainPane": {
+      "x": 374,
+      "right": 920,
+      "w": 546
+    },
+    "offenders": [
+      {
+        "tag": "MAIN",
+        "cls": "main-pane",
+        "right": 920,
+        "w": 546,
+        "scrollW": 588,
+        "clientW": 545,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "SECTION",
+        "cls": "conversation-view",
+        "right": 920,
+        "w": 545,
+        "scrollW": 588,
+        "clientW": 545,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "DIV",
+        "cls": "conversation-view__composer",
+        "right": 920,
+        "w": 545,
+        "scrollW": 588,
+        "clientW": 545,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "DIV",
+        "cls": "composer-dock",
+        "right": 896,
+        "w": 497,
+        "scrollW": 564,
+        "clientW": 497,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "DIV",
+        "cls": "composer",
+        "right": 896,
+        "w": 497,
+        "scrollW": 563,
+        "clientW": 495,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "DIV",
+        "cls": "composer-bar",
+        "right": 886,
+        "w": 472,
+        "scrollW": 549,
+        "clientW": 472,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "DIV",
+        "cls": "composer-bar__controls",
+        "right": 963,
+        "w": 379,
+        "scrollW": 379,
+        "clientW": 379,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "button button--pill",
+        "right": 931,
+        "w": 84,
+        "scrollW": 84,
+        "clientW": 84,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "button button--solid",
+        "right": 963,
+        "w": 24,
+        "scrollW": 24,
+        "clientW": 24,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "svg",
+        "cls": "[object SVGAnimatedString]",
+        "right": 958,
+        "w": 15,
+        "scrollW": 15,
+        "clientW": 15,
+        "minWidth": "auto",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 944,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 947,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 949,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 952,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 954,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      },
+      {
+        "tag": "path",
+        "cls": "[object SVGAnimatedString]",
+        "right": 957,
+        "w": 0,
+        "scrollW": 0,
+        "clientW": 0,
+        "minWidth": "0px",
+        "whiteSpace": "normal"
+      }
+    ]
+  },
+  "crowding": {
+    "chipCount": 1,
+    "chips": [
+      {
+        "label": "Abrir src/App.tsx",
+        "x": 399,
+        "right": 504,
+        "w": 105,
+        "overflowsOwn": false
+      }
+    ],
+    "toolbarBreadcrumb": {
+      "right": 1043,
+      "overflow": false,
+      "crumbs": [
+        "src",
+        "App.tsx"
+      ]
+    },
+    "titleOverflow": false
+  },
+  "stubs": {
+    "tabsBefore": 4,
+    "tabsAfter": 4,
+    "stable": true,
+    "menuStillClosed": true
+  },
+  "closeTab": {
+    "ok": true
+  },
+  "afterCloseTab": {
+    "tabCount": 3,
+    "tabs": [
+      {
+        "name": "docs/research-tecnico/arquitectura-tauri.md",
+        "text": "arquitectura-tauri.md",
+        "selected": "false",
+        "x": 933,
+        "right": 1075,
+        "w": 142
+      },
+      {
+        "name": "src/features/providers/hooks/use-composer-selection.ts",
+        "text": "use-composer-selection.ts",
+        "selected": "false",
+        "x": 1103,
+        "right": 1271,
+        "w": 168
+      },
+      {
+        "name": "src/App.tsx",
+        "text": "App.tsx",
+        "selected": "true",
+        "x": 1299,
+        "right": 1369,
+        "w": 70
+      }
+    ],
+    "strip": {
+      "x": 932,
+      "right": 1392,
+      "w": 460,
+      "scrollW": 460,
+      "clientW": 460,
+      "overflowHidden": "hidden"
+    },
+    "lastTabVisible": true,
+    "selectedCount": 1
+  },
+  "ok": true
+}
