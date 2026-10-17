@@ -72,6 +72,25 @@ vi.mock('@/features/files/ui/organisms/file-panel', () => ({
   }
 }));
 
+/**
+ * The region presentation the shell resolves from the window width. Seeded
+ * directly (the policy and the browser geometry are covered elsewhere) so this
+ * suite can assert the sidebar wiring deterministically in the node runner.
+ */
+const layout = vi.hoisted(() => ({
+  value: { sidebar: 'inline', rightPanel: 'inline' } as {
+    sidebar: 'inline' | 'overlay';
+    rightPanel: 'inline' | 'overlay';
+  }
+}));
+
+vi.mock('@/shared/ui/layout/region-visibility', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>(
+    '@/shared/ui/layout/region-visibility'
+  );
+  return { ...actual, resolveRegionLayout: () => layout.value };
+});
+
 vi.mock('./shell-state', async () => {
   const actual =
     await vi.importActual<Record<string, unknown>>('./shell-state');
@@ -178,6 +197,7 @@ describe('shell navigation seam', () => {
     capture.filePanel = null;
     capture.navigateHome.mockReset();
     capture.revealFileInPanel.mockReset();
+    layout.value = { sidebar: 'inline', rightPanel: 'inline' };
 
     capture.shellState.activeConversationId = 'conv-composer-chain';
     capture.shellState.visibility = { sidebar: true, rightPanel: false };
@@ -289,5 +309,22 @@ describe('shell navigation seam', () => {
     expect(homeComposer).toBeDefined();
     expect(homeComposer?.props.draft).toBe(EMPTY_COMPOSER_DRAFT);
     expect(typeof homeComposer?.props.onDraftChange).toBe('function');
+  });
+
+  it('keeps the sidebar inline at wide widths and collapses it to an overlay drawer when narrow (#43)', () => {
+    renderToStaticMarkup(<AppShell />);
+    // Wide: the sidebar still owns its column, and it has no dismiss handler it
+    // would not use.
+    expect(capture.sidebar?.isOverlay).toBe(false);
+
+    layout.value = { sidebar: 'overlay', rightPanel: 'overlay' };
+    renderToStaticMarkup(<AppShell />);
+
+    // Narrow: the sidebar hands its column to the rail and is drawn as an
+    // on-demand drawer. Its visibility state — and therefore the rail toggle —
+    // is untouched, and dismissing the drawer reports through the *same* shell
+    // transition the rail toggle uses, so region visibility keeps one owner.
+    expect(capture.sidebar?.isOverlay).toBe(true);
+    expect(capture.sidebar?.onClose).toBe(capture.rail?.onToggleSidebar);
   });
 });

@@ -45,7 +45,13 @@
   --line-height-base: 1.45; /* base copy */
 
   /* Geometry (wireframe: .window min-width, .rail width, .sidebar width). */
-  --window-min-width: 900px; /* .window-shell */
+  --window-min-width: 900px; /* .window-shell — the native floor enforced by
+                                tauri.conf.json minWidth; the two must agree
+                                (#43). The responsive breakpoints that decide
+                                when a region stops taking a column are in
+                                src/shared/ui/layout/region-visibility.ts */
+  --window-min-height: 700px; /* .window-shell — enforced by tauri.conf.json
+                                 minHeight (#43) */
   --rail-width: 56px; /* .rail */
   --sidebar-width: 318px; /* .sidebar */
   --right-panel-width: 460px; /* .right-panel — added here, the wireframe
@@ -56,4 +62,10 @@
   --region-gutter: 8px; /* top inset of the panel surfaces (screens 01/02) */
   --control-size: 32px; /* square hit area for icon controls; the rail
                            re-scopes it to 38px */
+
+  /* Stacking order (#43). Below the panel breakpoint a region is drawn as an
+     on-demand overlay over the main pane; the composer dock always paints above
+     those overlays, so the send control stays visible and operable. */
+  --layer-overlay: 20; /* .sidebar--overlay, .right-panel--overlay */
+  --layer-composer: 30; /* .composer-dock */
 }

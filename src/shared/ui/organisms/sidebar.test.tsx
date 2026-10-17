@@ -1,14 +1,50 @@
-import { isValidElement, type ReactElement, type ReactNode } from 'react';
+import { createElement, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
-import { Button, type ButtonProps } from '../atoms/button';
-import {
-  ConversationRow,
-  type ConversationRowProps
-} from '../molecules/conversation-row';
 import { Sidebar, type SidebarProps } from './sidebar';
+
+/**
+ * The suite drives the sidebar's *wiring* — which callback a row reports to —
+ * rather than its DOM. The component now uses hooks (the narrow-window drawer
+ * manages focus), so it can no longer be called as a plain function to read its
+ * element tree. Instead the two children whose callbacks the tests drive record
+ * the props they receive while rendering the real component; that is the same
+ * capture pattern the shell seam suites use.
+ */
+const recorded = vi.hoisted(() => ({
+  rows: [] as Record<string, unknown>[],
+  buttons: [] as Record<string, unknown>[]
+}));
+
+/** The real child, recovered from the module the mock replaced. */
+type ChildComponent = (props: Record<string, unknown>) => ReactElement;
+
+vi.mock('../molecules/conversation-row', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>(
+    '../molecules/conversation-row'
+  );
+  const Actual = actual.ConversationRow as ChildComponent;
+  return {
+    ConversationRow: (props: Record<string, unknown>) => {
+      recorded.rows.push(props);
+      return createElement(Actual, props);
+    }
+  };
+});
+
+vi.mock('../atoms/button', async () => {
+  const actual =
+    await vi.importActual<Record<string, unknown>>('../atoms/button');
+  const Actual = actual.Button as ChildComponent;
+  return {
+    Button: (props: Record<string, unknown>) => {
+      recorded.buttons.push(props);
+      return createElement(Actual, props);
+    }
+  };
+});
 
 const projects: readonly Project[] = [
   {
@@ -72,53 +108,12 @@ function renderSidebar(overrides: Partial<SidebarProps> = {}) {
   );
 }
 
-/** Collects the conversation rows a sidebar render produced (no DOM needed). */
-function collectRows(node: ReactNode): ReactElement<ConversationRowProps>[] {
-  const found: ReactElement<ConversationRowProps>[] = [];
-
-  function visit(current: ReactNode) {
-    if (Array.isArray(current)) {
-      current.forEach(visit);
-      return;
-    }
-    if (!isValidElement(current)) {
-      return;
-    }
-    if (current.type === ConversationRow) {
-      found.push(current as ReactElement<ConversationRowProps>);
-      return;
-    }
-    visit((current.props as { children?: ReactNode }).children);
-  }
-
-  visit(node);
-  return found;
-}
-
-/** Collects the `Button` atoms a sidebar render produced (no DOM needed). */
-function collectButtons(node: ReactNode): ReactElement<ButtonProps>[] {
-  const found: ReactElement<ButtonProps>[] = [];
-
-  function visit(current: ReactNode) {
-    if (Array.isArray(current)) {
-      current.forEach(visit);
-      return;
-    }
-    if (!isValidElement(current)) {
-      return;
-    }
-    if (current.type === Button) {
-      found.push(current as ReactElement<ButtonProps>);
-      return;
-    }
-    visit((current.props as { children?: ReactNode }).children);
-  }
-
-  visit(node);
-  return found;
-}
-
 describe('sidebar', () => {
+  beforeEach(() => {
+    recorded.rows = [];
+    recorded.buttons = [];
+  });
+
   it('renders the application brand and the three groups', () => {
     const markup = renderSidebar();
 
@@ -176,41 +171,37 @@ describe('sidebar', () => {
 
   it('reports the pressed conversation up, one owner of the selection', () => {
     const onSelectConversation = vi.fn();
-    const rows = collectRows(
-      Sidebar({
-        projects,
-        conversations,
-        activeConversationId: null,
-        onSelectConversation,
-        onNewChat: () => undefined
-      })
-    );
+    renderSidebar({ onSelectConversation });
 
-    const hooksRow = rows.find(row => row.props.title === 'Hooks review');
-    hooksRow?.props.onSelect();
+    const hooksRow = recorded.rows.find(row => row.title === 'Hooks review');
+    expect(hooksRow).toBeDefined();
+    (hooksRow?.onSelect as (() => void) | undefined)?.();
 
     expect(onSelectConversation).toHaveBeenCalledWith('conv-hooks');
   });
 
+  it('draws a plain column frame by default and a drawer when overlaid (#43)', () => {
+    const inline = renderSidebar();
+    expect(inline).toContain('class="sidebar"');
+    expect(inline).not.toContain('sidebar--overlay');
+
+    const overlay = renderSidebar({ isOverlay: true });
+    expect(overlay).toContain('class="sidebar sidebar--overlay"');
+    // The drawer is a focus target so Escape can dismiss it.
+    expect(overlay).toContain('tabindex="-1"');
+  });
+
   it('wires the new-chat row to the home action the shell hands down', () => {
     const onNewChat = vi.fn();
-    const buttons = collectButtons(
-      Sidebar({
-        projects,
-        conversations,
-        activeConversationId: 'conv-diff',
-        onSelectConversation: () => undefined,
-        onNewChat
-      })
-    );
+    renderSidebar({ activeConversationId: 'conv-diff', onNewChat });
 
-    // The new-chat row is the only `list`-variant button; pressing it reports the
-    // home destination so the shell can clear the open conversation (#40,
+    // The new-chat row is the first `list`-variant button; pressing it reports
+    // the home destination so the shell can clear the open conversation (#40,
     // criterion 1).
-    const newChat = buttons.find(button => button.props.variant === 'list');
+    const newChat = recorded.buttons.find(button => button.variant === 'list');
     expect(newChat).toBeDefined();
 
-    newChat?.props.onPress?.();
+    (newChat?.onPress as (() => void) | undefined)?.();
 
     expect(onNewChat).toHaveBeenCalledTimes(1);
   });
