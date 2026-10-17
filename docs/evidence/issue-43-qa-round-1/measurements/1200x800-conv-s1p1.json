@@ -1,0 +1,151 @@
+{
+  "activeElement": "Alternar panel derecho",
+  "clipped": [],
+  "composerClearance": "251px",
+  "covered": [],
+  "docOverflow": {
+    "x": 0,
+    "y": 0
+  },
+  "dock": {
+    "rect": {
+      "bottom": 771,
+      "h": 222,
+      "right": 716,
+      "w": 317,
+      "x": 399,
+      "y": 549
+    },
+    "z": "30"
+  },
+  "outsideViewport": [],
+  "rail": {
+    "bottom": 800,
+    "h": 800,
+    "right": 56,
+    "w": 56,
+    "x": 0,
+    "y": 0
+  },
+  "rightPanel": {
+    "hidden": false,
+    "overlay": false,
+    "position": "static",
+    "present": true,
+    "rect": {
+      "bottom": 800,
+      "h": 792,
+      "right": 1200,
+      "w": 460,
+      "x": 740,
+      "y": 8
+    },
+    "z": "auto"
+  },
+  "scrolledOut": [
+    {
+      "label": "Enviado a las 09:02",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Editar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Contraer actividad de herramientas",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Abrir src/shared/domain/selection-chain.ts",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Copiar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviar comentarios",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Compartir mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviado a las 09:02",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Editar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    }
+  ],
+  "send": {
+    "hit": "self",
+    "inViewport": true,
+    "rect": {
+      "bottom": 764,
+      "h": 30,
+      "right": 706,
+      "w": 30,
+      "x": 676,
+      "y": 734
+    }
+  },
+  "shell": {
+    "bottom": 800,
+    "h": 800,
+    "right": 1200,
+    "w": 1200,
+    "x": 0,
+    "y": 0
+  },
+  "shellClass": "window-shell",
+  "sidebar": {
+    "content": {
+      "ch": 674,
+      "oy": "auto",
+      "sh": 674,
+      "sy": 0
+    },
+    "overlay": false,
+    "position": "static",
+    "present": true,
+    "rect": {
+      "bottom": 800,
+      "h": 792,
+      "right": 374,
+      "w": 318,
+      "x": 56,
+      "y": 8
+    },
+    "z": "auto"
+  },
+  "toggles": [
+    {
+      "label": "Inicio",
+      "pressed": null
+    },
+    {
+      "label": "Alternar barra lateral",
+      "pressed": "true"
+    },
+    {
+      "label": "Alternar panel derecho",
+      "pressed": "true"
+    }
+  ],
+  "viewport": {
+    "h": 800,
+    "w": 1200
+  }
+}

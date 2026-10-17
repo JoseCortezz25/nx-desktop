@@ -1,0 +1,105 @@
+{
+  "activeElement": "Alternar barra lateral",
+  "clipped": [],
+  "composerClearance": "180px",
+  "covered": [],
+  "docOverflow": {
+    "x": 0,
+    "y": 0
+  },
+  "dock": {
+    "rect": {
+      "bottom": 871,
+      "h": 151,
+      "right": 1260,
+      "w": 705,
+      "x": 555,
+      "y": 720
+    },
+    "z": "30"
+  },
+  "outsideViewport": [],
+  "rail": {
+    "bottom": 900,
+    "h": 900,
+    "right": 56,
+    "w": 56,
+    "x": 0,
+    "y": 0
+  },
+  "rightPanel": {
+    "hidden": true,
+    "overlay": false,
+    "position": "static",
+    "present": true,
+    "rect": {
+      "bottom": 0,
+      "h": 0,
+      "right": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0
+    },
+    "z": "auto"
+  },
+  "scrolledOut": [],
+  "send": {
+    "hit": "self",
+    "inViewport": true,
+    "rect": {
+      "bottom": 860,
+      "h": 30,
+      "right": 1250,
+      "w": 30,
+      "x": 1220,
+      "y": 830
+    }
+  },
+  "shell": {
+    "bottom": 900,
+    "h": 900,
+    "right": 1440,
+    "w": 1440,
+    "x": 0,
+    "y": 0
+  },
+  "shellClass": "window-shell",
+  "sidebar": {
+    "content": {
+      "ch": 774,
+      "oy": "auto",
+      "sh": 774,
+      "sy": 0
+    },
+    "overlay": false,
+    "position": "static",
+    "present": true,
+    "rect": {
+      "bottom": 900,
+      "h": 892,
+      "right": 374,
+      "w": 318,
+      "x": 56,
+      "y": 8
+    },
+    "z": "auto"
+  },
+  "toggles": [
+    {
+      "label": "Inicio",
+      "pressed": null
+    },
+    {
+      "label": "Alternar barra lateral",
+      "pressed": "true"
+    },
+    {
+      "label": "Alternar panel derecho",
+      "pressed": "false"
+    }
+  ],
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}

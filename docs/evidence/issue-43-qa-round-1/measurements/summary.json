@@ -1,0 +1,2165 @@
+{
+  "generatedFrom": "measurements/*.json (agent-browser DOM probe)",
+  "rows": [
+    {
+      "state": "1000x720-conv-s0p0",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-conv-s0p1",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 1000,
+          "w": 460,
+          "x": 540,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 5,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-conv-s1p0",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 8,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-conv-s1p1",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 1000,
+          "w": 460,
+          "x": 540,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 13,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-s0p0",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-s0p1",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 1000,
+          "w": 460,
+          "x": 540,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-s1p0",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1000x720-s1p1",
+      "viewport": {
+        "h": 720,
+        "w": 1000
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 532,
+          "h": 524,
+          "right": 1000,
+          "w": 460,
+          "x": 540,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 691,
+          "h": 151,
+          "right": 881,
+          "w": 705,
+          "x": 176,
+          "y": 540
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-conv-s0p0",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 771,
+          "h": 151,
+          "right": 981,
+          "w": 705,
+          "x": 276,
+          "y": 620
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 6,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-conv-s0p1",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 1200,
+          "w": 460,
+          "x": 740,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 771,
+          "h": 183,
+          "right": 716,
+          "w": 635,
+          "x": 81,
+          "y": 588
+        },
+        "z": "30"
+      },
+      "composerClearance": "212px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-conv-s1p0",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 771,
+          "h": 151,
+          "right": 1140,
+          "w": 705,
+          "x": 435,
+          "y": 620
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 6,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-conv-s1p1",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 1200,
+          "w": 460,
+          "x": 740,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 771,
+          "h": 222,
+          "right": 716,
+          "w": 317,
+          "x": 399,
+          "y": 549
+        },
+        "z": "30"
+      },
+      "composerClearance": "251px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 9,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-s0p0",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 981,
+          "w": 705,
+          "x": 276,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "396px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-s0p1",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 1200,
+          "w": 460,
+          "x": 740,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 740,
+          "w": 683,
+          "x": 57,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "396px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-s1p0",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 1140,
+          "w": 705,
+          "x": 435,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "396px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1200x800-s1p1",
+      "viewport": {
+        "h": 800,
+        "w": 1200
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 800,
+          "h": 792,
+          "right": 1200,
+          "w": 460,
+          "x": 740,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 662,
+          "h": 222,
+          "right": 740,
+          "w": 365,
+          "x": 375,
+          "y": 440
+        },
+        "z": "30"
+      },
+      "composerClearance": "360px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-conv-s0p0",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 871,
+          "h": 151,
+          "right": 1101,
+          "w": 705,
+          "x": 396,
+          "y": 720
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-conv-s0p1",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 1440,
+          "w": 460,
+          "x": 980,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 871,
+          "h": 151,
+          "right": 871,
+          "w": 705,
+          "x": 166,
+          "y": 720
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-conv-s1p0",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 871,
+          "h": 151,
+          "right": 1260,
+          "w": 705,
+          "x": 555,
+          "y": 720
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-conv-s1p1",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 1440,
+          "w": 460,
+          "x": 980,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 871,
+          "h": 183,
+          "right": 956,
+          "w": 557,
+          "x": 399,
+          "y": 688
+        },
+        "z": "30"
+      },
+      "composerClearance": "212px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 6,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-s0p0",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 1101,
+          "w": 705,
+          "x": 396,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "496px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-s0p1",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 1440,
+          "w": 460,
+          "x": 980,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 871,
+          "w": 705,
+          "x": 166,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "496px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-s1p0",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 555,
+          "h": 151,
+          "right": 1260,
+          "w": 705,
+          "x": 555,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "496px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "1440x900-s1p1",
+      "viewport": {
+        "h": 900,
+        "w": 1440
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "static",
+        "rect": {
+          "bottom": 900,
+          "h": 892,
+          "right": 1440,
+          "w": 460,
+          "x": 980,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 587,
+          "h": 183,
+          "right": 980,
+          "w": 605,
+          "x": 375,
+          "y": 404
+        },
+        "z": "30"
+      },
+      "composerClearance": "496px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-conv-s0p0",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-conv-s0p1",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 900,
+          "w": 460,
+          "x": 440,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 5,
+        "clipped": 0,
+        "scrolledOut": 7,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-conv-s1p0",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 8,
+        "clipped": 0,
+        "scrolledOut": 8,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-conv-s1p1",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 900,
+          "w": 460,
+          "x": 440,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 13,
+        "clipped": 0,
+        "scrolledOut": 8,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-s0p0",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-s0p1",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": false,
+        "presentation": null,
+        "rect": null
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 900,
+          "w": 460,
+          "x": 440,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "false"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 0,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-s1p0",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 0,
+          "h": 0,
+          "right": 0,
+          "w": 0,
+          "x": 0,
+          "y": 0
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "false"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 1,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    },
+    {
+      "state": "900x700-s1p1",
+      "viewport": {
+        "h": 700,
+        "w": 900
+      },
+      "docOverflow": {
+        "x": 0,
+        "y": 0
+      },
+      "sidebar": {
+        "present": true,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 374,
+          "w": 318,
+          "x": 56,
+          "y": 8
+        }
+      },
+      "rightPanel": {
+        "hidden": false,
+        "presentation": "absolute",
+        "rect": {
+          "bottom": 512,
+          "h": 504,
+          "right": 900,
+          "w": 460,
+          "x": 440,
+          "y": 8
+        }
+      },
+      "composerDock": {
+        "rect": {
+          "bottom": 671,
+          "h": 151,
+          "right": 831,
+          "w": 705,
+          "x": 126,
+          "y": 520
+        },
+        "z": "30"
+      },
+      "composerClearance": "180px",
+      "send": {
+        "inViewport": true,
+        "hitTest": "self"
+      },
+      "toggles": [
+        {
+          "label": "Inicio",
+          "pressed": null
+        },
+        {
+          "label": "Alternar barra lateral",
+          "pressed": "true"
+        },
+        {
+          "label": "Alternar panel derecho",
+          "pressed": "true"
+        }
+      ],
+      "reachabilityFlags": {
+        "covered": 0,
+        "clipped": 1,
+        "scrolledOut": 0,
+        "outsideViewport": 0
+      }
+    }
+  ]
+}

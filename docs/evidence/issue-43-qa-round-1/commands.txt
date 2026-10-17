@@ -1,0 +1,36 @@
+Issue #43 / PR #50 - QA round 1 commands (HEAD 6f50b7db52d028dd28c3f2b1853359c4cb958e4e)
+
+# --- environment ---
+pwd                                             -> /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-43-qa (detached worktree)
+git rev-parse HEAD                              -> 6f50b7db52d028dd28c3f2b1853359c4cb958e4e  (matches the handoff HEAD; unchanged)
+git status --short --branch                     -> ## HEAD (no branch)  (clean)
+pnpm install --frozen-lockfile                  -> done in 1.8s
+pnpm run dev                                    -> Vite 8.3.4 ready, http://localhost:1420/  (documented README start command; mock repositories, no auth)
+
+# --- repo deterministic checks (existing harness) ---
+pnpm run typecheck                              -> exit 0, clean
+pnpm run lint                                   -> exit 0, clean
+pnpm run format:check                           -> "All matched files use Prettier code style!"
+pnpm test                                       -> 38 files / 224 tests passed
+
+# --- browser driver ---
+agent-browser set viewport <w> <h>
+agent-browser open http://localhost:1420/
+agent-browser click ".rail button[aria-label='Alternar barra lateral']"
+agent-browser click ".rail button[aria-label='Alternar panel derecho']"
+agent-browser click "button[aria-label='Cerrar panel']"
+agent-browser focus  ".rail button[aria-label='...']" ; agent-browser press Enter|Space|Escape
+cat dom/probe.js | agent-browser eval --stdin     # DOM/geometry probe -> measurements/*.json
+cat dom/reach.js | agent-browser eval --stdin     # scrollIntoView + elementFromPoint reachability pass
+agent-browser screenshot <path>                   # viewport captures -> current-*.png
+
+# --- reference render (the one size a wireframe draws) ---
+agent-browser set viewport 1440 900
+agent-browser open file:///<repo>/docs/wireframes/01-home.html        -> reference-01-home-1440x900.png
+agent-browser open file:///<repo>/docs/wireframes/02-home-sidebar.html -> reference-02-home-sidebar-1440x900.png
+
+# --- comparison pages (structural + geometric; NOT a pixel-parity gate) ---
+node build-comparison.mjs                        -> comparison-1440x900.html, annotated-viewports.html, key-evidence-viewports.html
+agent-browser screenshot --full comparison-1440x900.png
+agent-browser screenshot --full annotated-viewports.png
+agent-browser screenshot --full key-evidence-viewports.png

@@ -1,0 +1,92 @@
+{
+  "activeElement": "BODY",
+  "clipped": [],
+  "composerClearance": "180px",
+  "covered": [],
+  "docOverflow": {
+    "x": 0,
+    "y": 0
+  },
+  "dock": {
+    "rect": {
+      "bottom": 691,
+      "h": 151,
+      "right": 881,
+      "w": 705,
+      "x": 176,
+      "y": 540
+    },
+    "z": "30"
+  },
+  "outsideViewport": [],
+  "rail": {
+    "bottom": 720,
+    "h": 720,
+    "right": 56,
+    "w": 56,
+    "x": 0,
+    "y": 0
+  },
+  "rightPanel": {
+    "hidden": true,
+    "overlay": true,
+    "position": "absolute",
+    "present": true,
+    "rect": {
+      "bottom": 0,
+      "h": 0,
+      "right": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0
+    },
+    "z": "20"
+  },
+  "send": {
+    "hit": "self",
+    "inViewport": true,
+    "rect": {
+      "bottom": 680,
+      "h": 30,
+      "right": 871,
+      "w": 30,
+      "x": 841,
+      "y": 650
+    }
+  },
+  "shell": {
+    "bottom": 720,
+    "h": 720,
+    "right": 1000,
+    "w": 1000,
+    "x": 0,
+    "y": 0
+  },
+  "shellClass": "window-shell window-shell--compact",
+  "sidebar": {
+    "content": null,
+    "overlay": null,
+    "position": null,
+    "present": false,
+    "rect": null,
+    "z": null
+  },
+  "toggles": [
+    {
+      "label": "Inicio",
+      "pressed": null
+    },
+    {
+      "label": "Alternar barra lateral",
+      "pressed": "false"
+    },
+    {
+      "label": "Alternar panel derecho",
+      "pressed": "false"
+    }
+  ],
+  "viewport": {
+    "h": 720,
+    "w": 1000
+  }
+}

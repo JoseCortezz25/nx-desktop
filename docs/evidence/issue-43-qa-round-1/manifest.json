@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "issue": "https://github.com/JoseCortezz25/nx-desktop/issues/43",
+  "pr": "https://github.com/JoseCortezz25/nx-desktop/pull/50",
+  "head": "6f50b7db52d028dd28c3f2b1853359c4cb958e4e",
+  "base": "cc079940eac38a327fbc760a0572ef19dd57d980",
+  "branch": "feat/issue-43-responsive-layout",
+  "scope": "window-shell (rail, sidebar, main pane, right panel, composer dock)",
+  "url": "http://localhost:1420/",
+  "capture": "viewport",
+  "selector": null,
+  "engine": { "name": "HeadlessChrome", "version": "152.0.0.0", "chromium": "152", "platform": "Linux x86_64", "driver": "agent-browser 0.26.0 (CDP)" },
+  "deviceScaleFactor": 1,
+  "masks": ["message timestamps (Enviado a las HH:MM)"],
+  "baselineType": "new-baseline-established-by-this-ticket",
+  "baselineNote": "No pre-existing visual baseline exists below 1440x900 (issue #43). The below-1440 reference is the maintainer-approved structure in comment 6242046193 (rail 56 + sidebar 318 + right panel 460; panel overlays first, sidebar collapses second), so this is NOT an independent pixel-parity oracle. The 1440x900 row also has a rendered wireframe reference.",
+  "diffTool": { "script": "evaluate-visual-diff.ts", "available": false, "reason": "The companion script cannot drive a UI state nor clip the current side (recorded in issue #43); comparison is structural + geometric (measured DOM rectangles over raw captures)." },
+  "viewports": [
+    { "name": "900x700", "width": 900, "height": 700, "role": "approved native minimum" },
+    { "name": "1000x720", "width": 1000, "height": 720, "role": "below the sidebar-collapse step" },
+    { "name": "1200x800", "width": 1200, "height": 800, "role": "panel breakpoint" },
+    { "name": "1440x900", "width": 1440, "height": 900, "role": "only pre-existing reference" }
+  ],
+  "states": {
+    "s0p0": "home, both regions closed",
+    "s1p0": "home, sidebar open",
+    "s0p1": "home, right panel open",
+    "s1p1": "home, both regions open",
+    "conv-s0p0": "conversation view, both regions closed",
+    "conv-s1p1": "conversation view, both regions open"
+  },
+  "createdAt": "2026-10-17T23:50:40Z"
+}

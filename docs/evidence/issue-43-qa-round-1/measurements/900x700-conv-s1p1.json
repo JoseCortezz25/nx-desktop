@@ -1,0 +1,212 @@
+{
+  "activeElement": "right-panel right-panel--overlay",
+  "clipped": [],
+  "composerClearance": "180px",
+  "covered": [
+    {
+      "hit": "file-panel__empty",
+      "label": "Enviado a las 09:00",
+      "region": "main-pane"
+    },
+    {
+      "hit": "file-panel__empty",
+      "label": "Editar mensaje",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list button--active",
+      "label": "Contraer actividad de herramientas",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list button--active",
+      "label": "Abrir src/shared/domain/selection-chain.ts",
+      "region": "main-pane"
+    },
+    {
+      "hit": "file-panel__empty",
+      "label": "Abrir src/features/providers/hooks/use-compo",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Abrir docs/research-tecnico/arquitectura-tau",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Copiar mensaje",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Enviar comentarios",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Compartir mensaje",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Enviado a las 09:00",
+      "region": "main-pane"
+    },
+    {
+      "hit": "button button--list",
+      "label": "Editar mensaje",
+      "region": "main-pane"
+    },
+    {
+      "hit": "file-panel__empty",
+      "label": "Enviado a las 09:02",
+      "region": "main-pane"
+    },
+    {
+      "hit": "file-panel__empty",
+      "label": "Editar mensaje",
+      "region": "main-pane"
+    }
+  ],
+  "docOverflow": {
+    "x": 0,
+    "y": 0
+  },
+  "dock": {
+    "rect": {
+      "bottom": 671,
+      "h": 151,
+      "right": 831,
+      "w": 705,
+      "x": 126,
+      "y": 520
+    },
+    "z": "30"
+  },
+  "outsideViewport": [],
+  "rail": {
+    "bottom": 700,
+    "h": 700,
+    "right": 56,
+    "w": 56,
+    "x": 0,
+    "y": 0
+  },
+  "rightPanel": {
+    "hidden": false,
+    "overlay": true,
+    "position": "absolute",
+    "present": true,
+    "rect": {
+      "bottom": 512,
+      "h": 504,
+      "right": 900,
+      "w": 460,
+      "x": 440,
+      "y": 8
+    },
+    "z": "20"
+  },
+  "scrolledOut": [
+    {
+      "label": "Diff review panel",
+      "region": "sidebar",
+      "scroller": "sidebar__content"
+    },
+    {
+      "label": "Contraer actividad de herramientas",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Abrir src/shared/domain/selection-chain.ts",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Copiar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviar comentarios",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Compartir mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviado a las 09:02",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Editar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    }
+  ],
+  "send": {
+    "hit": "self",
+    "inViewport": true,
+    "rect": {
+      "bottom": 660,
+      "h": 30,
+      "right": 821,
+      "w": 30,
+      "x": 791,
+      "y": 630
+    }
+  },
+  "shell": {
+    "bottom": 700,
+    "h": 700,
+    "right": 900,
+    "w": 900,
+    "x": 0,
+    "y": 0
+  },
+  "shellClass": "window-shell window-shell--compact",
+  "sidebar": {
+    "content": {
+      "ch": 386,
+      "oy": "auto",
+      "sh": 411,
+      "sy": 0
+    },
+    "overlay": true,
+    "position": "absolute",
+    "present": true,
+    "rect": {
+      "bottom": 512,
+      "h": 504,
+      "right": 374,
+      "w": 318,
+      "x": 56,
+      "y": 8
+    },
+    "z": "20"
+  },
+  "toggles": [
+    {
+      "label": "Inicio",
+      "pressed": null
+    },
+    {
+      "label": "Alternar barra lateral",
+      "pressed": "true"
+    },
+    {
+      "label": "Alternar panel derecho",
+      "pressed": "true"
+    }
+  ],
+  "viewport": {
+    "h": 700,
+    "w": 900
+  }
+}

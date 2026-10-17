@@ -1,0 +1,65 @@
+Issue #43 / PR #50 - functional QA transcript (round 1)
+HEAD 6f50b7d  base cc07994  app: Vite dev server http://localhost:1420  driver: agent-browser 0.26.0 (CDP, HeadlessChrome 152)
+Selectors: aria-label (no data-testid exists in src/; aria-label is the stable hook the app exposes).
+
+A. RAIL TOGGLES - mouse
+  click `.rail button[aria-label='Alternar barra lateral']`  -> sidebar mounted (aside.sidebar.sidebar--overlay), aria-pressed=true
+  click `.rail button[aria-label='Alternar panel derecho']`  -> right panel visible (hidden=false), aria-pressed=true
+  each toggle leaves the other region's aria-pressed untouched.
+
+B. RAIL TOGGLES - keyboard
+  focus `.rail button[aria-label='Alternar barra lateral']`; press Enter  -> sidebar opens, aria-pressed=true
+  focus `.rail button[aria-label='Alternar panel derecho']`; press Space   -> panel opens, aria-pressed=true
+  (opening a drawer moves focus into the drawer by design, so a following Enter/Space goes to the drawer.)
+
+C. ESCAPE DISMISSAL + FOCUS RESTORATION
+  Right panel (overlay, 900x700): activeElement on open = `.right-panel--overlay`.
+    press Escape -> panel hidden=true, aria-pressed=false, activeElement = the element that opened it
+    (`button[aria-label='Abrir docs/research-tecnico/arquitectura-tauri.md']`). PASS.
+  Sidebar (overlay, 900x700): activeElement on open = `.sidebar--overlay`.
+    press Escape -> sidebar unmounted, aria-pressed=false, activeElement = BODY (document.body).
+    The rail toggle is NOT refocused. Reproduced deterministically. This is the Verifier finding;
+    adjudicated in README ("Sidebar focus finding").
+
+D. FILE OPEN FROM THE CHAT
+  conversation "Composer selection chain" -> chip `button[aria-label='Abrir docs/research-tecnico/arquitectura-tauri.md']`
+  click -> right panel opens as overlay (900x700: position absolute, x 440-900, y 8-512), tab strip shows
+  the file, `Abrir` toolbar present. aria-pressed for the panel toggle flips to true (revealFileInPanel).
+
+E. PANEL TAB PERSISTENCE
+  open two files -> tabs "src/shared/domain/selection-chain.ts" + "docs/research-tecnico/arquitectura-tauri.md"
+  click `button[aria-label='Cerrar panel']` -> panel hidden=true
+  click rail panel toggle -> panel visible again, BOTH tabs still present
+  resize 900 -> 1440 (overlay -> inline column) -> BOTH tabs still present.
+
+F. HOME NAVIGATION
+  sidebar `Nuevo chat` (overlay open) -> main pane returns to home (h1 "¿En qué deberíamos trabajar?"),
+    sidebar stays open (aria-pressed=true).
+  rail `button[aria-label='Inicio']` -> returns home from a conversation.
+
+G. COMPOSER / SEND REACHABILITY
+  Every viewport x every region state: send `button[aria-label='Enviar']` is inside the viewport and
+  document.elementFromPoint at its center resolves to the send button itself (hit=self). 32/32 states.
+  document.documentElement scrollWidth-clientWidth = 0 and scrollHeight-clientHeight = 0 in all 32 states.
+  Comfortable control reachability pass (scrollIntoView + hit test on rail/composer/sidebar/panel controls):
+    900x700 home: s0p0 12/0, s1p0 19/0, s1p1 20/0, s0p1 13/0  (checked / unreachable)
+    1000x720 home: same counts, 0 unreachable
+    900x700 conversation: s0p0 12/0, s1p0 19/0, s1p1 20/0, s0p1 13/0
+    1000x720 conversation: same counts, 0 unreachable
+  Composer growth stress (synthetic, documented as a stress probe - the shipped textarea is rows=1/resize:none
+  and shows content via scroll, so growth is exercised by width-driven action-row wrapping and by this probe):
+    at 900x700 conversation, both overlays open, set textarea min-height 22px -> 160px:
+      --composer-clearance 180px -> 318px; composer dock height 151 -> 289;
+      drawer bottoms y=512 -> y=374 (dock top 382, 8px --region-gutter); send still in viewport and hit=self.
+  Real width-driven growth: at 1200x800 the composer dock grows 151 -> 222 px with the panel open
+    (main pane narrows to 366, action row wraps) and --composer-clearance tracks it (396 -> 360). 1440 CONV s0p0: 151.
+    (measured dock height at home s1p1: 900=151, 1000=151, 1200=222, 1440=183)
+
+H. RESIZE WITHOUT RELOAD (no negated toggle)
+  at 1200x800 open both regions (inline) -> resize to 900x700 without reload: both aria-pressed stay true,
+  both regions flip to overlay; resize to 1440x900: both stay open, both flip to inline. No overflow at any step.
+
+I. NATIVE MINIMUM (source/config inspection, not native runtime)
+  src-tauri/tauri.conf.json: window width 1200 height 800, minWidth 900, minHeight 700.
+  src/shared/ui/tokens.css: --window-min-width: 900px, --window-min-height: 700px (identical values).
+  .window-shell computes min-width 900px / min-height 700px; observed shell min-width "900px".

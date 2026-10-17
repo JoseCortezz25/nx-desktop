@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Issue #43 — 1440x900 reference vs current</title><style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #eef0f4; color: #111; font: 13px/1.4 Inter, system-ui, sans-serif; }
+  h1 { font-size: 18px; margin: 16px 20px 4px; }
+  h2 { font-size: 14px; margin: 18px 20px 6px; color: #333; }
+  .meta { margin: 0 20px 10px; color: #555; max-width: 1400px; }
+  .row { display: flex; gap: 20px; padding: 0 20px 18px; flex-wrap: wrap; }
+  .panel { position: relative; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+  .panel > img { display: block; }
+  .panel > .cap { position: absolute; left: 0; top: -20px; font-weight: 600; color: #222; }
+  .reg { position: absolute; border: 2px solid; pointer-events: none; }
+  .reg > span { position: absolute; top: 0; left: 0; color: #fff; font-size: 10px; padding: 1px 4px; white-space: nowrap; }
+  .plus { align-self: center; font-size: 28px; color: #888; }
+</style></head><body><h1>Issue #43 — 1440x900 reference vs current</h1>
+    <h2>Home, both regions closed — wireframe 01 vs app at 1440x900</h2>
+    <div class="row">
+      <div class="panel" style="width:1440px;height:900px"><div class="cap">reference: docs/wireframes/01-home.html</div><img src="reference-01-home-1440x900.png" width="1440" height="900"></div>
+      <div class="plus">&rarr;</div>
+      <div class="panel" style="width:1440px;height:900px"><div class="cap">current: app / (PR HEAD)</div><img src="current-1440x900-home-s0p0.png" width="1440" height="900"><div class="reg" style="left:0px;top:0px;width:56px;height:900px;border-color:#2f6fed"><span style="background:#2f6fed">rail 56x900 @ 0,0</span></div>
+<div class="reg" style="left:396px;top:404px;width:705px;height:151px;border-color:#d9561e"><span style="background:#d9561e">composer dock 705x151 @ 396,404</span></div></div>
+    </div>
+    <div class="meta">The reference draws a 40px title bar and placeholder content the app intentionally does not reproduce (issue #42 removal); region geometry, clipped controls and landmarks are the comparison, not whole-page pixels.</div>
+    <h2>Home, sidebar open — wireframe 02 vs app at 1440x900</h2>
+    <div class="row">
+      <div class="panel" style="width:1440px;height:900px"><div class="cap">reference: docs/wireframes/02-home-sidebar.html</div><img src="reference-02-home-sidebar-1440x900.png" width="1440" height="900"></div>
+      <div class="plus">&rarr;</div>
+      <div class="panel" style="width:1440px;height:900px"><div class="cap">current: app / (PR HEAD)</div><img src="current-1440x900-home-s1p0.png" width="1440" height="900"><div class="reg" style="left:0px;top:0px;width:56px;height:900px;border-color:#2f6fed"><span style="background:#2f6fed">rail 56x900 @ 0,0</span></div>
+<div class="reg" style="left:56px;top:8px;width:318px;height:892px;border-color:#1a8f4a"><span style="background:#1a8f4a">sidebar (static) 318x892 @ 56,8</span></div>
+<div class="reg" style="left:555px;top:404px;width:705px;height:151px;border-color:#d9561e"><span style="background:#d9561e">composer dock 705x151 @ 555,404</span></div></div>
+    </div></body></html>

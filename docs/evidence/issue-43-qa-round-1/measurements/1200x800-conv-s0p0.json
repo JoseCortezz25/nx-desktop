@@ -1,0 +1,124 @@
+{
+  "activeElement": "Alternar panel derecho",
+  "clipped": [],
+  "composerClearance": "180px",
+  "covered": [],
+  "docOverflow": {
+    "x": 0,
+    "y": 0
+  },
+  "dock": {
+    "rect": {
+      "bottom": 771,
+      "h": 151,
+      "right": 981,
+      "w": 705,
+      "x": 276,
+      "y": 620
+    },
+    "z": "30"
+  },
+  "outsideViewport": [],
+  "rail": {
+    "bottom": 800,
+    "h": 800,
+    "right": 56,
+    "w": 56,
+    "x": 0,
+    "y": 0
+  },
+  "rightPanel": {
+    "hidden": true,
+    "overlay": false,
+    "position": "static",
+    "present": true,
+    "rect": {
+      "bottom": 0,
+      "h": 0,
+      "right": 0,
+      "w": 0,
+      "x": 0,
+      "y": 0
+    },
+    "z": "auto"
+  },
+  "scrolledOut": [
+    {
+      "label": "Abrir src/shared/domain/selection-chain.ts",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Copiar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviar comentarios",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Compartir mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Enviado a las 09:02",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    },
+    {
+      "label": "Editar mensaje",
+      "region": "main-pane",
+      "scroller": "conversation-view__scroll"
+    }
+  ],
+  "send": {
+    "hit": "self",
+    "inViewport": true,
+    "rect": {
+      "bottom": 760,
+      "h": 30,
+      "right": 971,
+      "w": 30,
+      "x": 941,
+      "y": 730
+    }
+  },
+  "shell": {
+    "bottom": 800,
+    "h": 800,
+    "right": 1200,
+    "w": 1200,
+    "x": 0,
+    "y": 0
+  },
+  "shellClass": "window-shell",
+  "sidebar": {
+    "content": null,
+    "overlay": null,
+    "position": null,
+    "present": false,
+    "rect": null,
+    "z": null
+  },
+  "toggles": [
+    {
+      "label": "Inicio",
+      "pressed": null
+    },
+    {
+      "label": "Alternar barra lateral",
+      "pressed": "false"
+    },
+    {
+      "label": "Alternar panel derecho",
+      "pressed": "false"
+    }
+  ],
+  "viewport": {
+    "h": 800,
+    "w": 1200
+  }
+}
