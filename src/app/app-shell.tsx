@@ -135,7 +135,6 @@ export function AppShell() {
         <Rail onNavigateHome={handleNavigateHome} />
         {visibility.sidebar ? (
           <Sidebar
-            providerName={resolved?.provider.displayName ?? null}
             projects={projects}
             conversations={conversations}
             activeConversationId={activeConversationId}

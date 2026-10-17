@@ -5,19 +5,12 @@ import { getSharedMessages } from '@/shared/i18n/messages';
 import { Button } from '../atoms/button';
 import { Icon } from '../atoms/icon';
 import { ConversationRow } from '../molecules/conversation-row';
-import { IconButton } from '../molecules/icon-button';
 import { SidebarProjectGroup } from '../molecules/sidebar-project-group';
 import { SidebarSection } from '../molecules/sidebar-section';
 import { buildSidebarModel } from './sidebar-model';
 import './sidebar.css';
 
 export interface SidebarProps {
-  /**
-   * Display name of the **active** provider, derived by the shell root from the
-   * same reconciled selection chain the composer renders. `null` while the
-   * catalog is still loading.
-   */
-  readonly providerName: string | null;
   /** The project list the grouping reads, served by the project port. */
   readonly projects: readonly Project[];
   /** The conversation list, served by the conversation port. */
@@ -44,12 +37,12 @@ export interface SidebarProps {
  * projected from the two ports by `buildSidebarModel`. It reads no seed and
  * keeps no local state:
  *
- * - the brand renders the active provider the shell hands down;
+ * - the brand renders the application name `Nx`, never a provider (the #41
+ *   product decision recorded in `.claude/knowledge/business-logic.md` §3.6);
  * - the pin state comes from `Conversation.isPinned`;
  * - the active conversation is the id the shell owns, reported back on select.
  */
 export function Sidebar({
-  providerName,
   projects,
   conversations,
   activeConversationId,
@@ -65,22 +58,14 @@ export function Sidebar({
 
   return (
     <aside className="sidebar">
+      {/*
+        The header is the static application brand alone. The notifications and
+        search controls are deferred (no replacement, no placeholder) and the
+        chevron is gone because a static brand has nothing to disclose (#41).
+      */}
       <div className="sidebar__header">
         <span className="sidebar__brand">
-          <span className="sidebar__brand-name">{providerName}</span>
-          <Icon name="chevron-down" size="sm" />
-        </span>
-        <span className="sidebar__tools">
-          <IconButton
-            icon="bell"
-            label={messages.sidebar.notificationsLabel}
-            size="sm"
-          />
-          <IconButton
-            icon="search"
-            label={messages.sidebar.searchLabel}
-            size="sm"
-          />
+          <span className="sidebar__brand-name">{messages.sidebar.brand}</span>
         </span>
       </div>
 
