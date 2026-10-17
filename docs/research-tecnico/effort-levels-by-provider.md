@@ -163,7 +163,7 @@ These are listed explicitly because "no effort control" is a real answer and mus
 
 **Provider `opencode-go` — reasons but no selectable stop:** `glm-5`, `glm-5.1`, `kimi-k2.5`, `kimi-k2.6`, `kimi-k2.7-code`, `mimo-v2-omni`, `mimo-v2-pro`, `mimo-v2.5`, `mimo-v2.5-pro`, `mimo-v2.6-flash`, `mimo-v2.6-pro`, `minimax-m2.5`, `minimax-m2.7`.
 
-The `codex` provider's own catalogue is not a separate entry in the snapshot; Codex CLI models (`gpt-5.3-codex`, `gpt-5.3-codex-spark`, `gpt-5.2-codex`, `gpt-5.1-codex*`) appear under `openai` and `opencode` and all carry effort levels.
+The `codex` provider's own catalogue is not a separate entry in the snapshot: the Codex CLI client's models are catalogued under the `openai` and `opencode` providers rather than under a dedicated `codex` provider. In catalogue `version 18` the coverage is not uniform — `gpt-5.3-codex` and `gpt-5.3-codex-spark` appear under **both** `openai` and `opencode`, whereas `gpt-5.2-codex` and the `gpt-5.1-codex*` family (`gpt-5.1-codex`, `gpt-5.1-codex-mini`, `gpt-5.1-codex-max`) appear **only** under `opencode`. All of the listed IDs carry effort levels.
 
 ## 6. Vocabulary and UI-scale recommendation (no copy decision)
 
