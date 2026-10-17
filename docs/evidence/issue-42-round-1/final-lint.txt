@@ -1,0 +1,4 @@
+
+> nx-desktop@0.1.0 lint /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> eslint src
+

@@ -1,0 +1,17 @@
+== initial ==
+0
+1
+0
+== click sidebar toggle ==
+✓ Done
+✓ Done
+1
+true
+== click sidebar toggle again ==
+✓ Done
+0
+false
+== click right panel toggle ==
+✓ Done
+1
+true

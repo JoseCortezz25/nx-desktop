@@ -1,0 +1,6 @@
+
+> nx-desktop@0.1.0 format:check /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> prettier --check --ignore-unknown .
+
+Checking formatting...
+All matched files use Prettier code style!

@@ -1,0 +1,4 @@
+
+> nx-desktop@0.1.0 typecheck /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> tsc --noEmit
+

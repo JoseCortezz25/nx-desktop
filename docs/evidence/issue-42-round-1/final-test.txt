@@ -1,0 +1,16 @@
+
+> nx-desktop@0.1.0 test /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> vitest run
+
+
+ RUN  v5.0.5 /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+
+
+ Test Files  38 passed (38)
+      Tests  211 passed (211)
+   Start at  15:02:52
+   Duration  1.90s (transform 41%, import 37%, tests 16%, worker 5%)
+
+    Isolate  38 workers spawned · ~250ms startup each (spawn + environment, per file)
+             at least ~614ms faster with isolate: false — reuses workers across files instead of one per file
+

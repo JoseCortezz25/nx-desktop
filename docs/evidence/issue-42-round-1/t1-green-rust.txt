@@ -1,0 +1,21 @@
+   Compiling nx-desktop v0.1.0 (/home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42/src-tauri)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.30s
+     Running unittests src/lib.rs (target/debug/deps/nx_desktop_lib-c77780a3c5281e06)
+
+running 1 test
+test tests::default_app_menu_matches_builder_menu_signature ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/debug/deps/nx_desktop-6285cbfdd851ad51)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests nx_desktop_lib
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

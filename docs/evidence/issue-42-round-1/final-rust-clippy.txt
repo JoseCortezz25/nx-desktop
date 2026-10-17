@@ -1,0 +1,5 @@
+
+> nx-desktop@0.1.0 rust:clippy /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.23s

@@ -1,0 +1,103 @@
+
+> nx-desktop@0.1.0 test /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+> vitest run
+
+
+ RUN  v5.0.5 /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42
+
+ ❯ src/app/app-shell.test.tsx (6 tests | 2 failed) 185ms
+   ❯ app shell native window chrome (#42) (2)
+     × renders no drawn title bar, menu bar, history or window controls 45ms
+     × keeps the two region toggles by moving them into the rail 23ms
+ ❯ src/shared/ui/organisms/rail.test.tsx (4 tests | 2 failed) 96ms
+   ❯ rail (4)
+     × draws the two region toggles the native frame no longer owns 66ms
+     × reports each region toggle and reflects the region it controls 4ms
+ ❯ src/shared/i18n/messages.test.ts (7 tests | 1 failed) 22ms
+   ❯ shared messages accessor (7)
+     × no longer carries the drawn window-chrome copy 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/app/app-shell.test.tsx > app shell native window chrome (#42) > renders no drawn title bar, menu bar, history or window controls
+AssertionError: expected '<div class="window-shell"><header cla…' not to contain 'class="title-bar"'
+
+Expected: "class="title-bar""
+Received: "<div class="window-shell"><header class="title-bar"><div class="title-bar__nav"><div class="nav-history"><button type="button" class="button button--icon" aria-label="Atrás" disabled=""><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg></button><button type="button" class="button button--icon" aria-label="Adelante" disabled=""><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div><button type="button" class="button button--icon button--active" aria-label="Alternar barra lateral" aria-pressed="true"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16"></path></svg></button><button type="button" class="button button--icon" aria-label="Alternar panel derecho" aria-pressed="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path></svg></button></div><div class="title-bar__menus"><div class="menu-bar"><button type="button" class="button button--text">Archivo</button><button type="button" class="button button--text">Edición</button><button type="button" class="button button--text">Ver</button><button type="button" class="button button--text">Ayuda</button></div></div><div class="title-bar__controls"><div class="window-controls"><button type="button" class="button button--icon" aria-label="Minimizar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"></path></svg></button><button type="button" class="button button--icon" aria-label="Maximizar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1.5"></rect></svg></button><button type="button" class="button button--icon" aria-label="Cerrar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></div></header><div class="window-shell__body"><nav class="rail" aria-label="Navegación principal"><button type="button" class="button button--icon button--active" aria-label="Inicio" aria-current="page"><svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg></button><span class="rail__separator" aria-hidden="true"></span><span class="rail__avatar" aria-hidden="true"></span></nav><aside class="sidebar"><div class="sidebar__header"><span class="sidebar__brand"><span class="sidebar__brand-name">Nx</span></span></div><div class="sidebar__new-chat"><button type="button" class="button button--list"><svg class="icon icon--md" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"></path></svg><span>Nuevo chat</span></button></div><div class="sidebar__content"></div></aside><main class="main-pane"><section class="home-view"><h1 class="home-view__title">¿En qué deberíamos trabajar?</h1><div class="composer-dock"><div class="composer-dock__context"><div class="context-bar"><button type="button" class="button button--pill" aria-label="Elegir proyecto" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="context-bar__value">Elegir proyecto</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--plain" aria-label="Entorno: Este ordenador" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M2 20h20"></path></svg><span class="context-bar__value">Este ordenador</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button></div></div><div class="composer"><textarea class="text-area" aria-label="Mensaje" placeholder="Trabaja con OpenCode" rows="1"></textarea><div class="composer-bar"><div class="composer-bar__leading"><button type="button" class="button button--plain" aria-label="Añadir"><svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"></path></svg></button></div><div class="composer-bar__controls"><button type="button" class="button button--pill" aria-label="Proveedor: OpenCode" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="2"></rect><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"></path></svg><span class="select-trigger__value">OpenCode</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--pill" aria-label="Modelo: GLM 4.6" aria-expanded="false"><span class="select-trigger__value">GLM 4.6</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--pill" aria-label="Esfuerzo: Ligero" aria-expanded="false"><span class="select-trigger__value">Ligero</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--solid" aria-label="Enviar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 10v3"></path><path d="M6 6v11"></path><path d="M10 3v18"></path><path d="M14 8v7"></path><path d="M18 5v13"></path><path d="M22 10v3"></path></svg></button></div></div></div></div></section></main><aside class="right-panel" hidden=""><div class="right-panel__tabs"><div class="right-panel__tab-slot"><div class="file-tab-strip" role="tablist" aria-label="Archivos abiertos"></div></div><button type="button" class="button button--icon" aria-label="Cerrar panel"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><div class="right-panel__content"><div class="file-panel__empty"><p class="file-panel__empty-text">Abre un archivo desde el chat</p></div></div></aside></div></div>"
+
+ ❯ src/app/app-shell.test.tsx:228:24
+    226|     // application menu are the operating system's. The frontend draws…
+    227|     // them, so neither the classes nor the copy they rendered may com…
+    228|     expect(markup).not.toContain('class="title-bar"');
+       |                        ^
+    229|     expect(markup).not.toContain('class="menu-bar"');
+    230|     expect(markup).not.toContain('class="window-controls"');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/app/app-shell.test.tsx > app shell native window chrome (#42) > keeps the two region toggles by moving them into the rail
+AssertionError: expected '<div class="window-shell"><header cla…' to contain 'aria-label="undefined"'
+
+Expected: "aria-label="undefined""
+Received: "<div class="window-shell"><header class="title-bar"><div class="title-bar__nav"><div class="nav-history"><button type="button" class="button button--icon" aria-label="Atrás" disabled=""><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5"></path><path d="m12 19-7-7 7-7"></path></svg></button><button type="button" class="button button--icon" aria-label="Adelante" disabled=""><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div><button type="button" class="button button--icon button--active" aria-label="Alternar barra lateral" aria-pressed="true"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M9 4v16"></path></svg></button><button type="button" class="button button--icon" aria-label="Alternar panel derecho" aria-pressed="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M15 4v16"></path></svg></button></div><div class="title-bar__menus"><div class="menu-bar"><button type="button" class="button button--text">Archivo</button><button type="button" class="button button--text">Edición</button><button type="button" class="button button--text">Ver</button><button type="button" class="button button--text">Ayuda</button></div></div><div class="title-bar__controls"><div class="window-controls"><button type="button" class="button button--icon" aria-label="Minimizar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"></path></svg></button><button type="button" class="button button--icon" aria-label="Maximizar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1.5"></rect></svg></button><button type="button" class="button button--icon" aria-label="Cerrar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div></div></header><div class="window-shell__body"><nav class="rail" aria-label="Navegación principal"><button type="button" class="button button--icon button--active" aria-label="Inicio" aria-current="page"><svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg></button><span class="rail__separator" aria-hidden="true"></span><span class="rail__avatar" aria-hidden="true"></span></nav><aside class="sidebar"><div class="sidebar__header"><span class="sidebar__brand"><span class="sidebar__brand-name">Nx</span></span></div><div class="sidebar__new-chat"><button type="button" class="button button--list"><svg class="icon icon--md" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.4 2.6a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"></path></svg><span>Nuevo chat</span></button></div><div class="sidebar__content"></div></aside><main class="main-pane"><section class="home-view"><h1 class="home-view__title">¿En qué deberíamos trabajar?</h1><div class="composer-dock"><div class="composer-dock__context"><div class="context-bar"><button type="button" class="button button--pill" aria-label="Elegir proyecto" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg><span class="context-bar__value">Elegir proyecto</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--plain" aria-label="Entorno: Este ordenador" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M2 20h20"></path></svg><span class="context-bar__value">Este ordenador</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button></div></div><div class="composer"><textarea class="text-area" aria-label="Mensaje" placeholder="Trabaja con OpenCode" rows="1"></textarea><div class="composer-bar"><div class="composer-bar__leading"><button type="button" class="button button--plain" aria-label="Añadir"><svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"></path></svg></button></div><div class="composer-bar__controls"><button type="button" class="button button--pill" aria-label="Proveedor: OpenCode" aria-expanded="false"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="2"></rect><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"></path></svg><span class="select-trigger__value">OpenCode</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--pill" aria-label="Modelo: GLM 4.6" aria-expanded="false"><span class="select-trigger__value">GLM 4.6</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--pill" aria-label="Esfuerzo: Ligero" aria-expanded="false"><span class="select-trigger__value">Ligero</span><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"></path></svg></button><button type="button" class="button button--solid" aria-label="Enviar"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 10v3"></path><path d="M6 6v11"></path><path d="M10 3v18"></path><path d="M14 8v7"></path><path d="M18 5v13"></path><path d="M22 10v3"></path></svg></button></div></div></div></div></section></main><aside class="right-panel" hidden=""><div class="right-panel__tabs"><div class="right-panel__tab-slot"><div class="file-tab-strip" role="tablist" aria-label="Archivos abiertos"></div></div><button type="button" class="button button--icon" aria-label="Cerrar panel"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><div class="right-panel__content"><div class="file-panel__empty"><p class="file-panel__empty-text">Abre un archivo desde el chat</p></div></div></aside></div></div>"
+
+ ❯ src/app/app-shell.test.tsx:246:20
+    244|
+    245|     expect(markup).toContain('class="rail"');
+    246|     expect(markup).toContain(
+       |                    ^
+    247|       `aria-label="${messages.rail.toggleSidebarLabel}"`
+    248|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/shared/i18n/messages.test.ts > shared messages accessor > no longer carries the drawn window-chrome copy
+AssertionError: expected [ 'actions', 'errors', 'window', …(9) ] to not include 'window'
+ ❯ src/shared/i18n/messages.test.ts:36:39
+     34|     const messages = getSharedMessages();
+     35|
+     36|     expect(Object.keys(messages)).not.toContain('window');
+       |                                       ^
+     37|     expect(messages.rail.toggleSidebarLabel).toBe('Alternar barra late…
+     38|     expect(messages.rail.toggleRightPanelLabel).toBe('Alternar panel d…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/shared/ui/organisms/rail.test.tsx > rail > draws the two region toggles the native frame no longer owns
+AssertionError: expected '<nav class="rail" aria-label="Navegac…' to contain 'aria-label="undefined"'
+
+Expected: "aria-label="undefined""
+Received: "<nav class="rail" aria-label="Navegación principal"><button type="button" class="button button--icon button--active" aria-label="Inicio" aria-current="page"><svg class="icon icon--lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg></button><span class="rail__separator" aria-hidden="true"></span><span class="rail__avatar" aria-hidden="true"></span></nav>"
+
+ ❯ src/shared/ui/organisms/rail.test.tsx:77:20
+     75|     const messages = getSharedMessages();
+     76|
+     77|     expect(markup).toContain(
+       |                    ^
+     78|       `aria-label="${messages.rail.toggleSidebarLabel}"`
+     79|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/shared/ui/organisms/rail.test.tsx > rail > reports each region toggle and reflects the region it controls
+AssertionError: expected undefined to be defined
+ ❯ src/shared/ui/organisms/rail.test.tsx:104:27
+    102|       button => button.props.icon === 'panel-right'
+    103|     );
+    104|     expect(sidebarToggle).toBeDefined();
+       |                           ^
+    105|     expect(rightPanelToggle).toBeDefined();
+    106|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  3 failed | 35 passed (38)
+      Tests  5 failed | 206 passed (211)
+   Start at  14:56:38
+   Duration  2.29s (transform 47%, import 32%, tests 15%, worker 5%)
+
+    Isolate  38 workers spawned · ~290ms startup each (spawn + environment, per file)
+             at least ~713ms faster with isolate: false — reuses workers across files instead of one per file
+
+ ELIFECYCLE  Test failed. See above for more details.
