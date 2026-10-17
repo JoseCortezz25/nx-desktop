@@ -11,27 +11,21 @@
   overflow: hidden;
 }
 
+/* The header carries the static brand alone (#41): no tools row, no chevron,
+   so no space-between or inter-child gap remains. */
 .sidebar__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   height: 28px;
 }
 
 .sidebar__brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   padding-left: 2px;
   color: var(--color-text);
   font-size: 20px;
   font-weight: 500;
-}
-
-.sidebar__tools {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
 }
 
 .sidebar__new-chat {
