@@ -17,7 +17,6 @@ import { HomeView } from '@/shared/ui/organisms/home-view';
 import { MainPane } from '@/shared/ui/organisms/main-pane';
 import { Rail } from '@/shared/ui/organisms/rail';
 import { Sidebar } from '@/shared/ui/organisms/sidebar';
-import { TitleBar } from '@/shared/ui/organisms/title-bar';
 import {
   INITIAL_SHELL_STATE,
   navigateHome,
@@ -125,14 +124,14 @@ export function AppShell() {
 
   return (
     <div className="window-shell">
-      <TitleBar
-        isSidebarOpen={visibility.sidebar}
-        isRightPanelOpen={visibility.rightPanel}
-        onToggleSidebar={handleToggleSidebar}
-        onToggleRightPanel={handleToggleRightPanel}
-      />
       <div className="window-shell__body">
-        <Rail onNavigateHome={handleNavigateHome} />
+        <Rail
+          isSidebarOpen={visibility.sidebar}
+          isRightPanelOpen={visibility.rightPanel}
+          onNavigateHome={handleNavigateHome}
+          onToggleSidebar={handleToggleSidebar}
+          onToggleRightPanel={handleToggleRightPanel}
+        />
         {visibility.sidebar ? (
           <Sidebar
             projects={projects}

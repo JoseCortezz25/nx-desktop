@@ -44,10 +44,8 @@
   --font-size-base: 14px; /* base copy */
   --line-height-base: 1.45; /* base copy */
 
-  /* Geometry (wireframe: .window min-width, .titlebar height, .rail width,
-     .sidebar width). */
+  /* Geometry (wireframe: .window min-width, .rail width, .sidebar width). */
   --window-min-width: 900px; /* .window-shell */
-  --title-bar-height: 40px; /* .title-bar */
   --rail-width: 56px; /* .rail */
   --sidebar-width: 318px; /* .sidebar */
   --right-panel-width: 460px; /* .right-panel — added here, the wireframe
@@ -56,6 +54,6 @@
                                  control stays inside the main pane at
                                  1440x900 with the sidebar open (#40) */
   --region-gutter: 8px; /* top inset of the panel surfaces (screens 01/02) */
-  --control-size: 32px; /* square hit area for title-bar controls; the rail
+  --control-size: 32px; /* square hit area for icon controls; the rail
                            re-scopes it to 38px */
 }

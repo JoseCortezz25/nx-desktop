@@ -29,31 +29,19 @@ export const sharedMessages = {
     cancelled: 'The run was cancelled.',
     internal_error: 'An unexpected internal error occurred.'
   },
-  // Window-shell chrome. The wireframe wording is the copy source
-  // (`docs/wireframes/README.md`, "Ground rules for implementation", and
-  // `docs/wireframes/01-home.html`); identifiers stay English.
-  window: {
-    menus: {
-      file: 'Archivo',
-      edit: 'Edición',
-      view: 'Ver',
-      help: 'Ayuda'
-    },
-    navigation: {
-      backLabel: 'Atrás',
-      forwardLabel: 'Adelante',
-      toggleSidebarLabel: 'Alternar barra lateral',
-      toggleRightPanelLabel: 'Alternar panel derecho'
-    },
-    controls: {
-      minimize: 'Minimizar',
-      maximize: 'Maximizar',
-      close: 'Cerrar'
-    }
-  },
+  // The app's own navigation surface. The home destination plus the two region
+  // toggles live in the rail (#42): the drawn title bar that used to hold the
+  // toggles was removed because the OS draws the window frame and its controls,
+  // and the native application menu is declared in Rust (`src-tauri/src/lib.rs`)
+  // rather than drawn here. The wireframe's fake menu labels (`Archivo`,
+  // `Edición`, `Ver`, `Ayuda`), the back/forward labels and the window-control
+  // labels were removed with their controls; a native menu's labels belong to
+  // the Rust declaration, not this copy map. Identifiers stay English.
   rail: {
     navigationLabel: 'Navegación principal',
-    homeLabel: 'Inicio'
+    homeLabel: 'Inicio',
+    toggleSidebarLabel: 'Alternar barra lateral',
+    toggleRightPanelLabel: 'Alternar panel derecho'
   },
   // Sidebar contents (#10). Group headings and the empty-project row follow the
   // wireframe wording (`docs/wireframes/02-home-sidebar.html`,

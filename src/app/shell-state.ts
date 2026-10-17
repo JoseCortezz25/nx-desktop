@@ -27,7 +27,7 @@ import {
 export interface ShellState {
   /** The conversation the main pane shows, or `null` for the home view. */
   readonly activeConversationId: ConversationId | null;
-  /** The regions the title bar toggles. */
+  /** The regions the rail's toggles open and close. */
   readonly visibility: RegionVisibility;
   /** The file the right panel was last asked to show, owned once by the shell. */
   readonly openFileRequest: OpenFileRequest | null;
