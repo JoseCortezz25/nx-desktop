@@ -19,7 +19,9 @@ All user-facing text in `nx-desktop` must be externalized to support internation
 
 ### Shared Cross-Feature Messages (`src/shared/i18n/messages.ts`)
 
-Contains generic reusable actions, common statuses, window menus (`Archivo`, `Edición`, `Ver`, `Ayuda`), and public IPC error code translations (`validation_failed`, `permission_denied`, `provider_unavailable`, `cancelled`, `internal_error`).
+Contains generic reusable actions, common statuses, the app's own chrome labels (for example the rail's home entry and its two region toggles), and public IPC error code translations (`validation_failed`, `permission_denied`, `provider_unavailable`, `cancelled`, `internal_error`).
+
+The OS window frame, its minimize/maximize/close controls and the application menu are **not** frontend copy. Their labels belong to the native menu declaration in Rust (`src-tauri/src/lib.rs`, `Menu::default`), and the drawn bar's four fake menu labels (`Archivo`, `Edición`, `Ver`, `Ayuda`) were removed from this map with the drawn bar (#42).
 
 ```ts
 // src/shared/i18n/messages.ts

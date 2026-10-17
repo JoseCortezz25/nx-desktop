@@ -11,6 +11,7 @@ Open any `.html` file directly in a browser. All files share `assets/wireframe.c
 - **No Chat/Work toggle.** It appeared in the references and is not part of the product.
 - **Out of scope for now:** microphone and voice-chat buttons (they are drawn for fidelity only), and the unused rail icons.
 - **Spanish labels** in the wireframes mirror the references. Real UI strings should go through i18n.
+- **Native window chrome (#42).** The title bar, its window controls and the application menu are the operating system's. The app declares a native application menu in Rust (`src-tauri/src/lib.rs`, `Menu::default`) and draws none of them, so the title bar these screens draw is **superseded** and must not be rebuilt (`.claude/knowledge/business-logic.md` §3.7).
 
 ## Screen index
 
@@ -45,8 +46,16 @@ Open any `.html` file directly in a browser. All files share `assets/wireframe.c
 
 Every screen is a composition of the same regions:
 
-1. **Title bar:** history navigation, sidebar toggle, menus (Archivo, Edición, Ver, Ayuda), window controls.
-2. **Rail:** home and secondary navigation icons.
+1. **Title bar — superseded by native chrome (#42).** The OS draws the window
+   frame, its height, its minimize/maximize/close controls and the application
+   menu. The drawn bar (history navigation, menus `Archivo`/`Edición`/`Ver`/`Ayuda`,
+   window controls) is **not** a region to rebuild: the app declares a native
+   `Menu::default` in Rust and keeps the native frame (`decorations` stays on).
+   The back/forward control was always disabled — no history state or handler
+   existed anywhere in `src/` — so it was removed as decorative rather than
+   relocated. The two region toggles are real application state and moved into
+   the rail (region 2). See `.claude/knowledge/business-logic.md` §3.7.
+2. **Rail:** home and secondary navigation icons, plus the two region toggles.
 3. **Sidebar** (toggleable): new chat, pinned, projects (grouping conversations), recents.
 4. **Main pane:** home view or conversation, plus the composer.
 5. **Right panel** (toggleable, opens on file or diff click): tabs with a viewer.

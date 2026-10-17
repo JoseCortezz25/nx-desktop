@@ -7,6 +7,8 @@ Derived from `docs/wireframes/README.md` and `docs/research-tecnico/arquitectura
 
 **Locked product decision (2026-10-17, issue #41).** The sidebar header brand is the application name `Nx`, not the active provider; the notifications and search controls are deferred, and the brand chevron is removed. Recorded in §3.6 because it deliberately overrides the wireframe and supersedes the #10 provider brand.
 
+**Locked product decision (2026-10-17, issue #42).** The window chrome is the operating system's: the app keeps the native frame, declares a native application menu in Rust from Tauri's platform defaults, and draws no title bar, menu bar or window controls. Recorded in §3.7 because it deliberately overrides the wireframe's drawn bar and supersedes it.
+
 ---
 
 ## 1. Product Purpose
@@ -82,6 +84,15 @@ Decisions 2026-10-16 (issue #30) whose surfaces are tracked by other tickets. Th
 1. **Static application brand.** The sidebar header displays the application name `Nx`. It MUST NOT display a `Provider.displayName`, even when a provider is resolved. This deliberately overrides the wireframe (`docs/wireframes/02-home-sidebar.html`, which draws a provider name) and supersedes the #10 behaviour where the brand followed the active provider. Provider identity remains visible in the composer's provider selector; the sidebar header is product identity, not session state.
 2. **Notifications and search deferred.** The header's bell (notifications) and magnifier (search) controls are **deferred for now**, not permanently removed: no replacement, no placeholder, and no half-wired handler. Their message keys were removed with them; a later ticket reintroduces the surface and its copy together.
 3. **No brand chevron.** The chevron was removed because a static brand has nothing to switch or disclose. No brand switcher is planned in its place; a future switcher must add its own control, handler and accessible state.
+
+### 3.7 Native Window Chrome and Application Menu (2026-10-17, issue #42)
+
+The maintainer required the native window chrome (issue #42; decision comment `6239923847`). This deliberately overrides the wireframe's drawn title bar (`docs/wireframes/README.md`, "Ground rules for implementation" and "Layout regions") and supersedes it.
+
+1. **Native frame kept.** The window keeps the OS title bar and its minimize/maximize/close controls; `decorations` stays enabled in `src-tauri/tauri.conf.json`. The frontend MUST NOT render a drawn title bar, a drawn menu bar or drawn window controls. The old controls were inert — `window-controls.tsx` took optional `onMinimize`/`onMaximize`/`onClose`, its only caller passed labels alone so all three were `undefined`, and no Rust window command existed — so removing them removed a click that did nothing.
+2. **Native application menu from platform defaults.** The application menu is declared in Rust (`src-tauri/src/lib.rs`) with Tauri's `Menu::default`, unconditionally on every desktop platform: macOS would install a default menu on its own, but Windows and Linux show no menu bar unless the app sets one. The menu contains only predefined OS/Tauri items and **no product commands.** The four wireframe labels `Archivo`, `Edición`, `Ver`, `Ayuda` were removed from `messages.ts` and MUST NOT be ported to the Rust declaration nor reintroduced as frontend copy; a native menu's labels belong where the native menu is declared. Product-specific menu actions remain out of scope until separately defined.
+3. **Region toggles belong to the app's own UI.** The sidebar and right-panel toggles drive region visibility that already exists (`shell-state`, `src/shared/ui/layout/region-visibility.ts`). They live in the **rail**, the app's own navigation surface, not in a strip the OS owns. Their owner and transitions do not change: the shell still owns `ShellState.visibility` and the rail only reports presses upward.
+4. **Back/forward removed as decorative.** The history control was always disabled: neither button had an enabling state or a handler anywhere in `src/`, there was no history state that could drive them, and the wireframe's "history navigation" was drawn chrome. It is removed rather than relocated; a future navigation history introduces its own state, control and handler together.
 
 ---
 
