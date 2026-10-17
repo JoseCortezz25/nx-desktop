@@ -41,11 +41,7 @@ import { Popover } from '../molecules/popover';
 import { ProjectPicker } from '../molecules/project-picker';
 import { SelectList, type SelectOption } from '../molecules/select-list';
 import { SelectTrigger } from '../molecules/select-trigger';
-import {
-  EMPTY_COMPOSER_DRAFT,
-  submitDraft,
-  typeInDraft
-} from './composer-draft';
+import { submitDraft, typeInDraft, type ComposerDraft } from './composer-draft';
 import './composer.css';
 
 /**
@@ -90,6 +86,16 @@ export interface ComposerProps {
    * project port — the composer never keeps a copy of the policy.
    */
   readonly onChangeApprovalMode: (approvalMode: ApprovalMode) => void;
+  /**
+   * The unsent prompt, owned by the shell root beside the selection chain. The
+   * composer is a **controlled** field: it renders this value and reports every
+   * change upward instead of keeping its own copy, so the draft is not lost
+   * when the main pane re-slots the composer under a different parent (the
+   * `Home -> Conversation` switch remounts it).
+   */
+  readonly draft: ComposerDraft;
+  /** Reports the draft a keystroke, paste or send produces up to the shell. */
+  readonly onDraftChange: (draft: ComposerDraft) => void;
   /** Handed the submitted prompt text. */
   readonly onSubmit: (prompt: string) => void;
 }
@@ -98,11 +104,13 @@ export interface ComposerProps {
  * Organism: the composer and the context bar on its top edge
  * (`docs/wireframes/README.md`, "Reusable components").
  *
- * It owns the unsent draft, the run environment and which popover is open. The
- * selection chain (#7) and the approval policy (#8) are the exceptions: both
- * live outside this organism — the chain on the shell root, the policy on the
- * project — so the composer renders what it is handed and reports changes
- * upward instead of keeping a second copy.
+ * It owns the run environment and which popover is open. The unsent draft, the
+ * selection chain (#7) and the approval policy (#8) are the exceptions: all
+ * three live outside this organism — the draft and the chain on the shell root,
+ * the policy on the project — so the composer renders what it is handed and
+ * reports changes upward instead of keeping a second copy. That is what keeps
+ * the draft alive across the `Home -> Conversation` view switch, which remounts
+ * this component under a different parent.
  *
  * Everything resolved from catalog/port data is derived during render — a
  * late-arriving catalog or branch list becomes a valid selection instead of
@@ -119,10 +127,11 @@ export function Composer({
   branches,
   onSelectProject,
   onChangeApprovalMode,
+  draft,
+  onDraftChange,
   onSubmit
 }: ComposerProps) {
   const messages = getSharedMessages();
-  const [draft, setDraft] = useState(EMPTY_COMPOSER_DRAFT);
   const [desiredEnvironment, setDesiredEnvironment] = useState<RunEnvironment>(
     DEFAULT_RUN_ENVIRONMENT
   );
@@ -200,14 +209,14 @@ export function Composer({
     : messages.composer.approval.listLabel;
 
   function handlePromptChange(text: string) {
-    setDraft(typeInDraft(text));
+    onDraftChange(typeInDraft(text));
   }
 
   function handleSend() {
-    // Reads the current draft rather than a state updater: `submitDraft` calls
-    // `onSubmit`, and an updater must stay side-effect free (React may invoke it
-    // twice in StrictMode).
-    setDraft(submitDraft(draft, onSubmit));
+    // Reads the draft it is handed rather than a state updater: `submitDraft`
+    // calls `onSubmit`, and an updater must stay side-effect free (React may
+    // invoke it twice in StrictMode).
+    onDraftChange(submitDraft(draft, onSubmit));
   }
 
   function handleToggle(selector: OpenSelector) {

@@ -21,6 +21,12 @@ export interface FilePanelProps {
    * (`.claude/knowledge/business-logic.md` §3.5; the seam #11 built).
    */
   readonly openFileRequest: OpenFileRequest | null;
+  /**
+   * Whether the region is visible. Region visibility is owned by the shell; the
+   * panel only reflects it. It is a presentation toggle (`hidden`) rather than
+   * an unmount, so the open-tab set below survives a close/reopen.
+   */
+  readonly isOpen: boolean;
   /** Closes the panel region; the shell owns region visibility. */
   readonly onClose: () => void;
 }
@@ -35,8 +41,16 @@ export interface FilePanelProps {
  * It composes the shared `RightPanel` frame, so the region chrome (and the
  * viewer slot later tickets fill) stays shared while the file behaviour lives
  * with the files feature.
+ *
+ * The shell keeps this organism mounted while the region is hidden (`isOpen`),
+ * so the tab set it owns outlives a close/reopen instead of collapsing back to
+ * the single last-requested file.
  */
-export function FilePanel({ openFileRequest, onClose }: FilePanelProps) {
+export function FilePanel({
+  openFileRequest,
+  isOpen,
+  onClose
+}: FilePanelProps) {
   const messages = getSharedMessages();
   const [tabs, setTabs] = useState<FileTabs>(() =>
     openFileRequest
@@ -68,6 +82,7 @@ export function FilePanel({ openFileRequest, onClose }: FilePanelProps) {
 
   return (
     <RightPanel
+      isOpen={isOpen}
       onClose={onClose}
       tabs={
         <FileTabStrip

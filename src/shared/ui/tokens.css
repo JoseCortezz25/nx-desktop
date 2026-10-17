@@ -50,8 +50,11 @@
   --title-bar-height: 40px; /* .title-bar */
   --rail-width: 56px; /* .rail */
   --sidebar-width: 318px; /* .sidebar */
-  --right-panel-width: 520px; /* .right-panel — added here, the wireframe
-                                 leaves the panel flexible */
+  --right-panel-width: 460px; /* .right-panel — added here, the wireframe
+                                 leaves the panel flexible. Kept below the
+                                 composer's intrinsic row width so the send
+                                 control stays inside the main pane at
+                                 1440x900 with the sidebar open (#40) */
   --region-gutter: 8px; /* top inset of the panel surfaces (screens 01/02) */
   --control-size: 32px; /* square hit area for title-bar controls; the rail
                            re-scopes it to 38px */
