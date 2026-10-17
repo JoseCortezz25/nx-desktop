@@ -24,6 +24,19 @@ const captured = vi.hoisted(() => ({
   panel: null as Record<string, unknown> | null
 }));
 
+/**
+ * The window width the shell resolves its region presentation from. The suite
+ * seeds the *policy result* rather than a pixel width, so the wiring assertion
+ * is deterministic in the node runner; the policy itself is covered by
+ * `region-visibility.test.ts` and the geometry by the browser pass.
+ */
+const layout = vi.hoisted(() => ({
+  value: { sidebar: 'inline', rightPanel: 'inline' } as {
+    sidebar: 'inline' | 'overlay';
+    rightPanel: 'inline' | 'overlay';
+  }
+}));
+
 vi.mock('@/features/files/model/open-file-request', () => ({
   INITIAL_OPEN_FILE_REQUEST: openedFile
 }));
@@ -42,7 +55,8 @@ vi.mock('@/shared/ui/layout/region-visibility', async () => {
   );
   return {
     ...actual,
-    INITIAL_REGION_VISIBILITY: { sidebar: false, rightPanel: true }
+    INITIAL_REGION_VISIBILITY: { sidebar: false, rightPanel: true },
+    resolveRegionLayout: () => layout.value
   };
 });
 
@@ -112,6 +126,7 @@ const catalog: readonly Provider[] = [
 describe('shell to right panel open-file seam', () => {
   beforeEach(() => {
     captured.panel = null;
+    layout.value = { sidebar: 'inline', rightPanel: 'inline' };
     harness.providers = catalog;
     harness.conversations = [];
     harness.projects = [];
@@ -134,6 +149,7 @@ describe('shell to right panel open-file seam', () => {
     // also received a setter it could drift into a second owner.
     expect(Object.keys(captured.panel ?? {}).sort()).toEqual([
       'isOpen',
+      'isOverlay',
       'onClose',
       'openFileRequest'
     ]);
@@ -153,5 +169,23 @@ describe('shell to right panel open-file seam', () => {
     expect(resolveSelection(catalog, null)?.provider.displayName).toBe(
       'OpenCode'
     );
+  });
+
+  it('keeps the panel inline at wide widths (#43)', () => {
+    layout.value = { sidebar: 'inline', rightPanel: 'inline' };
+    renderToStaticMarkup(<AppShell />);
+
+    expect(captured.panel?.isOverlay).toBe(false);
+  });
+
+  it('hands the panel the overlay presentation below the panel breakpoint (#43)', () => {
+    // At 900x700 the shell must not lay the panel out as a fixed column beside
+    // the main pane; it tells the panel to draw as an on-demand overlay. The
+    // region's visibility is untouched, so the rail toggle keeps working.
+    layout.value = { sidebar: 'overlay', rightPanel: 'overlay' };
+    renderToStaticMarkup(<AppShell />);
+
+    expect(captured.panel?.isOverlay).toBe(true);
+    expect(captured.panel?.isOpen).toBe(true);
   });
 });

@@ -4,6 +4,10 @@
    molecule and the box carry no outer margin; centring lives here. */
 .composer-dock {
   position: relative;
+  /* The composer is the primary action surface: it paints above the contextual
+     region overlays (#43) so the send control stays visible and operable at
+     every width, even while a drawer covers the main pane. */
+  z-index: var(--layer-composer);
   display: flex;
   flex-direction: column;
   align-items: center;

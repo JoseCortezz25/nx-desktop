@@ -17,6 +17,24 @@
   display: none;
 }
 
+/* Narrow windows (#43): the panel stops taking a fixed column and is drawn as an
+   on-demand drawer anchored to the body's trailing edge, over the main pane. It
+   is dismissed by its close control or Escape.
+   
+   The drawer ends above the composer dock (`--composer-clearance`, published by
+   the composer), so it never covers the composer or the send control; the
+   `--layer-composer` ordering is the belt to that brace. */
+.right-panel--overlay {
+  position: absolute;
+  top: var(--region-gutter);
+  right: 0;
+  bottom: calc(var(--composer-clearance, 0px) + var(--region-gutter));
+  z-index: var(--layer-overlay);
+  margin-top: 0;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
 .right-panel__tabs {
   display: flex;
   align-items: center;

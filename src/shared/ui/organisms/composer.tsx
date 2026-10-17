@@ -149,6 +149,44 @@ export function Composer({
   const environmentLabel =
     environment.environmentName || messages.contextBar.environment.localMachine;
 
+  // Publishes how much room the dock needs at the bottom of the window
+  // (`--composer-clearance`) so the narrow-window region overlays (#43) can end
+  // above it: the overlays must never cover the composer or its send control.
+  // The observer keeps the value correct as the draft grows or the window
+  // resizes; the body is observed too because a bottom-docked composer moves
+  // without changing its own height. Cleanup is idempotent.
+  useEffect(() => {
+    const dock = rootRef.current;
+    if (!dock || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const body = dock.closest('.window-shell__body');
+    const root = document.documentElement;
+    const publish = () => {
+      const bodyBottom = body
+        ? body.getBoundingClientRect().bottom
+        : window.innerHeight;
+      const clearance = Math.max(
+        0,
+        Math.round(bodyBottom - dock.getBoundingClientRect().top)
+      );
+      root.style.setProperty('--composer-clearance', `${clearance}px`);
+    };
+
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(dock);
+    if (body) {
+      observer.observe(body);
+    }
+
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--composer-clearance');
+    };
+  }, []);
+
   // Synchronizes with the document while a popover is open: dismiss on an
   // outside press or Escape. Cleanup is idempotent.
   useEffect(() => {

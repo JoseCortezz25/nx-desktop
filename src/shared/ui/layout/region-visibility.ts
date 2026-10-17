@@ -65,3 +65,91 @@ export function showRegion(
     ? visibility
     : { ...visibility, rightPanel: true };
 }
+
+/**
+ * How an open region is presented at a given window width.
+ *
+ * - `inline`: the region keeps a fixed column in the shell's flex row.
+ * - `overlay`: the region stops taking a column and is drawn as an on-demand,
+ *   dismissible drawer over the main pane, so it never squeezes the composer.
+ *
+ * Overlaying is a presentation change, not a visibility change: the region's
+ * `visibility` state — and therefore the rail toggle's pressed state and the
+ * user's explicit intent — is untouched.
+ */
+export const REGION_PRESENTATIONS = ['inline', 'overlay'] as const;
+
+/** The presentation of one region at a given window width. */
+export type RegionPresentation = (typeof REGION_PRESENTATIONS)[number];
+
+/** The presentation of both toggleable regions at a given window width. */
+export interface RegionLayout {
+  readonly sidebar: RegionPresentation;
+  readonly rightPanel: RegionPresentation;
+}
+
+/**
+ * The measured geometry the breakpoints are derived from. The pixel values
+ * mirror the geometry tokens in `src/shared/ui/tokens.css`; keeping them here
+ * lets the derivation below be asserted instead of asserted-in-a-comment.
+ *
+ * Both floors are measured, not invented (`#43` Explorer measurement, re-checked
+ * against the live DOM):
+ *
+ * - `mainPaneFloor` 366px — the conversation main pane's content floor; below
+ *   it the message column is clipped by the pane's `overflow: hidden` (the #40
+ *   width sweep flipped clean at 1200 with both regions inline).
+ * - `composerDockFloor` 705px — the composer's max-content width (action row
+ *   632 + box padding 23 = 655, plus the dock's 24px gutters); the wireframe
+ *   width at which the action row — and the send control — stays on one line.
+ */
+export const LAYOUT_METRICS = {
+  railWidth: 56,
+  sidebarWidth: 318,
+  rightPanelWidth: 460,
+  mainPaneFloor: 366,
+  composerDockFloor: 705
+} as const;
+
+/**
+ * The window-width breakpoints, derived by adding the measured floors to the
+ * chrome they have to share space with. No magic round numbers.
+ */
+export const LAYOUT_BREAKPOINTS = {
+  /**
+   * At or above this width both regions keep their columns: the main pane still
+   * clears its 366px content floor beside the rail, the sidebar and the panel
+   * (56 + 318 + 460 + 366 = 1200). Below it the panel overlays first.
+   */
+  rightPanelInlineMin:
+    LAYOUT_METRICS.railWidth +
+    LAYOUT_METRICS.sidebarWidth +
+    LAYOUT_METRICS.rightPanelWidth +
+    LAYOUT_METRICS.mainPaneFloor,
+  /**
+   * At or above this width the sidebar keeps its column while the panel is
+   * already overlaid: the main pane still fits the composer's 705px single-row
+   * width beside the rail and the sidebar (56 + 318 + 705 = 1079). Below it the
+   * sidebar collapses to the rail and becomes an on-demand drawer.
+   */
+  sidebarInlineMin:
+    LAYOUT_METRICS.railWidth +
+    LAYOUT_METRICS.sidebarWidth +
+    LAYOUT_METRICS.composerDockFloor
+} as const;
+
+/**
+ * Resolves how the two open regions are presented at a window width. Pure, so
+ * the shell only wires it to the measured width and the rules stay observable
+ * in the node test runner.
+ */
+export function resolveRegionLayout(windowWidth: number): RegionLayout {
+  return {
+    sidebar:
+      windowWidth >= LAYOUT_BREAKPOINTS.sidebarInlineMin ? 'inline' : 'overlay',
+    rightPanel:
+      windowWidth >= LAYOUT_BREAKPOINTS.rightPanelInlineMin
+        ? 'inline'
+        : 'overlay'
+  };
+}

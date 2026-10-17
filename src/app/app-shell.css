@@ -31,12 +31,21 @@ body {
 .window-shell {
   display: flex;
   flex-direction: column;
+  /* The content floor the native window enforces (#43). Because
+     tauri.conf.json declares the same minWidth/minHeight, the window can never
+     be dragged into a state these minimums cannot render; the floor is a
+     guarantee, not an overflow trigger. */
   min-width: var(--window-min-width);
+  min-height: var(--window-min-height);
   height: 100%;
   background: var(--color-bg);
 }
 
 .window-shell__body {
+  /* Containing block for the narrow-window overlay drawers (#43): a region that
+     stops taking a column is positioned against the body, not the viewport, so
+     it stays inside the window's rounded frame. */
+  position: relative;
   display: flex;
   flex: 1;
   min-height: 0;

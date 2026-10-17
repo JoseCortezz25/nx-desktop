@@ -32,6 +32,23 @@
   margin: 12px 0 16px;
 }
 
+/* Narrow windows (#43): the sidebar hands its column to the rail and is drawn as
+   an on-demand drawer anchored just right of the rail, over the main pane. The
+   rail stays fully visible (and its toggles operable) to its left.
+   
+   Like the right panel, the drawer ends above the composer dock
+   (`--composer-clearance`) so it never covers the composer or the send control. */
+.sidebar--overlay {
+  position: absolute;
+  top: var(--region-gutter);
+  bottom: calc(var(--composer-clearance, 0px) + var(--region-gutter));
+  left: var(--rail-width);
+  z-index: var(--layer-overlay);
+  margin-top: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
 /* The pinned, project and recent groups scroll together; the header and the
    new-chat action stay fixed above them. */
 .sidebar__content {

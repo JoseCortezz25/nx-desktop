@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useConversationCatalog } from '@/features/conversations/hooks/use-conversation-catalog';
 import { useComposerSelection } from '@/features/providers/hooks/use-composer-selection';
 import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
@@ -18,6 +18,10 @@ import { MainPane } from '@/shared/ui/organisms/main-pane';
 import { Rail } from '@/shared/ui/organisms/rail';
 import { Sidebar } from '@/shared/ui/organisms/sidebar';
 import {
+  LAYOUT_BREAKPOINTS,
+  resolveRegionLayout
+} from '@/shared/ui/layout/region-visibility';
+import {
   INITIAL_SHELL_STATE,
   navigateHome,
   openConversation,
@@ -26,6 +30,36 @@ import {
   type ShellState
 } from './shell-state';
 import './app-shell.css';
+
+/**
+ * Tracks the window width so the shell can pick each region's presentation from
+ * the layout breakpoints (`resolveRegionLayout`). A static/server render has no
+ * `window`; it resolves to the widest arrangement, which is the layout the
+ * wireframes draw, so the shell still renders fully without a viewport.
+ *
+ * The listener is the shell's one synchronization with the window; cleanup is
+ * idempotent.
+ */
+function useWindowWidth(): number {
+  const [width, setWidth] = useState<number>(() =>
+    typeof window === 'undefined' ? Number.POSITIVE_INFINITY : window.innerWidth
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    function handleResize() {
+      setWidth(window.innerWidth);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return width;
+}
 
 /**
  * Window-shell composition root (`docs/wireframes/README.md`, "Layout
@@ -64,6 +98,13 @@ export function AppShell() {
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
 
   const { activeConversationId, visibility, openFileRequest } = shell;
+
+  // Region *presentation* is derived from the measured window width; region
+  // *visibility* stays the ephemeral state the rail toggles own. Overlaying a
+  // region therefore never negates a manual toggle — it only stops the region
+  // from taking a column and squeezing the composer.
+  const windowWidth = useWindowWidth();
+  const regionLayout = resolveRegionLayout(windowWidth);
 
   const activeConversation =
     conversations.find(
@@ -123,7 +164,13 @@ export function AppShell() {
   }
 
   return (
-    <div className="window-shell">
+    <div
+      className={
+        windowWidth < LAYOUT_BREAKPOINTS.rightPanelInlineMin
+          ? 'window-shell window-shell--compact'
+          : 'window-shell'
+      }
+    >
       <div className="window-shell__body">
         <Rail
           isSidebarOpen={visibility.sidebar}
@@ -139,6 +186,8 @@ export function AppShell() {
             activeConversationId={activeConversationId}
             onSelectConversation={handleSelectConversation}
             onNewChat={handleNavigateHome}
+            isOverlay={regionLayout.sidebar === 'overlay'}
+            onClose={handleToggleSidebar}
           />
         ) : null}
         <MainPane>
@@ -161,6 +210,7 @@ export function AppShell() {
         <FilePanel
           openFileRequest={openFileRequest}
           isOpen={visibility.rightPanel}
+          isOverlay={regionLayout.rightPanel === 'overlay'}
           onClose={handleToggleRightPanel}
         />
       </div>

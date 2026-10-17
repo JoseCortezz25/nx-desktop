@@ -7,12 +7,14 @@ const DOC = 'docs/research-tecnico/arquitectura-tauri.md';
 
 function renderPanel(
   openFileRequest: { path: string } | null,
-  isOpen = true
+  isOpen = true,
+  isOverlay = false
 ): string {
   return renderToStaticMarkup(
     <FilePanel
       openFileRequest={openFileRequest}
       isOpen={isOpen}
+      isOverlay={isOverlay}
       onClose={() => undefined}
     />
   );
@@ -53,5 +55,23 @@ describe('file panel', () => {
   it('shows the region when the shell opens it and hides it when closed', () => {
     expect(renderPanel({ path: DOC }, true)).not.toContain('hidden=""');
     expect(renderPanel({ path: DOC }, false)).toContain('hidden=""');
+  });
+
+  it('re-frames the region as a dismissible overlay without losing open tabs (#43)', () => {
+    const markup = renderPanel({ path: DOC }, true, true);
+
+    // Same mounted region — the open tab survives — with the overlay frame and
+    // the focus target the drawer needs.
+    expect(markup).toContain('class="right-panel right-panel--overlay"');
+    expect(markup).toContain('tabindex="-1"');
+    expect(markup).toContain('arquitectura-tauri.md');
+  });
+
+  it('keeps the plain column frame at wide widths (#43)', () => {
+    const markup = renderPanel({ path: DOC }, true, false);
+
+    expect(markup).toContain('class="right-panel"');
+    expect(markup).not.toContain('right-panel--overlay');
+    expect(markup).not.toContain('tabindex="-1"');
   });
 });

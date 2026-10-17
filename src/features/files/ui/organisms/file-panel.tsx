@@ -27,6 +27,13 @@ export interface FilePanelProps {
    * an unmount, so the open-tab set below survives a close/reopen.
    */
   readonly isOpen: boolean;
+  /**
+   * Whether the region is drawn as an overlay over the main pane instead of a
+   * fixed column (#43, narrow windows). It is a presentation mode resolved by
+   * the shell from the window width; the panel's tab working set is untouched by
+   * it, so an overlay/column switch never discards open tabs.
+   */
+  readonly isOverlay: boolean;
   /** Closes the panel region; the shell owns region visibility. */
   readonly onClose: () => void;
 }
@@ -49,6 +56,7 @@ export interface FilePanelProps {
 export function FilePanel({
   openFileRequest,
   isOpen,
+  isOverlay,
   onClose
 }: FilePanelProps) {
   const messages = getSharedMessages();
@@ -83,6 +91,7 @@ export function FilePanel({
   return (
     <RightPanel
       isOpen={isOpen}
+      isOverlay={isOverlay}
       onClose={onClose}
       tabs={
         <FileTabStrip

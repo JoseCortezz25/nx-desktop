@@ -1,3 +1,4 @@
+import { useEffect, useRef, type KeyboardEvent } from 'react';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
@@ -28,6 +29,19 @@ export interface SidebarProps {
    * house icon reports — so the switch out of a conversation is not one-way.
    */
   readonly onNewChat: () => void;
+  /**
+   * Whether the sidebar is drawn as an on-demand drawer over the main pane
+   * instead of a fixed column (#43, narrow windows). It is a presentation mode
+   * resolved by the shell; the region's visibility state is untouched, so the
+   * rail toggle still opens and closes it exactly as before.
+   */
+  readonly isOverlay?: boolean;
+  /**
+   * Dismisses the overlay drawer back to the rail (Escape). The shell passes its
+   * region toggle, so the drawer and the rail toggle share one owner of region
+   * visibility. Ignored in the column arrangement.
+   */
+  readonly onClose?: () => void;
 }
 
 /**
@@ -47,7 +61,9 @@ export function Sidebar({
   conversations,
   activeConversationId,
   onSelectConversation,
-  onNewChat
+  onNewChat,
+  isOverlay = false,
+  onClose
 }: SidebarProps) {
   const messages = getSharedMessages();
   const model = buildSidebarModel(
@@ -55,9 +71,45 @@ export function Sidebar({
     projects,
     activeConversationId
   );
+  const drawerRef = useRef<HTMLElement>(null);
+
+  // The drawer is mounted only while the region is open, so focus moves in on
+  // mount and back to whatever opened it (the rail toggle) on unmount — but only
+  // when focus is still inside the drawer, so a window that widens back to the
+  // column arrangement never steals focus from wherever the user moved it.
+  useEffect(() => {
+    if (!isOverlay) {
+      return;
+    }
+
+    const drawer = drawerRef.current;
+    const restore =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    drawer?.focus();
+
+    return () => {
+      if (restore && drawer?.contains(document.activeElement)) {
+        restore.focus();
+      }
+    };
+  }, [isOverlay]);
+
+  function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (isOverlay && event.key === 'Escape') {
+      event.stopPropagation();
+      onClose?.();
+    }
+  }
 
   return (
-    <aside className="sidebar">
+    <aside
+      ref={drawerRef}
+      className={isOverlay ? 'sidebar sidebar--overlay' : 'sidebar'}
+      tabIndex={isOverlay ? -1 : undefined}
+      onKeyDown={handleKeyDown}
+    >
       {/*
         The header is the static application brand alone. The notifications and
         search controls are deferred (no replacement, no placeholder) and the
