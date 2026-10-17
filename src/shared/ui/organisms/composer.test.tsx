@@ -7,6 +7,7 @@ import {
   resolveSelection
 } from '@/shared/domain/selection-chain';
 import { Composer, type ComposerProps } from './composer';
+import { EMPTY_COMPOSER_DRAFT } from './composer-draft';
 
 /**
  * Smokes the composition the unit tests cannot: that the organism renders the
@@ -93,6 +94,8 @@ function renderComposer(overrides: Partial<ComposerProps> = {}) {
       branches={['main', 'develop']}
       onSelectProject={() => undefined}
       onChangeApprovalMode={() => undefined}
+      draft={EMPTY_COMPOSER_DRAFT}
+      onDraftChange={() => undefined}
       onSubmit={() => undefined}
       {...overrides}
     />
@@ -145,6 +148,34 @@ describe('composer', () => {
 
     expect(markup).not.toContain('ChatGPT');
     expect(markup).not.toContain('GPT-6.1 Sol');
+  });
+
+  it('renders the draft it is handed instead of keeping a local copy', () => {
+    // The composer is a controlled field: the shell owns the unsent draft, so a
+    // non-empty value it hands down must appear in the field. A component that
+    // kept its own draft would render empty here (#40, criterion 2).
+    const markup = renderComposer({ draft: { text: 'Keep this draft' } });
+
+    expect(markup).toContain('>Keep this draft</textarea>');
+  });
+
+  it('renders the empty draft the owner hands without inventing one', () => {
+    const markup = renderComposer({ draft: EMPTY_COMPOSER_DRAFT });
+
+    expect(markup).toContain('></textarea>');
+    expect(markup).not.toContain('>Keep this draft</textarea>');
+  });
+
+  it('renders the send control enabled so a message can be sent', () => {
+    const markup = renderComposer();
+
+    // The wireframe keeps the send control enabled on the empty state; the
+    // submit rule (not a disabled attribute) guards the path. Operability at the
+    // baseline viewport is asserted by the browser geometry probe (#40).
+    expect(markup).toContain(
+      'class="button button--solid" aria-label="Enviar"'
+    );
+    expect(markup).not.toMatch(/aria-label="Enviar"[^>]*\sdisabled/);
   });
 
   describe('context bar', () => {

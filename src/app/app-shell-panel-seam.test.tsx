@@ -133,9 +133,18 @@ describe('shell to right panel open-file seam', () => {
     // The panel may read the request and close the region; nothing else. If it
     // also received a setter it could drift into a second owner.
     expect(Object.keys(captured.panel ?? {}).sort()).toEqual([
+      'isOpen',
       'onClose',
       'openFileRequest'
     ]);
+  });
+
+  it('hands the panel the region visibility the shell owns', () => {
+    renderToStaticMarkup(<AppShell />);
+
+    // This suite seeds the right panel open, so the panel must be told so; the
+    // shell owns visibility and the panel only reflects it (#40, criterion 4/5).
+    expect(captured.panel?.isOpen).toBe(true);
   });
 
   it('resolves the shell selection chain the same way the composer does', () => {

@@ -1,8 +1,17 @@
+/* The action row wraps instead of clipping. The main pane clips its content
+   (`overflow: hidden`, #4), so when the sidebar and the right panel are both
+   open the row is narrower than its content and the trailing send control used
+   to be cut off entirely (#40). `flex-wrap` lets the chip cluster move to a
+   second line, keeping the send control inside the pane at any width; on the
+   baseline 1440x900 state the row still fits on one line. `min-height` (not a
+   fixed height) lets the row grow when it wraps. */
 .composer-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 38px;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  min-height: 38px;
 }
 
 /* Add trigger plus the chips that sit beside it on the left (the approval chip,
@@ -13,9 +22,19 @@
   gap: 12px;
 }
 
-/* Selector chips plus the send control, pushed to the row end. */
+/* Selector chips plus the send control, pushed to the row end. `min-width: 0`
+   lets the cluster shrink inside the composer box instead of forcing an
+   overflow, and `flex-wrap` keeps the send control reachable when the chips
+   alone outgrow the line. */
 .composer-bar__controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
+  /* Pushes the cluster to the row's trailing edge — including when it wraps
+     onto its own line, where `justify-content: space-between` would otherwise
+     strand it at the start. */
+  margin-left: auto;
 }

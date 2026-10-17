@@ -5,14 +5,12 @@ import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog
 import { useWorkspaceBranches } from '@/features/projects/hooks/use-workspace-branches';
 import { useProviderCatalog } from '@/features/providers/hooks/use-provider-catalog';
 import { FilePanel } from '@/features/files/ui/organisms/file-panel';
-import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
 import {
-  INITIAL_REGION_VISIBILITY,
-  toggleRegion,
-  type RegionVisibility
-} from '@/shared/ui/layout/region-visibility';
+  EMPTY_COMPOSER_DRAFT,
+  type ComposerDraft
+} from '@/shared/ui/organisms/composer-draft';
 import { Composer } from '@/shared/ui/organisms/composer';
 import { ConversationView } from '@/shared/ui/organisms/conversation-view';
 import { HomeView } from '@/shared/ui/organisms/home-view';
@@ -20,34 +18,44 @@ import { MainPane } from '@/shared/ui/organisms/main-pane';
 import { Rail } from '@/shared/ui/organisms/rail';
 import { Sidebar } from '@/shared/ui/organisms/sidebar';
 import { TitleBar } from '@/shared/ui/organisms/title-bar';
+import {
+  INITIAL_SHELL_STATE,
+  navigateHome,
+  openConversation,
+  revealFileInPanel,
+  toggleShellRegion,
+  type ShellState
+} from './shell-state';
 import './app-shell.css';
 
 /**
  * Window-shell composition root (`docs/wireframes/README.md`, "Layout
- * regions"). It owns the shell's ephemeral presentation state — the visible
- * regions, the composer's reconciled selection chain, the open conversation and
- * the open-file request — resolves the catalogs the shell, the composer, the
- * sidebar and the conversation read through their typed ports (providers,
- * projects, conversations, the active workspace's branches), and slots the
- * content each later ticket fills.
+ * regions"). It owns the shell's ephemeral presentation state — the open
+ * conversation, the visible regions and the open-file request in `shell-state`,
+ * the unsent composer draft, and the composer's reconciled selection chain —
+ * resolves the catalogs the shell, the composer, the sidebar and the
+ * conversation read through their typed ports (providers, projects,
+ * conversations, the active workspace's branches), and slots the content each
+ * later ticket fills.
  *
- * Each piece of state has one owner here. The open conversation (#10) is owned
- * once so the sidebar highlight and the conversation region read the same id,
- * and the open-file request (#11) is owned once so a file chip's click has a
- * single seam the right panel (#12) consumes without a second copy. The shell
- * stores that request and never resolves it: rendering the file belongs to #12,
- * which reads this same value.
+ * Each piece of state has one owner here:
+ *
+ * - the open conversation (#10) is owned once so the sidebar highlight and the
+ *   conversation region read the same id; `navigateHome` is its return path;
+ * - the composer selection (#7/#8) lives in the feature hook, and the **draft**
+ *   is hoisted here beside it so it survives the view switch — the composer no
+ *   longer owns (and therefore no longer loses) it when the main pane re-slots
+ *   it under the conversation;
+ * - the open-file request (#11) is owned once so a file chip's click has a
+ *   single seam the right panel (#12) consumes without a second copy. A request
+ *   also reveals the right panel, so opening a file shows it instead of leaving
+ *   the region hidden.
  *
  * It holds no persisted state and calls no IPC.
  */
 export function AppShell() {
-  const [visibility, setVisibility] = useState<RegionVisibility>(
-    INITIAL_REGION_VISIBILITY
-  );
-  const [activeConversationId, setActiveConversationId] =
-    useState<ConversationId | null>(null);
-  const [openFileRequest, setOpenFileRequest] =
-    useState<OpenFileRequest | null>(INITIAL_OPEN_FILE_REQUEST);
+  const [shell, setShell] = useState<ShellState>(INITIAL_SHELL_STATE);
+  const [draft, setDraft] = useState<ComposerDraft>(EMPTY_COMPOSER_DRAFT);
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
@@ -56,11 +64,16 @@ export function AppShell() {
   const { conversations } = useConversationCatalog();
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
 
+  const { activeConversationId, visibility, openFileRequest } = shell;
+
   const activeConversation =
     conversations.find(
       conversation => conversation.id === activeConversationId
     ) ?? null;
 
+  // The draft is hoisted here, one owner beside the selection chain, so the
+  // composer renders what it is handed and never keeps (or loses) a copy when
+  // the main pane re-slots it under the conversation.
   const composer = (
     <Composer
       providers={providers}
@@ -73,26 +86,34 @@ export function AppShell() {
       branches={branches}
       onSelectProject={selectProject}
       onChangeApprovalMode={changeApprovalMode}
+      draft={draft}
+      onDraftChange={setDraft}
       onSubmit={handleSubmitPrompt}
     />
   );
 
   function handleToggleSidebar() {
-    setVisibility(current => toggleRegion(current, 'sidebar'));
+    setShell(toggleShellRegion(shell, 'sidebar'));
   }
 
   function handleToggleRightPanel() {
-    setVisibility(current => toggleRegion(current, 'rightPanel'));
+    setShell(toggleShellRegion(shell, 'rightPanel'));
   }
 
   function handleSelectConversation(conversationId: ConversationId) {
-    setActiveConversationId(conversationId);
+    setShell(openConversation(shell, conversationId));
+  }
+
+  /** Both Home entry points — the rail's house icon and the sidebar's new chat. */
+  function handleNavigateHome() {
+    setShell(navigateHome(shell));
   }
 
   function handleRequestOpenFile(request: OpenFileRequest) {
-    // Stores the request for the right panel (#12). Opening the tab is #12's;
-    // the shell only holds the one value both consumers read.
-    setOpenFileRequest(request);
+    // Stores the request for the right panel (#12) and reveals the region, so a
+    // chip click actually shows the file. Opening the tab is #12's; the shell
+    // only holds the one value both consumers read.
+    setShell(revealFileInPanel(shell, request));
   }
 
   function handleSubmitPrompt(prompt: string) {
@@ -111,7 +132,7 @@ export function AppShell() {
         onToggleRightPanel={handleToggleRightPanel}
       />
       <div className="window-shell__body">
-        <Rail />
+        <Rail onNavigateHome={handleNavigateHome} />
         {visibility.sidebar ? (
           <Sidebar
             providerName={resolved?.provider.displayName ?? null}
@@ -119,6 +140,7 @@ export function AppShell() {
             conversations={conversations}
             activeConversationId={activeConversationId}
             onSelectConversation={handleSelectConversation}
+            onNewChat={handleNavigateHome}
           />
         ) : null}
         <MainPane>
@@ -133,12 +155,16 @@ export function AppShell() {
             <HomeView composer={composer} />
           )}
         </MainPane>
-        {visibility.rightPanel ? (
-          <FilePanel
-            openFileRequest={openFileRequest}
-            onClose={handleToggleRightPanel}
-          />
-        ) : null}
+        {/*
+          The panel is kept mounted while the region is closed: `visibility`
+          only hides it, so the open-tab working set survives a close/reopen
+          instead of being rebuilt from the single last request.
+        */}
+        <FilePanel
+          openFileRequest={openFileRequest}
+          isOpen={visibility.rightPanel}
+          onClose={handleToggleRightPanel}
+        />
       </div>
     </div>
   );

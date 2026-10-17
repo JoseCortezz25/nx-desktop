@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
+import { Button, type ButtonProps } from '../atoms/button';
 import {
   ConversationRow,
   type ConversationRowProps
@@ -66,6 +67,7 @@ function renderSidebar(overrides: Partial<SidebarProps> = {}) {
       conversations={conversations}
       activeConversationId={null}
       onSelectConversation={() => undefined}
+      onNewChat={() => undefined}
       {...overrides}
     />
   );
@@ -85,6 +87,29 @@ function collectRows(node: ReactNode): ReactElement<ConversationRowProps>[] {
     }
     if (current.type === ConversationRow) {
       found.push(current as ReactElement<ConversationRowProps>);
+      return;
+    }
+    visit((current.props as { children?: ReactNode }).children);
+  }
+
+  visit(node);
+  return found;
+}
+
+/** Collects the `Button` atoms a sidebar render produced (no DOM needed). */
+function collectButtons(node: ReactNode): ReactElement<ButtonProps>[] {
+  const found: ReactElement<ButtonProps>[] = [];
+
+  function visit(current: ReactNode) {
+    if (Array.isArray(current)) {
+      current.forEach(visit);
+      return;
+    }
+    if (!isValidElement(current)) {
+      return;
+    }
+    if (current.type === Button) {
+      found.push(current as ReactElement<ButtonProps>);
       return;
     }
     visit((current.props as { children?: ReactNode }).children);
@@ -142,7 +167,8 @@ describe('sidebar', () => {
         projects,
         conversations,
         activeConversationId: null,
-        onSelectConversation
+        onSelectConversation,
+        onNewChat: () => undefined
       })
     );
 
@@ -150,5 +176,29 @@ describe('sidebar', () => {
     hooksRow?.props.onSelect();
 
     expect(onSelectConversation).toHaveBeenCalledWith('conv-hooks');
+  });
+
+  it('wires the new-chat row to the home action the shell hands down', () => {
+    const onNewChat = vi.fn();
+    const buttons = collectButtons(
+      Sidebar({
+        providerName: 'Codex',
+        projects,
+        conversations,
+        activeConversationId: 'conv-diff',
+        onSelectConversation: () => undefined,
+        onNewChat
+      })
+    );
+
+    // The new-chat row is the only `list`-variant button; pressing it reports the
+    // home destination so the shell can clear the open conversation (#40,
+    // criterion 1).
+    const newChat = buttons.find(button => button.props.variant === 'list');
+    expect(newChat).toBeDefined();
+
+    newChat?.props.onPress?.();
+
+    expect(onNewChat).toHaveBeenCalledTimes(1);
   });
 });

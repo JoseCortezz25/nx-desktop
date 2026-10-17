@@ -10,6 +10,13 @@
   overflow: hidden;
 }
 
+/* A closed region stays mounted so its open-tab set survives; `hidden` is the
+   visibility toggle. The class selector outranks the user-agent `[hidden]`
+   rule, so `display: none` is re-applied here. */
+.right-panel[hidden] {
+  display: none;
+}
+
 .right-panel__tabs {
   display: flex;
   align-items: center;

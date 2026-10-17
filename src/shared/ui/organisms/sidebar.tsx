@@ -29,6 +29,12 @@ export interface SidebarProps {
    */
   readonly activeConversationId: ConversationId | null;
   readonly onSelectConversation: (conversationId: ConversationId) => void;
+  /**
+   * The sidebar's home affordance: the `Nuevo chat` row. It returns to the home
+   * view by clearing the open conversation — the same destination the rail's
+   * house icon reports — so the switch out of a conversation is not one-way.
+   */
+  readonly onNewChat: () => void;
 }
 
 /**
@@ -47,7 +53,8 @@ export function Sidebar({
   projects,
   conversations,
   activeConversationId,
-  onSelectConversation
+  onSelectConversation,
+  onNewChat
 }: SidebarProps) {
   const messages = getSharedMessages();
   const model = buildSidebarModel(
@@ -78,7 +85,7 @@ export function Sidebar({
       </div>
 
       <div className="sidebar__new-chat">
-        <Button variant="list">
+        <Button variant="list" onPress={onNewChat}>
           <Icon name="square-pen" size="md" />
           <span>{messages.sidebar.newChat}</span>
         </Button>
