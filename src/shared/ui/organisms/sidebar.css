@@ -35,7 +35,7 @@
 /* Narrow windows (#43): the sidebar hands its column to the rail and is drawn as
    an on-demand drawer anchored just right of the rail, over the main pane. The
    rail stays fully visible (and its toggles operable) to its left.
-   
+
    Like the right panel, the drawer ends above the composer dock
    (`--composer-clearance`) so it never covers the composer or the send control. */
 .sidebar--overlay {

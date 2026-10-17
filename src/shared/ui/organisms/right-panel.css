@@ -20,7 +20,7 @@
 /* Narrow windows (#43): the panel stops taking a fixed column and is drawn as an
    on-demand drawer anchored to the body's trailing edge, over the main pane. It
    is dismissed by its close control or Escape.
-   
+
    The drawer ends above the composer dock (`--composer-clearance`, published by
    the composer), so it never covers the composer or the send control; the
    `--layer-composer` ordering is the belt to that brace. */

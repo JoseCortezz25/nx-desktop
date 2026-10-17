@@ -56,3 +56,7 @@ Known limitations (reported honestly): the native OS window frame cannot be exer
 ## Delivery and progress
 
 Forecast was roughly 400–650 authored changed lines. Actual: one implementation commit `e9f5ffd` (18 files, ~626 inserted / ~88 deleted including the sidebar-test capture-pattern rewrite) plus this record. Single PR for the cohesive shell-plus-surface adaptation. Next step: independent Verifier, then independent visual+functional QA.
+
+## Round 2 — pre-Verifier whitespace hygiene (2026-10-17)
+
+Read-only `git diff --check cc079940eac38a327fbc760a0572ef19dd57d980...HEAD` flagged two trailing-whitespace blank lines inside the new overlay comments: `src/shared/ui/organisms/right-panel.css:23` and `src/shared/ui/organisms/sidebar.css:38`. Each was an otherwise-empty block-comment line carrying three spaces. The spaces were removed without touching any declaration, selector, comment text, or token, so the measured geometry, breakpoints, and interaction behavior are unchanged; no source behavior was altered and no scope was widened. The Round 1 handoff at `2c58119f0a58c2b6f5935fbcf07041c6d91026e7` is superseded by this record. After the correction `pnpm run format:check` is clean and `git diff --check cc079940...HEAD` reports nothing.
