@@ -1,0 +1,32 @@
+=== V1. Home, rail + sidebar + right panel open, 1440x900 ===
+{  "conv": false,  "home": true,  "panelOpen": true,  "sidebarOpen": true}
+state: {  "conv": false,  "home": true,  "panelOpen": true,  "sidebarOpen": true}
+-- diff vs docs/captures/issue-4/03-sidebar-and-right-panel-open.png (issue #4 app baseline, panel was 520px):
+✗ 2.36% pixels differ
+  Diff image: /tmp/opencode/qa40/diff1-home-all-open-vs-issue4-03.png
+  30522 different / 1296000 total pixels
+
+=== V2. Home, rail + sidebar open, right panel closed ===
+{  "conv": false,  "home": true,  "panelOpen": false,  "sidebarOpen": true}
+state: {  "conv": false,  "home": true,  "panelOpen": false,  "sidebarOpen": true}
+-- diff vs docs/captures/issue-4/02-sidebar-open.png (issue #4 app baseline):
+✗ 1.23% pixels differ
+  Diff image: /tmp/opencode/qa40/diff2-home-sidebar-open-vs-issue4-02.png
+  15971 different / 1296000 total pixels
+
+=== V3. Conversation + sidebar open, right panel closed ===
+{  "conv": true,  "home": false,  "panelOpen": false,  "sidebarOpen": true}
+state: {  "conv": true,  "home": false,  "panelOpen": false,  "sidebarOpen": true}
+-- diff vs wireframe 11 render (ref-11-chat-conversation-sidebar.png, 1440x900, low-fidelity structural reference):
+✗ 8.10% pixels differ
+  Diff image: /tmp/opencode/qa40/diff3-conversation-sidebar-vs-wireframe11.png
+  105027 different / 1296000 total pixels
+
+=== V4. Conversation + rail + sidebar + right panel open (every region), 1440x900 ===
+{  "conv": true,  "home": false,  "panelOpen": true,  "sidebarOpen": true}
+state: {  "conv": true,  "home": false,  "panelOpen": true,  "sidebarOpen": true}
+-- diff vs wireframe 03 render (ref-03-chat-sitemap-doc.png, conversation + document panel + sidebar, 1440x900, low-fidelity structural reference; wireframe leaves the panel width flexible):
+✗ 10.44% pixels differ
+  Diff image: /tmp/opencode/qa40/diff4-conversation-all-open-vs-wireframe03.png
+  135349 different / 1296000 total pixels
+VISUAL DONE

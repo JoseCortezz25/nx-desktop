@@ -1,0 +1,174 @@
+{
+  "viewport": { "name": "desktop", "width": 1440, "height": 900 },
+  "app": {
+    "head": "f6f30a4872a45b6836d938aa195d0e5427d5e2d4",
+    "url": "http://localhost:1420/",
+    "source": "packages: vite 8.3.4 dev server; browser: headless chromium 152.0.0.0 via agent-browser 0.26.0; measurements read from getBoundingClientRect() in the running app"
+  },
+  "states": [
+    {
+      "id": "home-regions-closed",
+      "regions": {
+        "titleBar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": null,
+        "mainPane": { "x": 56, "y": 48, "w": 1384, "h": 848 },
+        "rightPanel": { "hidden": true, "w": 0 }
+      },
+      "composerBar": {
+        "x": 411,
+        "y": 550,
+        "w": 680,
+        "h": 38,
+        "scrollWidth": 680,
+        "clientWidth": 680
+      },
+      "send": {
+        "x": 1061,
+        "y": 554,
+        "w": 30,
+        "h": 30,
+        "visible": true,
+        "insideMainPane": true
+      }
+    },
+    {
+      "id": "home-sidebar-open",
+      "regions": {
+        "titleBar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 },
+        "mainPane": { "x": 374, "y": 48, "w": 1066, "h": 848 },
+        "rightPanel": { "hidden": true, "w": 0 }
+      },
+      "send": {
+        "x": 1220,
+        "y": 554,
+        "w": 30,
+        "h": 30,
+        "visible": true,
+        "insideMainPane": true
+      }
+    },
+    {
+      "id": "home-all-regions-open",
+      "regions": {
+        "titleBar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 },
+        "mainPane": { "x": 374, "y": 48, "w": 606, "h": 848 },
+        "rightPanel": { "x": 980, "y": 48, "w": 460, "h": 852, "hidden": false }
+      },
+      "composerBar": {
+        "x": 390,
+        "y": 550,
+        "w": 580,
+        "h": 70,
+        "scrollWidth": 580,
+        "clientWidth": 580
+      },
+      "send": {
+        "x": 940,
+        "y": 590,
+        "w": 30,
+        "h": 30,
+        "visible": true,
+        "insideMainPane": true
+      }
+    },
+    {
+      "id": "conversation-sidebar-open-panel-closed",
+      "regions": {
+        "titleBar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 },
+        "mainPane": { "x": 374, "y": 48, "w": 1066, "h": 848 },
+        "rightPanel": { "hidden": true, "w": 0 }
+      },
+      "composerBar": {
+        "x": 570,
+        "y": 826,
+        "w": 680,
+        "h": 38,
+        "scrollWidth": 680,
+        "clientWidth": 680
+      },
+      "send": {
+        "x": 1220,
+        "y": 830,
+        "w": 30,
+        "h": 30,
+        "visible": true,
+        "insideMainPane": true
+      }
+    },
+    {
+      "id": "conversation-all-regions-open",
+      "regions": {
+        "titleBar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 },
+        "mainPane": { "x": 374, "y": 48, "w": 606, "h": 848 },
+        "rightPanel": { "x": 980, "y": 48, "w": 460, "h": 852, "hidden": false }
+      },
+      "composerBar": {
+        "x": 414,
+        "y": 794,
+        "w": 532,
+        "h": 70,
+        "scrollWidth": 532,
+        "clientWidth": 532
+      },
+      "send": {
+        "x": 916,
+        "y": 834,
+        "w": 30,
+        "h": 30,
+        "visible": true,
+        "insideMainPane": true,
+        "disabled": false,
+        "hitTestAtCentre": "button[aria-label=\"Enviar\"]"
+      },
+      "mainPaneOverflow": {
+        "overflowX": "hidden",
+        "scrollWidth": 605,
+        "clientWidth": 605
+      }
+    }
+  ],
+  "wireframeReferences": {
+    "01-home": {
+      "sourceCommit": "16f415a8877becad744b22a8d60eceef2e4bfdea",
+      "titleBar": { "h": 40 },
+      "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+      "sidebar": null
+    },
+    "02-home-sidebar": {
+      "sourceCommit": "16f415a8877becad744b22a8d60eceef2e4bfdea",
+      "rail": { "w": 56 },
+      "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 }
+    },
+    "11-chat-conversation-sidebar": {
+      "sourceCommit": "16f415a8877becad744b22a8d60eceef2e4bfdea",
+      "titleBar": { "h": 40 },
+      "rail": { "w": 56 },
+      "sidebar": { "x": 56, "y": 47, "w": 316, "h": 853 }
+    },
+    "03-chat-sitemap-doc": {
+      "sourceCommit": "16f415a8877becad744b22a8d60eceef2e4bfdea",
+      "window": { "w": 1425 },
+      "rail": { "w": 52 },
+      "sidebar": { "x": 52, "y": 40, "w": 318, "h": 860 },
+      "mid": { "w": 468 },
+      "doc": { "w": 587 }
+    }
+  },
+  "designTokenContract": {
+    "source": "src/shared/ui/tokens.css @ f6f30a4",
+    "titleBarHeight": "40px",
+    "railWidth": "56px",
+    "sidebarWidth": "318px",
+    "rightPanelWidth": "460px (app-added token; the wireframes leave the right panel flexible, and #40 explicitly makes this token the first thing to reconsider)"
+  },
+  "structuralVerdict": "Region inventory (title bar, rail, toggleable sidebar, main pane, toggleable right panel) matches docs/wireframes/README.md 'Layout regions' with all five regions rendered simultaneously at 1440x900. Title bar 40px and rail 56px equal the wireframe values exactly; sidebar 318px equals the wireframe value (wireframe 11 reads 316px, a 2px difference) and the token. The right panel is the only geometry that intentionally moved (520px -> 460px); the wireframe declares that region flexible, so this is inside the intended change."
+}

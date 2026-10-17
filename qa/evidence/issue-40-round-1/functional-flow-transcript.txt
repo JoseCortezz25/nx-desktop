@@ -1,0 +1,750 @@
+
+===== A. Home, all toggleable regions closed =====
+{
+  "activeConversationRows": [],
+  "composerBar": {
+    "bottom": 588,
+    "height": 38,
+    "left": 411,
+    "right": 1091,
+    "top": 550,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": null,
+  "draftValue": "",
+  "hasConversationRegion": false,
+  "hasViewer": false,
+  "homeHeading": "¿En qué deberíamos trabajar?",
+  "homeView": true,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 56,
+    "right": 1440,
+    "top": 48,
+    "width": 1384
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1383,
+    "overflowX": "hidden",
+    "scrollWidth": 1383
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 584,
+    "height": 30,
+    "left": 1061,
+    "right": 1091,
+    "top": 554,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": null,
+  "sidebarVisible": false,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== B. Open sidebar (title bar toggle) =====
+{
+  "activeConversationRows": [],
+  "composerBar": {
+    "bottom": 588,
+    "height": 38,
+    "left": 570,
+    "right": 1250,
+    "top": 550,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": null,
+  "draftValue": "",
+  "hasConversationRegion": false,
+  "hasViewer": false,
+  "homeHeading": "¿En qué deberíamos trabajar?",
+  "homeView": true,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 1440,
+    "top": 48,
+    "width": 1066
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1065,
+    "overflowX": "hidden",
+    "scrollWidth": 1065
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 584,
+    "height": 30,
+    "left": 1220,
+    "right": 1250,
+    "top": 554,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== C. Open conversation 'Composer selection chain' from the sidebar =====
+{
+  "activeConversationRows": [
+    "Composer selection chain",
+    "Composer selection chain"
+  ],
+  "composerBar": {
+    "bottom": 864,
+    "height": 38,
+    "left": 570,
+    "right": 1250,
+    "top": 826,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": "Composer selection chain",
+  "draftValue": "",
+  "hasConversationRegion": true,
+  "hasViewer": false,
+  "homeHeading": null,
+  "homeView": false,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 1440,
+    "top": 48,
+    "width": 1066
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1065,
+    "overflowX": "hidden",
+    "scrollWidth": 1065
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 860,
+    "height": 30,
+    "left": 1220,
+    "right": 1250,
+    "top": 830,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== D. Rail 'Inicio' returns Home and clears the conversation =====
+{
+  "activeConversationRows": [],
+  "composerBar": {
+    "bottom": 588,
+    "height": 38,
+    "left": 570,
+    "right": 1250,
+    "top": 550,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": null,
+  "draftValue": "",
+  "hasConversationRegion": false,
+  "hasViewer": false,
+  "homeHeading": "¿En qué deberíamos trabajar?",
+  "homeView": true,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 1440,
+    "top": 48,
+    "width": 1066
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1065,
+    "overflowX": "hidden",
+    "scrollWidth": 1065
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 584,
+    "height": 30,
+    "left": 1220,
+    "right": 1250,
+    "top": 554,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== E. Open conversation again, then sidebar 'Nuevo chat' returns Home =====
+{
+  "activeConversationRows": [],
+  "composerBar": {
+    "bottom": 588,
+    "height": 38,
+    "left": 570,
+    "right": 1250,
+    "top": 550,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": null,
+  "draftValue": "",
+  "hasConversationRegion": false,
+  "hasViewer": false,
+  "homeHeading": "¿En qué deberíamos trabajar?",
+  "homeView": true,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 1440,
+    "top": 48,
+    "width": 1066
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1065,
+    "overflowX": "hidden",
+    "scrollWidth": 1065
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 584,
+    "height": 30,
+    "left": 1220,
+    "right": 1250,
+    "top": 554,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== F. Draft typed on Home survives Home -> Conversation -> Home =====
+-- draft after typing on Home:
+"draft survives switch qa40"
+-- draft inside the conversation view:
+"draft survives switch qa40"
+-- draft back on Home:
+"draft survives switch qa40"
+
+===== G. 1440x900, sidebar + right panel open, conversation view =====
+{
+  "activeConversationRows": [
+    "Composer selection chain",
+    "Composer selection chain"
+  ],
+  "composerBar": {
+    "bottom": 864,
+    "height": 70,
+    "left": 414,
+    "right": 946,
+    "top": 794,
+    "width": 532
+  },
+  "composerBarOverflow": {
+    "clientWidth": 532,
+    "scrollWidth": 532
+  },
+  "conversationTitle": "Composer selection chain",
+  "draftValue": "draft survives switch qa40",
+  "hasConversationRegion": true,
+  "hasViewer": false,
+  "homeHeading": null,
+  "homeView": false,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 980,
+    "top": 48,
+    "width": 606
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 605,
+    "overflowX": "hidden",
+    "scrollWidth": 605
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 900,
+    "height": 852,
+    "left": 980,
+    "right": 1440,
+    "top": 48,
+    "width": 460
+  },
+  "rightPanelHidden": false,
+  "rightPanelVisible": true,
+  "send": {
+    "bottom": 864,
+    "height": 30,
+    "left": 916,
+    "right": 946,
+    "top": 834,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 0,
+  "tabLabels": [],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": null,
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== H. Send control is operable with every region open =====
+-- draft before send:
+"send me from qa40"
+-- is Enviar enabled at 1440x900 with all regions open:
+{
+  "disabled": false,
+  "isHitByEnviar": true,
+  "topElementAtCentre": "svg",
+  "visible": true
+}
+-- draft after clicking Enviar (empty proves the submit rule ran):
+""
+
+===== I. A file chip reveals the right panel with that file =====
+-- close the right panel first (so a chip click must reveal it):
+{
+  "panelHidden": true,
+  "toggleAriaPressed": "false"
+}
+-- click the chip for src/shared/domain/selection-chain.ts:
+{
+  "hasViewer": true,
+  "panelHidden": false,
+  "panelVisible": true,
+  "tabs": [
+    "selection-chain.ts"
+  ],
+  "toggleAriaPressed": "true"
+}
+
+===== J. Two open tabs survive a panel close/reopen =====
+-- two tabs after the second chip:
+{
+  "activeTab": "use-composer-selection.ts",
+  "tabs": [
+    "selection-chain.ts",
+    "use-composer-selection.ts"
+  ]
+}
+-- close the panel with the panel close control:
+{
+  "panelHidden": true,
+  "tabsStillMounted": 2
+}
+-- reopen the panel:
+{
+  "activeTab": "use-composer-selection.ts",
+  "hasViewer": true,
+  "panelHidden": false,
+  "tabs": [
+    "selection-chain.ts",
+    "use-composer-selection.ts"
+  ]
+}
+
+===== M. Panel-closed geometry at 1440x900 =====
+{
+  "activeConversationRows": [
+    "Composer selection chain",
+    "Composer selection chain"
+  ],
+  "composerBar": {
+    "bottom": 864,
+    "height": 38,
+    "left": 570,
+    "right": 1250,
+    "top": 826,
+    "width": 680
+  },
+  "composerBarOverflow": {
+    "clientWidth": 680,
+    "scrollWidth": 680
+  },
+  "conversationTitle": "Composer selection chain",
+  "draftValue": "",
+  "hasConversationRegion": true,
+  "hasViewer": true,
+  "homeHeading": null,
+  "homeView": false,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 1440,
+    "top": 48,
+    "width": 1066
+  },
+  "mainPaneOverflow": {
+    "clientWidth": 1065,
+    "overflowX": "hidden",
+    "scrollWidth": 1065
+  },
+  "rail": {
+    "bottom": 900,
+    "height": 860,
+    "left": 0,
+    "right": 56,
+    "top": 40,
+    "width": 56
+  },
+  "rightPanel": {
+    "bottom": 0,
+    "height": 0,
+    "left": 0,
+    "right": 0,
+    "top": 0,
+    "width": 0
+  },
+  "rightPanelHidden": true,
+  "rightPanelVisible": false,
+  "send": {
+    "bottom": 860,
+    "height": 30,
+    "left": 1220,
+    "right": 1250,
+    "top": 830,
+    "width": 30
+  },
+  "sendDisabled": false,
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "sidebarVisible": true,
+  "tabCount": 2,
+  "tabLabels": [
+    "selection-chain.ts",
+    "use-composer-selection.ts"
+  ],
+  "titleBar": {
+    "bottom": 40,
+    "height": 40,
+    "left": 0,
+    "right": 1440,
+    "top": 0,
+    "width": 1440
+  },
+  "viewerPath": "src>features>providers>hooks>use-composer-selection.ts",
+  "viewport": {
+    "h": 900,
+    "w": 1440
+  }
+}
+
+===== N. Console + page errors =====
+-- console:
+✓ Console log cleared
+-- page errors:
+FLOW DONE
+{
+  "composerBar": {
+    "bottom": 620,
+    "height": 70,
+    "left": 390,
+    "right": 970,
+    "top": 550,
+    "width": 580
+  },
+  "composerBarHeight": 70,
+  "composerBarOverflow": {
+    "clientWidth": 580,
+    "scrollWidth": 580
+  },
+  "homeView": true,
+  "mainPane": {
+    "bottom": 896,
+    "height": 848,
+    "left": 374,
+    "right": 980,
+    "top": 48,
+    "width": 606
+  },
+  "mainPaneRight": 980,
+  "panelHidden": false,
+  "rightPanel": {
+    "bottom": 900,
+    "height": 852,
+    "left": 980,
+    "right": 1440,
+    "top": 48,
+    "width": 460
+  },
+  "send": {
+    "bottom": 620,
+    "height": 30,
+    "left": 940,
+    "right": 970,
+    "top": 590,
+    "width": 30
+  },
+  "sendInsideMainPane": true,
+  "sendVisible": true,
+  "sidebar": {
+    "bottom": 900,
+    "height": 852,
+    "left": 56,
+    "right": 374,
+    "top": 48,
+    "width": 318
+  },
+  "state": "Home with rail+sidebar+main pane+right panel open"
+}

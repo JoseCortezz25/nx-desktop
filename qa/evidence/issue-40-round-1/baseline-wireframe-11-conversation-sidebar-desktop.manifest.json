@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "url": "file:///home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40-qa/docs/wireframes/11-chat-conversation-sidebar.html",
+  "scope": "conversation-with-sidebar",
+  "capture": "viewport",
+  "selector": null,
+  "viewport": { "name": "desktop", "width": 1440, "height": 900 },
+  "engine": {
+    "name": "chromium (agent-browser 0.26.0)",
+    "version": "152.0.0.0"
+  },
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": null,
+  "screenshot": "qa/evidence/issue-40-round-1/baseline-wireframe-11-conversation-sidebar-desktop.png",
+  "sourceCommit": "16f415a8877becad744b22a8d60eceef2e4bfdea",
+  "createdAt": "2026-10-17T18:40:00.000Z",
+  "note": "Wireframe 11 rendered at the baseline viewport. Low-fidelity grayscale structural reference, not a pixel-parity gate."
+}

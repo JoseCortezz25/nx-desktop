@@ -1,0 +1,194 @@
+{
+  "role": "qa",
+  "round": 1,
+  "task": "https://github.com/JoseCortezz25/nx-desktop/issues/40",
+  "pr": "https://github.com/JoseCortezz25/nx-desktop/pull/44",
+  "branch": "feat/issue-40-navigation-and-layout-seams",
+  "reviewedCommit": "f6f30a4872a45b6836d938aa195d0e5427d5e2d4",
+  "validationType": "visual+functional (binding, as declared in the Coder handoff)",
+  "environment": {
+    "host": "Linux (WSL2)",
+    "node": "v24.15.0",
+    "pnpm": "10.33.2",
+    "vite": "8.3.4",
+    "port": 1420,
+    "portSource": "vite.config.ts server.port=1420 (strictPort) served by the README-documented `pnpm run dev`; http://localhost:1420/ confirmed live by the dev-server banner",
+    "browser": "headless chromium 152.0.0.0 via agent-browser 0.26.0 (CDP)",
+    "auth": "none (frontend renders from mock ports; no Tauri backend)",
+    "fixture": "pinned conversation 'Composer selection chain' with chips src/shared/domain/selection-chain.ts, src/features/providers/hooks/use-composer-selection.ts, docs/research-tecnico/arquitectura-tauri.md",
+    "gitStatus": "clean detached worktree at f6f30a4 before and after the run; no file under review was modified"
+  },
+  "console": {
+    "pageErrors": [],
+    "consoleMessages": [],
+    "note": "agent-browser `console --clear` and `errors --clear` returned no entries on the exercised flows."
+  },
+  "functionalChecks": [
+    {
+      "id": "AC1-rail-inicio",
+      "useCase": "Open a conversation, press the rail 'Inicio' -> Home with the conversation cleared",
+      "selectors": [
+        "button[aria-label=\"Inicio\"]",
+        ".home-view",
+        ".conversation-view"
+      ],
+      "observed": {
+        "homeView": true,
+        "conversationRegion": false,
+        "activeConversationRows": []
+      },
+      "result": "pass",
+      "screenshot": "current-01-home-regions-closed.png (state after rail press; sidebar stays as the user left it)"
+    },
+    {
+      "id": "AC1-sidebar-nuevo-chat",
+      "useCase": "Open a conversation, press the sidebar 'Nuevo chat' -> Home with the conversation cleared",
+      "selectors": [".sidebar__new-chat button", ".conversation-row__title"],
+      "observed": {
+        "homeView": true,
+        "conversationRegion": false,
+        "activeConversationRows": []
+      },
+      "result": "pass"
+    },
+    {
+      "id": "AC2-draft-ownership",
+      "useCase": "Type a draft on Home, open a conversation, return Home -> the draft is still in the composer",
+      "selector": "textarea[aria-label=\"Mensaje\"]",
+      "observed": [
+        "draft survives switch qa40 (typed on Home)",
+        "draft survives switch qa40 (inside the conversation view)",
+        "draft survives switch qa40 (back on Home)"
+      ],
+      "result": "pass",
+      "screenshot": "current-10-home-draft-persisted.png"
+    },
+    {
+      "id": "AC3-send-visible-and-operable-all-regions-open",
+      "useCase": "At 1440x900 with rail + sidebar + main pane + right panel open, the send control is visible and operable",
+      "selectors": [
+        "button[aria-label=\"Enviar\"]",
+        ".composer-bar",
+        ".main-pane"
+      ],
+      "observed": {
+        "conversationView": {
+          "mainPaneWidth": 606,
+          "mainPaneOverflow": {
+            "overflowX": "hidden",
+            "scrollWidth": 605,
+            "clientWidth": 605
+          },
+          "composerBar": {
+            "width": 532,
+            "height": 70,
+            "scrollWidth": 532,
+            "clientWidth": 532
+          },
+          "send": { "x": 916, "right": 946 },
+          "sendInsideMainPane": true,
+          "sendVisible": true,
+          "sendDisabled": false,
+          "hitTest": "the point at the send control's centre resolves to the Enviar button"
+        },
+        "homeView": {
+          "mainPaneWidth": 606,
+          "composerBar": { "width": 580, "height": 70 },
+          "send": { "x": 940, "right": 970 },
+          "sendInsideMainPane": true,
+          "sendVisible": true
+        }
+      },
+      "operation": "typed 'send me from qa40' and pressed Enviar; the draft textarea read back empty afterwards, proving the submit rule ran (AppShell does not persist the prompt yet by design)",
+      "result": "pass",
+      "screenshots": [
+        "current-03-home-all-regions-open.png",
+        "current-05-conversation-all-regions-open.png"
+      ]
+    },
+    {
+      "id": "AC4-chip-reveals-panel",
+      "useCase": "Click a file chip while the right panel is closed -> the panel becomes visible showing that file",
+      "precondition": { "panelHidden": true, "toggleAriaPressed": "false" },
+      "selectors": [
+        "button[aria-label=\"Abrir src/shared/domain/selection-chain.ts\"]",
+        ".right-panel",
+        "button[aria-label=\"Alternar panel derecho\"]"
+      ],
+      "observed": {
+        "panelHidden": false,
+        "panelVisible": true,
+        "toggleAriaPressed": "true",
+        "tabs": ["selection-chain.ts"],
+        "viewerPresent": true
+      },
+      "result": "pass",
+      "screenshot": "current-07-chip-revealed-panel.png"
+    },
+    {
+      "id": "AC5-tabs-survive-close-reopen",
+      "useCase": "Close the right panel with >=2 tabs open, reopen it -> the tabs are still there",
+      "observed": {
+        "afterSecondChip": ["selection-chain.ts", "use-composer-selection.ts"],
+        "afterClose": { "panelHidden": true, "tabsStillMounted": 2 },
+        "afterReopen": {
+          "panelHidden": false,
+          "tabs": ["selection-chain.ts", "use-composer-selection.ts"],
+          "activeTab": "use-composer-selection.ts",
+          "viewerPresent": true
+        }
+      },
+      "result": "pass",
+      "screenshots": [
+        "current-08-two-tabs-open.png",
+        "current-09-panel-reopened-tabs-kept.png"
+      ]
+    },
+    {
+      "id": "panel-closed-geometry",
+      "useCase": "Secondary check: 1440x900 with the right panel closed",
+      "observed": {
+        "mainPane": { "x": 374, "w": 1066 },
+        "rightPanel": { "hidden": true, "w": 0 },
+        "sendInsideMainPane": true
+      },
+      "result": "pass",
+      "screenshot": "current-06-conversation-panel-closed.png"
+    }
+  ],
+  "negativeAndCriticalPaths": [
+    {
+      "path": "Chip click while the panel is already open",
+      "expected": "the panel stays open (idempotent reveal) rather than toggling closed",
+      "observed": "second chip click kept panelHidden=false and added/focused the second tab",
+      "result": "pass"
+    },
+    {
+      "path": "Repeated Home navigation on an already-empty shell",
+      "expected": "no spurious state change",
+      "observed": "rail 'Inicio' pressed while Home was showing left both regions untouched and Home rendered",
+      "result": "pass"
+    },
+    {
+      "path": "Send control hit test (not just visibility)",
+      "expected": "the centre of the control is the top element (nothing overlays or clips it)",
+      "observed": "elementFromPoint at the send centre resolved to the Enviar button",
+      "result": "pass"
+    },
+    {
+      "path": "Console / page errors across the whole flow",
+      "expected": "no uncaught error",
+      "observed": "none",
+      "result": "pass"
+    }
+  ],
+  "existingAutomatedCoverage": [
+    "src/app/app-shell-navigation-seam.test.tsx",
+    "src/app/shell-state.test.tsx",
+    "src/shared/ui/organisms/rail.test.tsx",
+    "src/features/files/ui/organisms/file-panel.test.tsx",
+    "src/app/app-shell-panel-seam.test.tsx"
+  ],
+  "newTrackedTestsAdded": [],
+  "note": "QA added no tracked test: the seams already carry the repository's own suites and QA must not silently modify the verifier-approved commit (f6f30a4)."
+}

@@ -1,0 +1,57 @@
+{
+  "titleBar": {
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 1440,
+      "height": 40
+    },
+    "diffPixels": 0,
+    "totalPixels": 57600,
+    "ratio": 0
+  },
+  "rail": {
+    "rect": {
+      "x": 0,
+      "y": 40,
+      "width": 56,
+      "height": 860
+    },
+    "diffPixels": 0,
+    "totalPixels": 48160,
+    "ratio": 0
+  },
+  "sidebar": {
+    "rect": {
+      "x": 56,
+      "y": 48,
+      "width": 318,
+      "height": 852
+    },
+    "diffPixels": 5560,
+    "totalPixels": 270936,
+    "ratio": 0.020521
+  },
+  "mainPane": {
+    "rect": {
+      "x": 374,
+      "y": 48,
+      "width": 1066,
+      "height": 848
+    },
+    "diffPixels": 24449,
+    "totalPixels": 903968,
+    "ratio": 0.027046
+  },
+  "rightPanelColumn": {
+    "rect": {
+      "x": 980,
+      "y": 48,
+      "width": 460,
+      "height": 852
+    },
+    "diffPixels": 14411,
+    "totalPixels": 391920,
+    "ratio": 0.03677
+  }
+}

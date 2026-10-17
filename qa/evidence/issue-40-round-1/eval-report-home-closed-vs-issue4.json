@@ -1,0 +1,27 @@
+{
+  "url": "http://localhost:1420/",
+  "baselineDir": "/tmp/opencode/qa40/baseline-app-desktop",
+  "outDir": "/tmp/opencode/qa40/eval-home-closed-vs-app",
+  "capture": "viewport",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "maxDiffPixels": null,
+  "maxDiffRatio": 1,
+  "passed": true,
+  "results": [
+    {
+      "viewport": "desktop",
+      "baseline": "/tmp/opencode/qa40/baseline-app-desktop/desktop/desktop.png",
+      "current": "/tmp/opencode/qa40/eval-home-closed-vs-app/desktop/desktop.current.png",
+      "diff": "/tmp/opencode/qa40/eval-home-closed-vs-app/desktop/desktop.diff.png",
+      "diffPixels": 10073,
+      "diffRatio": 0.0077723765432098765,
+      "passed": true,
+      "viewportSource": "baseline-png"
+    }
+  ],
+  "createdAt": "2026-10-17T18:38:50.900Z"
+}

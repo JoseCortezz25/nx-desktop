@@ -1,0 +1,73 @@
+{
+  "method": "pixelmatch (threshold 0.1, includeAA) over two 1440x900 viewport captures; verified callers: (a) the kit script scripts/evaluate-visual-diff.ts (sha256 03b23ffc710547184a24c61ebad72f30fad4e247c81caffaf783fba329d1f5f7, copied unmodified into a directory with node_modules so its ESM imports resolve) for the no-interaction Home-closed state; (b) agent-browser 0.26.0 'diff screenshot --baseline' for the interactive states the kit script cannot reach (it navigates and screenshots but never clicks) — see kit gap #48.",
+  "comparisons": [
+    {
+      "id": "01-home-all-open-vs-issue4-03",
+      "current": "current-03-home-all-regions-open.png",
+      "baseline": "baseline-issue4-03-all-regions-desktop.png (docs/captures/issue-4/03-sidebar-and-right-panel-open.png @ 3e697fd)",
+      "scope": "whole viewport 1440x900, Home, rail+sidebar+main pane+right panel open",
+      "diffPixels": 30522,
+      "totalPixels": 1296000,
+      "diffRatio": 0.0236,
+      "expected": true,
+      "reason": "Intended: the right panel token moved 520px -> 460px (#40). Also the sidebar content differs because the baseline predates #10 (sidebar pinned/projects/recents)."
+    },
+    {
+      "id": "02-home-sidebar-vs-issue4-02",
+      "current": "current-02-home-sidebar-open.png",
+      "baseline": "baseline-issue4-02-home-sidebar-desktop.png (docs/captures/issue-4/02-sidebar-open.png @ 3e697fd)",
+      "scope": "whole viewport 1440x900, Home, rail+sidebar open, right panel closed",
+      "diffPixels": 15971,
+      "totalPixels": 1296000,
+      "diffRatio": 0.0123,
+      "expected": true,
+      "reason": "Content only: the sidebar's later-ticket groups (#10) and main-pane composer copy. Region-localised diff: rail 0 px, title bar 67 px (0.12%)."
+    },
+    {
+      "id": "03-conversation-sidebar-vs-wireframe-11",
+      "current": "current-04-conversation-sidebar-open.png",
+      "baseline": "baseline-wireframe-11-conversation-sidebar-desktop.png (docs/wireframes/11-chat-conversation-sidebar.html @ 16f415a)",
+      "scope": "whole viewport 1440x900, conversation + sidebar open",
+      "diffPixels": 105027,
+      "totalPixels": 1296000,
+      "diffRatio": 0.081,
+      "expected": true,
+      "reason": "Low-fidelity grayscale wireframe vs the real rendered app (different copy, colour, real mock content). Structural reference only, not a pixel-parity gate; region geometry matches (rail 56, sidebar 318 vs 316)."
+    },
+    {
+      "id": "04-conversation-all-open-vs-wireframe-03",
+      "current": "current-05-conversation-all-regions-open.png",
+      "baseline": "baseline-wireframe-03-doc-panel-desktop.png (docs/wireframes/03-chat-sitemap-doc.html @ 16f415a)",
+      "scope": "whole viewport 1440x900, conversation + sidebar + document panel",
+      "diffPixels": 135349,
+      "totalPixels": 1296000,
+      "diffRatio": 0.1044,
+      "expected": true,
+      "reason": "Same low-fidelity structural reference, plus the flexible right-panel width (wireframe 587 of a 1425 window vs app 460 of 1440)."
+    },
+    {
+      "id": "05-home-closed-vs-issue4-01",
+      "current": "current-11-home-closed-kitscript.png",
+      "baseline": "baseline-issue4-01-home-closed-desktop.png (docs/captures/issue-4/01-default-closed.png @ 3e697fd)",
+      "scope": "whole viewport 1440x900, Home, both toggleable regions closed",
+      "tool": "kit script scripts/evaluate-visual-diff.ts",
+      "diffPixels": 10073,
+      "totalPixels": 1296000,
+      "diffRatio": 0.00777,
+      "expected": false,
+      "reason": "Near-identical: no unintended layout shift in the closed state. Residual diff is text/copy content from later tickets."
+    },
+    {
+      "id": "06-home-closed-vs-wireframe-01",
+      "current": "current-11-home-closed-kitscript.png",
+      "baseline": "baseline-wireframe-01-home-desktop.png (docs/captures/issue-4/ref-01-home.png @ 3e697fd, render of docs/wireframes/01-home.html)",
+      "scope": "whole viewport 1440x900, Home, both toggleable regions closed",
+      "tool": "kit script scripts/evaluate-visual-diff.ts",
+      "diffPixels": 21460,
+      "totalPixels": 1296000,
+      "diffRatio": 0.01656,
+      "expected": false,
+      "reason": "Structural reference within the declared allowance for a low-fidelity grayscale wireframe."
+    }
+  ]
+}

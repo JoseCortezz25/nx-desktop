@@ -1,0 +1,27 @@
+{
+  "url": "http://localhost:1420/",
+  "baselineDir": "/tmp/opencode/qa40/baseline-wireframe-home",
+  "outDir": "/tmp/opencode/qa40/eval-home-closed-vs-wireframe",
+  "capture": "viewport",
+  "viewports": [
+    "desktop"
+  ],
+  "masks": [],
+  "threshold": 0.1,
+  "maxDiffPixels": null,
+  "maxDiffRatio": 1,
+  "passed": true,
+  "results": [
+    {
+      "viewport": "desktop",
+      "baseline": "/tmp/opencode/qa40/baseline-wireframe-home/desktop/desktop.png",
+      "current": "/tmp/opencode/qa40/eval-home-closed-vs-wireframe/desktop/desktop.current.png",
+      "diff": "/tmp/opencode/qa40/eval-home-closed-vs-wireframe/desktop/desktop.diff.png",
+      "diffPixels": 21460,
+      "diffRatio": 0.016558641975308642,
+      "passed": true,
+      "viewportSource": "baseline-png"
+    }
+  ],
+  "createdAt": "2026-10-17T18:39:01.206Z"
+}
