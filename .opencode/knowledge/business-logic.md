@@ -5,6 +5,8 @@ Derived from `docs/wireframes/README.md` and `docs/research-tecnico/arquitectura
 
 **Locked product decisions (2026-10-16).** The maintainer answered the nine product questions the wireframes left open (issue #30). They are now locked behaviour, recorded below in the section that owns each one: §2 (`EffortLevel`, `ApprovalMode`, `Project`, `Hook`, `Subagent`, `DiffFile`), §3.1 (mid-conversation provider switch), §3.2 (subagent control), §3.4 (real model names) and §3.5 (diff, message actions, "Abrir"). §4 keeps only what is genuinely still open. Do not silently invent product policy for the rest.
 
+**Locked product decision (2026-10-17, issue #41).** The sidebar header brand is the application name `Nx`, not the active provider; the notifications and search controls are deferred, and the brand chevron is removed. Recorded in §3.6 because it deliberately overrides the wireframe and supersedes the #10 provider brand.
+
 ---
 
 ## 1. Product Purpose
@@ -74,6 +76,12 @@ Decisions 2026-10-16 (issue #30) whose surfaces are tracked by other tickets. Th
 1. **`DiffView` Modes** (ticket #13): `unified` only. The wireframe toolbar draws `unified` and `split`, but only `unified` is in scope; `split` is deferred.
 2. **Message Timestamp & Editing** (ticket #11): both are in scope. They are buttons rendered below the message bubbles; the wireframe does not draw them yet.
 3. **`Abrir` Menu** (ticket #12): only VS Code is offered. The option MUST NOT appear when VS Code is not installed on the machine, and no other editor or shell target replaces it for now.
+
+### 3.6 Application Identity in the Sidebar Header (2026-10-17, issue #41)
+
+1. **Static application brand.** The sidebar header displays the application name `Nx`. It MUST NOT display a `Provider.displayName`, even when a provider is resolved. This deliberately overrides the wireframe (`docs/wireframes/02-home-sidebar.html`, which draws a provider name) and supersedes the #10 behaviour where the brand followed the active provider. Provider identity remains visible in the composer's provider selector; the sidebar header is product identity, not session state.
+2. **Notifications and search deferred.** The header's bell (notifications) and magnifier (search) controls are **deferred for now**, not permanently removed: no replacement, no placeholder, and no half-wired handler. Their message keys were removed with them; a later ticket reintroduces the surface and its copy together.
+3. **No brand chevron.** The chevron was removed because a static brand has nothing to switch or disclose. No brand switcher is planned in its place; a future switcher must add its own control, handler and accessible state.
 
 ---
 

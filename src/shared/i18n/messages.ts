@@ -58,12 +58,13 @@ export const sharedMessages = {
   // Sidebar contents (#10). Group headings and the empty-project row follow the
   // wireframe wording (`docs/wireframes/02-home-sidebar.html`,
   // `11-chat-conversation-sidebar.html`: "Fijados", "Proyectos", "Recientes",
-  // "Sin chats"). The brand shows the active provider at runtime, never a
-  // hardcoded placeholder.
+  // "Sin chats"). The brand is the application name `Nx`, not a provider: #41
+  // overrides the wireframe and supersedes #10 (`business-logic.md` §3.6).
+  // The notifications and search labels were removed with their deferred
+  // controls rather than kept as dead copy (#41).
   sidebar: {
+    brand: 'Nx',
     newChat: 'Nuevo chat',
-    notificationsLabel: 'Notificaciones',
-    searchLabel: 'Buscar',
     pinned: 'Fijados',
     projects: 'Proyectos',
     recents: 'Recientes',

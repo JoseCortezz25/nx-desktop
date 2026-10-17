@@ -62,7 +62,6 @@ const conversations: readonly Conversation[] = [
 function renderSidebar(overrides: Partial<SidebarProps> = {}) {
   return renderToStaticMarkup(
     <Sidebar
-      providerName="Codex"
       projects={projects}
       conversations={conversations}
       activeConversationId={null}
@@ -120,13 +119,29 @@ function collectButtons(node: ReactNode): ReactElement<ButtonProps>[] {
 }
 
 describe('sidebar', () => {
-  it('renders the active provider brand and the three groups', () => {
+  it('renders the application brand and the three groups', () => {
     const markup = renderSidebar();
 
-    expect(markup).toContain('<span class="sidebar__brand-name">Codex</span>');
+    // #41 supersedes #10's provider brand: the header carries the application
+    // identity, so a provider name can never leak into it again.
+    expect(markup).toContain('<span class="sidebar__brand-name">Nx</span>');
+    expect(markup).not.toContain('Codex');
     expect(markup).toContain('Fijados');
     expect(markup).toContain('Proyectos');
     expect(markup).toContain('Recientes');
+  });
+
+  it('leaves the deferred notifications, search and chevron affordances out', () => {
+    const markup = renderSidebar();
+
+    // #41 defers both tools and removes the chevron: the header is the static
+    // brand alone, with no placeholder, no handler and no disclosure icon.
+    expect(markup).toContain(
+      '<div class="sidebar__header"><span class="sidebar__brand"><span class="sidebar__brand-name">Nx</span></span></div>'
+    );
+    expect(markup).not.toContain('sidebar__tools');
+    expect(markup).not.toContain('Notificaciones');
+    expect(markup).not.toContain('Buscar');
   });
 
   it('draws pinned, project-nested and recent conversations from the ports', () => {
@@ -163,7 +178,6 @@ describe('sidebar', () => {
     const onSelectConversation = vi.fn();
     const rows = collectRows(
       Sidebar({
-        providerName: 'Codex',
         projects,
         conversations,
         activeConversationId: null,
@@ -182,7 +196,6 @@ describe('sidebar', () => {
     const onNewChat = vi.fn();
     const buttons = collectButtons(
       Sidebar({
-        providerName: 'Codex',
         projects,
         conversations,
         activeConversationId: 'conv-diff',

@@ -11,12 +11,13 @@ import {
 /**
  * The shell resolves its catalogs through feature hooks that fetch asynchronously
  * (no-op under static rendering). This suite replaces those hooks with a
- * controllable harness so the shell's *wiring* can be asserted: which value it
- * hands the sidebar brand, and which selection it hands the composer.
+ * controllable harness so the shell's *wiring* can be asserted: the sidebar
+ * brand is static, and the composer receives the reconciled selection chain.
  *
- * The selection-chain mock re-derives with the real `resolveSelection`, so the
- * brand is proven to follow the reconciled chain rather than the catalog's first
- * row — the defect this ticket was handed.
+ * The selection-chain mock re-derives with the real `resolveSelection`. #41
+ * supersedes #10's provider brand, but the original regression concern remains
+ * and is now stronger: changing the reconciled provider must not make a catalog
+ * row (or the active provider) appear in the brand.
  */
 const harness = vi.hoisted(() => ({
   providers: [] as readonly Provider[],
@@ -156,21 +157,31 @@ describe('app shell sidebar brand', () => {
     harness.desired = null;
   });
 
-  it('shows the catalog default while no provider is chosen', () => {
-    expect(renderSidebarShell()).toContain(
+  it('shows the application brand, not the catalog default', () => {
+    // #41 supersedes #10: the header no longer follows any provider. The
+    // regression concern #10 guarded — never read `providers[0]` — remains, and
+    // is now stronger because no catalog row may appear in the brand at all.
+    const markup = renderSidebarShell();
+
+    expect(markup).toContain('<span class="sidebar__brand-name">Nx</span>');
+    expect(markup).not.toContain(
       '<span class="sidebar__brand-name">OpenCode</span>'
     );
   });
 
-  it('follows the active provider once a second provider is selected', () => {
+  it('keeps the application brand when a second provider is selected', () => {
     // The catalog's first row is still OpenCode; only the reconciled chain says
-    // Codex. A brand that read `providers[0]` would fail this assertion.
+    // Codex. The brand must still read Nx, proving it reads neither the catalog
+    // default nor the active provider.
     harness.desired = changeProvider(catalog, 'codex');
     expect(catalog[0]?.displayName).toBe('OpenCode');
 
     const markup = renderSidebarShell();
 
-    expect(markup).toContain('<span class="sidebar__brand-name">Codex</span>');
+    expect(markup).toContain('<span class="sidebar__brand-name">Nx</span>');
+    expect(markup).not.toContain(
+      '<span class="sidebar__brand-name">Codex</span>'
+    );
     expect(markup).not.toContain(
       '<span class="sidebar__brand-name">OpenCode</span>'
     );
