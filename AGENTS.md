@@ -100,7 +100,7 @@ Load the matching `SKILL.md` before executing any task in its domain:
 
 - **`.husky/pre-commit`**: Validates branch naming (`^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)\/[a-z0-9._-]+$` or `main`), runs `lint-staged` (Prettier + ESLint on staged frontend files), and runs `cargo fmt --check` when `.rs` files are staged.
 - **`.husky/commit-msg`**: Enforces Conventional Commits (`<= 100` chars, lowercase type, imperative mood) via Commitlint + regex and rejects `Co-Authored-By` trailers.
-- **`.husky/pre-push` & `scripts/verify-pr-conventions.mjs`**: Enforces branch naming, PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md`), `pnpm run typecheck`, `pnpm run lint`, and `pnpm run rust:clippy`.
+- **`.husky/pre-push` & `scripts/verify-pr-conventions.mjs`**: Enforces branch naming, the PR title/body contract (`.github/PULL_REQUEST_TEMPLATE.md`), `pnpm run typecheck`, `pnpm run lint`, and `pnpm run rust:clippy`. A PR title is valid when it is a Conventional Commit header **or** the Fabrica delivery title `Agent-<positive task id>-<lowercase kebab-case slug>` (e.g. `Agent-42-native-window-chrome`); commit messages stay strictly Conventional Commits.
 
 ---
 

@@ -10,6 +10,11 @@
  *  - `node scripts/verify-pr-conventions.mjs --pr`
  *      Validates PR title (PR_TITLE env), branch (PR_BRANCH env or current git branch),
  *      and PR body (PR_BODY env or .github/PULL_REQUEST_TEMPLATE.md contract).
+ *
+ *      A PR title is accepted when it is EITHER a Conventional Commit header
+ *      (`<type>(<scope>): <description>`) OR the Fabrica delivery title
+ *      `Agent-<positive task id>-<lowercase kebab-case slug>`. The commit-message
+ *      mode stays strictly Conventional Commits.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -21,6 +26,11 @@ const COMMIT_HEADER_REGEX =
   /^(?:feat|fix|chore|docs|test|style|refactor|perf|build|ci|revert)(?:\([a-z0-9._-]+\))?!?: .{1,}$/;
 const CO_AUTHOR_REGEX = /co-authored-by:/i;
 const ISSUE_LINK_REGEX = /\b(?:closes|fixes|resolves)\s+#\d+\b/i;
+// Fabrica delivery PR title: `Agent-<positive task id>-<lowercase kebab-case slug>`
+// (e.g. `Agent-42-native-window-chrome`). The task id must be a positive integer
+// with no leading zeros, and every slug segment is lowercase alphanumeric with
+// single hyphens between segments.
+const AGENT_PR_TITLE_REGEX = /^Agent-[1-9]\d*(?:-[a-z0-9]+)+$/;
 
 function getCurrentBranch() {
   try {
@@ -81,13 +91,34 @@ function validateCommitMessage(rawContent) {
   }
 }
 
+function validatePrTitle(title) {
+  if (AGENT_PR_TITLE_REGEX.test(title)) {
+    if (title.length > 100) {
+      fail(
+        `PR title exceeds 100 characters (${title.length} chars): "${title}"`
+      );
+    }
+    return;
+  }
+
+  if (title.startsWith('Agent-')) {
+    fail(
+      `Invalid Fabrica Agent PR title: "${title}"\n` +
+        `Expected pattern: Agent-<positive task id>-<lowercase-kebab-case-slug>\n` +
+        `Example: Agent-47-fabrica-pr-title-judge`
+    );
+  }
+
+  validateCommitMessage(title);
+}
+
 function validatePr() {
   const branch = process.env.PR_BRANCH || getCurrentBranch();
   validateBranch(branch);
 
   const title = process.env.PR_TITLE;
   if (title) {
-    validateCommitMessage(title);
+    validatePrTitle(title);
   }
 
   const body = process.env.PR_BODY;
