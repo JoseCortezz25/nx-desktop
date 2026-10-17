@@ -40,7 +40,7 @@ Every catalogue table in §2–§4.2 is sourced from that file at the path shape
 
 ## 2. Claude / provider `anthropic`
 
-**Native vocabulary.** Anthropic's effort control is the top-level `output_config.effort` parameter, available with no beta header on supported models.[3] Documented levels, in the order the docs present them, are `low`, `medium`, `high`, `xhigh`, `max`.[3] Which values are accepted per model is model-dependent: `max` is listed as available on Fable 5.1, Mythos 5.1, Fable 5, Mythos 5, Mythos Preview, Opus 5.5, Opus 5, Opus 4.8, Opus 4.7, Opus 4.6, Sonnet 5.5, Sonnet 5, Sonnet 4.6 and Haiku 5.5; `xhigh` on the same list minus Mythos Preview and Opus 4.6, and the docs warn "Not every model that supports `max` supports `xhigh`."[3]
+**Native vocabulary.** Anthropic's effort control is the top-level `output_config.effort` parameter, available with no beta header on supported models.[3] Documented levels, in the order the docs present them, are `low`, `medium`, `high`, `xhigh`, `max`.[3] Which values are accepted per model is model-dependent: `max` is listed as available on Fable 5.1, Mythos 5.1, Fable 5, Mythos 5, Mythos Preview, Opus 5.5, Opus 5, Opus 4.8, Opus 4.7, Opus 4.6, Sonnet 5.5, Sonnet 5, Sonnet 4.6 and Haiku 5.5; `xhigh` on the same list minus Mythos Preview, Opus 4.6 and Sonnet 4.6, and the docs warn "Not every model that supports `max` supports `xhigh`."[3]
 
 **Defaults.** Most effort-capable models default to `high`; Opus 5.5 and Haiku 5.5 default to `medium`.[3] Setting `effort` explicitly to the default is identical to omitting it.[3]
 
@@ -202,7 +202,7 @@ Recommendations, stated as structure rather than copy:
 ## 9. Verification and limitations
 
 - **Markdown/structure:** file authored and committed via `git` with `git diff --check` run; header, per-provider tables, no-control list, gaps and adapter sections present.
-- **Link reachability (sample, checked 2026-10-17):** all nine sources in §Sources returned HTTP `200` via `curl -L` with a browser user-agent. This is a reachability sample, not a content-hash pin.
+- **Link reachability (checked 2026-10-17):** all eight sources in §Sources (`[1]`–`[8]`) returned HTTP `200` via `curl -L` with a browser user-agent. An earlier draft referred to a ninth candidate URL; it is not part of the committed `## Sources` block and is not reconstructable from this artifact, so it is dropped rather than asserted reachable. This is a reachability sample, not a content-hash pin.
 - **Local evidence:** catalogue field paths and version above are from the file on disk at the stated mtime; `sha256` prefix recorded for traceability. Only public catalogue fields are quoted — no credentials, tokens or private config are reproduced.
 - **Limitations:** a single cached snapshot (`version 18`) was available and it may lag the live `models.dev` data (G3). Some vendor-documented models are absent from the snapshot (G5, G6). No provider API call was made, so per-model acceptance is documented from vendor docs, not observed.
 

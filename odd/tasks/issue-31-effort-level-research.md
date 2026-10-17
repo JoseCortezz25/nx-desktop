@@ -15,8 +15,8 @@ Authorized new research artifact: `docs/research-tecnico/effort-levels-by-provid
 ## Progress and evidence
 
 - Issue #31 read with no blocking dependency and `ready-for-agent`; #43 separately moved to `needs-info` for product decisions and pending #42 shell merge. Worktree initialized from remote main. Engram mirror pending because Engram tools unavailable in this session; local task file is recovery source.
-- T1 delivered: `docs/research-tecnico/effort-levels-by-provider.md` (216 lines) — per-provider/per-model ordered effort tables (Anthropic 15, OpenAI 50, OpenCode Zen 112, OpenCode Go 42 models), explicit no-control lists, gaps/contradictions, adapter consequences (#25–#27) and a structural UI-scale recommendation with no product copy decision.
-- Evidence: 8 first-party sources registered in a citation ledger and cited inline (`[1]`–`[8]`); all 9 candidate URLs returned HTTP 200 on 2026-10-17. Local catalogue provenance pinned: `~/.cache/opencode/models.json`, cache version `18`, mtime `2026-09-26 20:51:02 -0500`, `sha256` prefix `a37427ede35e2a0bcfd5cdd90ecfffcb`.
+- T1 delivered: `docs/research-tecnico/effort-levels-by-provider.md` — per-provider/per-model ordered effort tables (Anthropic 15, OpenAI 50, OpenCode Zen 112, OpenCode Go 42 models), explicit no-control lists, gaps/contradictions, adapter consequences (#25–#27) and a structural UI-scale recommendation with no product copy decision.
+- Evidence: 8 first-party sources registered in a citation ledger and cited inline (`[1]`–`[8]`); all eight cited URLs returned HTTP `200` on 2026-10-17 (an earlier ninth candidate was not part of the committed `## Sources` block and is dropped, not asserted reachable). Local catalogue provenance pinned: `~/.cache/opencode/models.json`, cache version `18`, mtime `2026-09-26 20:51:02 -0500`, `sha256` prefix `a37427ede35e2a0bcfd5cdd90ecfffcb`.
 - Finding to carry forward: the ticket's claim that the catalogue carries per-model `variants` blocks is wrong for this snapshot — the field is `reasoning_options` and there is no `variants` key (documented as gap G1).
 
 ## Next step
