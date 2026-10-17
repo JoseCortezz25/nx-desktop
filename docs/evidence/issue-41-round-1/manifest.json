@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "issue": 41,
+  "pr": 45,
+  "scope": "sidebar header (.sidebar__header)",
+  "route": "home shell (/) with sidebar open; conversation view for regression",
+  "capture": "clip",
+  "selector": ".sidebar__header",
+  "viewport": { "name": "desktop", "width": 1440, "height": 900 },
+  "engine": "HeadlessChrome/152.0.0.0 (agent-browser 0.26.0, Chromium via CDP)",
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": ".sidebar__brand-name",
+  "baseline": {
+    "ref": "05735c4379eb2b75d1b7a8bed68e66e1ecd10a09",
+    "branch": "main (PR #45 base)",
+    "screenshot": "base-05735c4-1440x900-header-clip.png",
+    "clipSize": { "width": 286, "height": 28 }
+  },
+  "current": {
+    "ref": "69ce1b41cf2be04eaaa342f27709e6dc5027b1c6",
+    "branch": "feat/issue-41-sidebar-brand-nx (PR #45 HEAD)",
+    "screenshot": "current-1440x900-header-clip.png",
+    "clipSize": { "width": 286, "height": 28 }
+  },
+  "diff": "diff-05735c4-vs-69ce1b4-header-clip.png",
+  "createdAt": "2026-10-17T14:22:00Z",
+  "note": "Scoped-visual workaround for kit gap #48: the kit evaluate-visual-diff.ts cannot clip to a selector or click, so the clip comparison was produced by capturing both sides as element screenshots and comparing the clip PNGs (see visual-report.json for the method)."
+}

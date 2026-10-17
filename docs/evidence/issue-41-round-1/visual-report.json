@@ -1,0 +1,177 @@
+{
+  "schema": "fabrica-scoped-visual-report",
+  "issue": 41,
+  "pr": 45,
+  "generatedAt": "2026-10-17T19:23:15.043Z",
+  "method": "pngjs per-pixel Manhattan RGB distance. ink = distance > 12 from modal background. diff(pixel) = |dR|+|dG|+|dB| > 12. Clip-relative coordinates. Kit gap #48 workaround: evaluate-visual-diff.ts cannot clip or click, so the scoped clip comparison runs here.",
+  "scope": "sidebar header only (.sidebar__header)",
+  "route": "home shell (/) with sidebar open; conversation view for regression",
+  "viewport": {
+    "name": "desktop",
+    "width": 1440,
+    "height": 900
+  },
+  "captureMode": "clip (.sidebar__header element screenshot, agent-browser 0.26.0)",
+  "engine": "HeadlessChrome/152.0.0.0 (agent-browser 0.26.0, Chromium via CDP)",
+  "deviceScaleFactor": 1,
+  "dynamicAreasIgnored": [
+    "conversation/project rows",
+    "composer"
+  ],
+  "relationshipToIssue4Baseline": "The issue #4 app baseline can anchor unchanged header geometry only; its brand text/icons are superseded by #41 and are not used as the text source of truth here.",
+  "images": [
+    {
+      "file": "base-05735c4-1440x900-header-clip.png",
+      "width": 286,
+      "height": 28,
+      "backgroundColor": "255,255,255",
+      "uniqueColors": 415,
+      "backgroundShare": 0.8855,
+      "inkPixels": 863,
+      "inkShare": 0.1078,
+      "inkBBox": {
+        "minX": 2,
+        "maxX": 275,
+        "minY": 7,
+        "maxY": 26
+      },
+      "contentBandsX": [
+        [
+          2,
+          16
+        ],
+        [
+          18,
+          38
+        ],
+        [
+          40,
+          96
+        ],
+        [
+          110,
+          118
+        ],
+        [
+          228,
+          240
+        ],
+        [
+          265,
+          275
+        ]
+      ]
+    },
+    {
+      "file": "current-1440x900-header-clip.png",
+      "width": 286,
+      "height": 28,
+      "backgroundColor": "255,255,255",
+      "uniqueColors": 97,
+      "backgroundShare": 0.9732,
+      "inkPixels": 202,
+      "inkShare": 0.0252,
+      "inkBBox": {
+        "minX": 3,
+        "maxX": 26,
+        "minY": 9,
+        "maxY": 22
+      },
+      "contentBandsX": [
+        [
+          3,
+          15
+        ],
+        [
+          17,
+          26
+        ]
+      ]
+    }
+  ],
+  "controls": {
+    "negative_same_vs_same": {
+      "a": "current-1440x900-header-clip.png",
+      "b": "current-1440x900-header-clip.png",
+      "width": 286,
+      "height": 28,
+      "diffPixels": 0,
+      "totalPixels": 8008,
+      "diffRatio": 0,
+      "diffBBox": null,
+      "diffColumnBandsX": []
+    },
+    "positive_base_vs_current": {
+      "a": "base-05735c4-1440x900-header-clip.png",
+      "b": "current-1440x900-header-clip.png",
+      "width": 286,
+      "height": 28,
+      "diffPixels": 933,
+      "totalPixels": 8008,
+      "diffRatio": 0.1165,
+      "diffBBox": {
+        "minX": 2,
+        "maxX": 275,
+        "minY": 7,
+        "maxY": 26
+      },
+      "diffColumnBandsX": [
+        [
+          2,
+          38
+        ],
+        [
+          40,
+          96
+        ],
+        [
+          110,
+          118
+        ],
+        [
+          228,
+          240
+        ],
+        [
+          265,
+          275
+        ]
+      ]
+    }
+  },
+  "stateStability": {
+    "current_home_vs_conversation": {
+      "a": "current-1440x900-header-clip.png",
+      "b": "current-69ce1b4-conversation-header-clip.png",
+      "width": 286,
+      "height": 28,
+      "diffPixels": 0,
+      "totalPixels": 8008,
+      "diffRatio": 0,
+      "diffBBox": null,
+      "diffColumnBandsX": []
+    },
+    "current_provider_openCode_vs_codex": {
+      "a": "current-69ce1b4-header-provider-OpenCode.png",
+      "b": "current-69ce1b4-header-provider-Codex.png",
+      "width": 286,
+      "height": 28,
+      "diffPixels": 0,
+      "totalPixels": 8008,
+      "diffRatio": 0,
+      "diffBBox": null,
+      "diffColumnBandsX": []
+    },
+    "current_provider_codex_vs_claude": {
+      "a": "current-69ce1b4-header-provider-Codex.png",
+      "b": "current-69ce1b4-header-provider-Claude.png",
+      "width": 286,
+      "height": 28,
+      "diffPixels": 0,
+      "totalPixels": 8008,
+      "diffRatio": 0,
+      "diffBBox": null,
+      "diffColumnBandsX": []
+    }
+  }
+}

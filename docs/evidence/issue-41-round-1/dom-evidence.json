@@ -1,0 +1,100 @@
+{
+  "capturedAt": "2026-10-17T14:21Z",
+  "viewport": { "width": 1440, "height": 900, "deviceScaleFactor": 1 },
+  "readiness": {
+    "url": "http://localhost:1420/",
+    "title": "Tauri + React + Typescript",
+    "devServer": "vite 8.3.4",
+    "devicePixelRatio": 1,
+    "browser": "HeadlessChrome/152.0.0.0"
+  },
+  "currentHead_69ce1b4": {
+    "headerSelector": ".sidebar__header",
+    "headerHTML": "<div class=\"sidebar__header\"><span class=\"sidebar__brand\"><span class=\"sidebar__brand-name\">Nx</span></span></div>",
+    "headerChildren": ["sidebar__brand"],
+    "headerBox": { "x": 72, "y": 62, "w": 286, "h": 28 },
+    "brandBox": { "x": 72, "y": 62, "w": 26, "h": 29 },
+    "brandNameBox": { "x": 74, "y": 62, "w": 24, "h": 29 },
+    "sidebarBox": { "x": 56, "y": 48, "w": 318, "h": 852 },
+    "headerComputedStyle": {
+      "display": "flex",
+      "alignItems": "center",
+      "justifyContent": "normal",
+      "height": "28px",
+      "gap": "normal"
+    },
+    "brandComputedStyle": {
+      "display": "flex",
+      "alignItems": "center",
+      "gap": "normal",
+      "paddingLeft": "2px",
+      "fontSize": "20px",
+      "fontWeight": "500"
+    },
+    "brandBackground": "rgba(0, 0, 0, 0) (transparent, inherits sidebar white)",
+    "headerBorder": "0px none",
+    "headerBoxShadow": "none",
+    "counts": {
+      "headerButtons": 0,
+      "headerSvgs": 0,
+      "sidebarTools": 0,
+      "ariaNotificaciones": 0,
+      "ariaBuscar": 0
+    },
+    "brandText": "Nx",
+    "headerTextContains": { "Codex": false, "OpenCode": false, "Nx": true },
+    "headerOffsetFromSidebarTop": 14,
+    "newChatTopGap": 12
+  },
+  "baseHead_05735c4": {
+    "headerHTML": "<div class=\"sidebar__header\"><span class=\"sidebar__brand\"><span class=\"sidebar__brand-name\">OpenCode</span><svg class=\"icon icon--sm\">chevron</svg></span><span class=\"sidebar__tools\"><button aria-label=\"Notificaciones\">bell</button><button aria-label=\"Buscar\">magnifier</button></span></div>",
+    "headerChildren": ["sidebar__brand", "sidebar__tools"],
+    "headerBox": { "x": 72, "y": 62, "w": 286, "h": 28 },
+    "brandBox": { "x": 72, "y": 62, "w": 122, "h": 29 },
+    "brandNameBox": { "x": 74, "y": 62, "w": 95, "h": 29 },
+    "sidebarBox": { "x": 56, "y": 48, "w": 318, "h": 852 },
+    "headerComputedStyle": {
+      "display": "flex",
+      "alignItems": "center",
+      "justifyContent": "space-between",
+      "height": "28px",
+      "gap": "normal"
+    },
+    "brandComputedStyle": {
+      "display": "flex",
+      "gap": "10px",
+      "paddingLeft": "2px",
+      "fontSize": "20px"
+    },
+    "counts": { "headerButtons": 2, "headerSvgs": 3, "sidebarTools": 1 },
+    "ariaLabelsInHeader": ["Notificaciones", "Buscar"],
+    "brandText": "OpenCode"
+  },
+  "comparison": {
+    "headerBoxIdentical": true,
+    "headerHeightIdentical": true,
+    "brandLeftEdgeIdentical": true,
+    "brandLineBoxIdentical": "y=62 h=29 both sides",
+    "sidebarBoxIdentical": true,
+    "note": "Geometry is anchored: header box, header height (28px), brand left edge (x=72) and the brand line box (y=62 h=29) are identical between base and current. Only rendered content changed."
+  },
+  "functional": {
+    "providerSelectionsObserved": ["OpenCode", "Codex", "Claude"],
+    "brandUnderAllProviders": "Nx",
+    "headerClipMD5": "598e592aa25b21e2258510e038896b54",
+    "headerClipMD5Across": [
+      "OpenCode",
+      "Codex",
+      "Claude",
+      "home",
+      "conversation"
+    ],
+    "conversationOpenBrand": "Nx",
+    "pageErrors": [],
+    "consoleMessages": [
+      "[vite] connecting...",
+      "[vite] connected.",
+      "React DevTools info"
+    ]
+  }
+}

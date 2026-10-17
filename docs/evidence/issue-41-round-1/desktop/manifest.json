@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "scope": "sidebar header (.sidebar__header)",
+  "capture": "clip",
+  "selector": ".sidebar__header",
+  "viewport": { "name": "desktop", "width": 1440, "height": 900 },
+  "engine": {
+    "name": "chromium",
+    "version": "152.0.0.0",
+    "driver": "agent-browser 0.26.0"
+  },
+  "deviceScaleFactor": 1,
+  "masks": [],
+  "readySelector": ".sidebar__brand-name",
+  "url": "http://localhost:1420/",
+  "baselineCommit": "05735c4379eb2b75d1b7a8bed68e66e1ecd10a09",
+  "baselineScreenshot": "base-05735c4-1440x900-header-clip.png",
+  "currentCommit": "69ce1b41cf2be04eaaa342f27709e6dc5027b1c6",
+  "currentScreenshot": "current-1440x900-header-clip.png",
+  "createdAt": "2026-10-17T14:22:00Z"
+}
