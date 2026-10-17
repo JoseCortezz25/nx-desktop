@@ -1,0 +1,30 @@
+# Builder receipt transcript — issue #40 / PR #44
+# record_type: command-transcript
+# generated_at_utc: 2026-10-17T18:14:29Z
+# host: Linux 6.6.87.2-microsoft-standard-WSL2 x86_64
+# node: v24.15.0
+# pnpm: 10.33.2
+# branch: feat/issue-40-navigation-and-layout-seams
+# head_sha: f6f30a4872a45b6836d938aa195d0e5427d5e2d4
+# worktree: /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+# worktree_status_at_start:
+
+$ pnpm test
+exit_code_and_output:
+
+> nx-desktop@0.1.0 test /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+> vitest run
+
+
+ RUN  v5.0.5 /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+
+
+ Test Files  38 passed (38)
+      Tests  206 passed (206)
+   Start at  13:14:34
+   Duration  2.04s (transform 39%, import 37%, tests 18%, worker 5%)
+
+    Isolate  38 workers spawned · ~288ms startup each (spawn + environment, per file)
+             at least ~707ms faster with isolate: false — reuses workers across files instead of one per file
+
+[exit_code: 0]

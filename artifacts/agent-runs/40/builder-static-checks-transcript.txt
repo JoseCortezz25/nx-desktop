@@ -1,0 +1,41 @@
+# Builder receipt transcript — issue #40 / PR #44
+# record_type: command-transcript
+# generated_at_utc: 2026-10-17T18:14:38Z
+# host: Linux 6.6.87.2-microsoft-standard-WSL2 x86_64
+# node: v24.15.0
+# pnpm: 10.33.2
+# branch: feat/issue-40-navigation-and-layout-seams
+# head_sha: f6f30a4872a45b6836d938aa195d0e5427d5e2d4
+# worktree: /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+
+$ pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run build
+exit_code_and_output:
+
+> nx-desktop@0.1.0 typecheck /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+> tsc --noEmit
+
+
+> nx-desktop@0.1.0 lint /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+> eslint src
+
+
+> nx-desktop@0.1.0 format:check /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+> prettier --check --ignore-unknown .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> nx-desktop@0.1.0 build /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-40
+> tsc && vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 126 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.47 kB │ gzip:  0.30 kB
+dist/assets/index-CT_CTEDO.css   19.37 kB │ gzip:  3.97 kB
+dist/assets/index-Dqarln_Q.js   271.75 kB │ gzip: 83.19 kB
+
+✓ built in 251ms
+[exit_code: 0]

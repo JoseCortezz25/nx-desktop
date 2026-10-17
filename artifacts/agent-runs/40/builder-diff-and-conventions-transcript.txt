@@ -1,0 +1,16 @@
+# Builder receipt transcript — issue #40 / PR #44
+# record_type: command-transcript
+# generated_at_utc: 2026-10-17T18:14:58Z
+# branch: feat/issue-40-navigation-and-layout-seams
+# head_sha: f6f30a4872a45b6836d938aa195d0e5427d5e2d4
+
+$ node scripts/verify-pr-conventions.mjs --branch
+[JUDGE OK] Branch naming convention verified.
+[exit_code: 0]
+
+$ gh pr view 44 --json number,headRefName,headRefOid,files
+{"files":[{"path":"src/app/app-shell-navigation-seam.test.tsx","additions":293,"deletions":0},{"path":"src/app/app-shell-panel-seam.test.tsx","additions":9,"deletions":0},{"path":"src/app/app-shell.tsx","additions":63,"deletions":37},{"path":"src/app/shell-state.test.tsx","additions":91,"deletions":0},{"path":"src/app/shell-state.ts","additions":91,"deletions":0},{"path":"src/features/files/ui/organisms/file-panel.test.tsx","additions":27,"deletions":2},{"path":"src/features/files/ui/organisms/file-panel.tsx","additions":16,"deletions":1},{"path":"src/shared/ui/layout/region-visibility.ts","additions":19,"deletions":0},{"path":"src/shared/ui/molecules/composer-bar.css","additions":21,"deletions":2},{"path":"src/shared/ui/organisms/composer.test.tsx","additions":31,"deletions":0},{"path":"src/shared/ui/organisms/composer.tsx","additions":25,"deletions":16},{"path":"src/shared/ui/organisms/rail.test.tsx","additions":58,"deletions":0},{"path":"src/shared/ui/organisms/rail.tsx","additions":11,"deletions":1},{"path":"src/shared/ui/organisms/right-panel.css","additions":7,"deletions":0},{"path":"src/shared/ui/organisms/right-panel.tsx","additions":19,"deletions":2},{"path":"src/shared/ui/organisms/sidebar.test.tsx","additions":51,"deletions":1},{"path":"src/shared/ui/organisms/sidebar.tsx","additions":9,"deletions":2},{"path":"src/shared/ui/tokens.css","additions":5,"deletions":2}],"headRefName":"feat/issue-40-navigation-and-layout-seams","headRefOid":"f6f30a4872a45b6836d938aa195d0e5427d5e2d4","number":44}
+[exit_code: 0]
+
+$ git status --porcelain
+[exit_code: 0]
