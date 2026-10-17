@@ -1,0 +1,39 @@
+{
+  "schema": "issue-42-qa-round-1/image-derived-geometry",
+  "method": "the comparison page loads each PNG into a canvas and re-derives the region boundaries from raw pixels only (canvas getImageData), before any annotation overlay is drawn. Independent of the DOM getBoundingClientRect values in measurements.json.",
+  "definitions": {
+    "firstPanelColumnX": "first x whose column is panel-white (#ffffff, tol 3) for the next 24 consecutive columns (y 100..860) - the rail | surface boundary",
+    "firstPanelRowY": "first y whose row is panel-white (>=90% of x 8..1432, tol 3) - the top of the app surfaces",
+    "railBgFraction": "fraction of a below-the-buttons rail band (x 10..46, y 300..780) that is window background (#f7f7f8, tol 6). The band deliberately avoids the rail controls so a toggle's active/hover CSS fill cannot colour the metric."
+  },
+  "results": [
+    {
+      "state": "01-default",
+      "reference": { "firstPanelColumnX": 57, "firstPanelRowY": 49, "railBgFraction": 0.9392 },
+      "current": { "firstPanelColumnX": 57, "firstPanelRowY": 9, "railBgFraction": 1 },
+      "delta": { "firstPanelColumnX": 0, "firstPanelRowY": -40 }
+    },
+    {
+      "state": "02-sidebar",
+      "reference": { "firstPanelColumnX": null, "firstPanelRowY": 48, "railBgFraction": 0.9497 },
+      "current": { "firstPanelColumnX": 56, "firstPanelRowY": 9, "railBgFraction": 1 },
+      "delta": { "firstPanelColumnX": null, "firstPanelRowY": -39 }
+    },
+    {
+      "state": "04-right-panel",
+      "reference": null,
+      "current": { "firstPanelColumnX": 57, "firstPanelRowY": 9, "railBgFraction": 1 }
+    },
+    {
+      "state": "03-both",
+      "reference": null,
+      "current": { "firstPanelColumnX": 56, "firstPanelRowY": 9, "railBgFraction": 1 }
+    }
+  ],
+  "reading": {
+    "vertical": "reference first panel-white row = 48/49; current = 9. The 40px difference is the drawn title bar the reference renders and #42 removes. It matches the DOM delta of exactly 40px in measurements.json.",
+    "horizontal": "the rail | surface boundary is column 56/57 in both, i.e. the 56px rail (--rail-width) plus the 1px pane border/antialias. Horizontal geometry is unchanged.",
+    "railFill": "the app's rail is 100% window background in the sampled band (no drawn chrome strip); the reference rail is 93.9-95.0% background because the wireframe draws decorative rail icons there. A drawn-content difference, not a geometry difference.",
+    "reference 02 firstPanelColumnX null": "expected: the reference screen 02 sidebar is text-dense, so no run of 24 consecutive columns stays >=90% panel-white; the current sidebar is sparser. The row probe (content-insensitive) is the reliable one and it agrees at 48 vs 9."
+  }
+}

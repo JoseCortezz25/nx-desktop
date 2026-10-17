@@ -1,0 +1,21 @@
+$ pnpm test   # corroboration that the rail/toggle + no-chrome flows are already frozen in the repo harness
+# NOTE: this is NOT the QA verdict basis and not a repeat of the Verifier's code-quality gate.
+
+
+> nx-desktop@0.1.0 test /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42-qa
+> vitest run
+
+
+ RUN  v5.0.5 /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42-qa
+
+
+ Test Files  38 passed (38)
+      Tests  211 passed (211)
+   Start at  16:06:31
+   Duration  2.38s (transform 68%, import 21%, tests 9%, worker 3%)
+
+    Isolate  38 workers spawned · ~241ms startup each (spawn + environment, per file)
+             at least ~592ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+EXIT=0

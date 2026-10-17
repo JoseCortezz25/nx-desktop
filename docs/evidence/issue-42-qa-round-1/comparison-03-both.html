@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>QA #42 round 1 - comparison 03-both</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; background: #101014; color: #f2f2f4;
+         font: 13px/1.45 Inter, 'Segoe UI', system-ui, sans-serif; }
+  h1 { font-size: 18px; margin: 14px 20px 6px; }
+  .note { margin: 0 20px 12px; color: #b9b9c4; max-width: 2400px; }
+  .row { display: flex; gap: 20px; align-items: flex-start; padding: 0 20px 12px; }
+  figure { margin: 0; }
+  figcaption { padding: 6px 2px 4px; color: #d5d5dd; }
+  canvas { display: block; border: 1px solid #3a3a44; background: #fff; }
+  .metrics { margin: 4px 20px 24px; padding: 12px 16px; background: #1b1b22;
+             border: 1px solid #33333d; border-radius: 8px; max-width: 2400px;
+             font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+             white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Issue #42 QA round 1 (scoped-visual) - State 03 - sidebar and right panel both open</h1>
+<p class="note">
+  Current: PR #46 HEAD <code>4c2ba36</code> at 1440x900 (app content only; OS chrome excluded).
+  CURRENT ONLY - no wireframe reference draws this state. The wireframes draw the right panel
+  only inside the chat screens (<code>03</code>, <code>13</code>, <code>18</code>), so states 03/04 are
+  current-state functional + geometry checks, <b>not</b> reference parity.
+  Region outlines come from measured <code>getBoundingClientRect</code>; the metrics block below
+  re-derives the boundaries from raw pixels as an independent cross-check.
+</p>
+<div class="row">
+  <figure><figcaption>CURRENT - app at 4c2ba36</figcaption>
+    <canvas id="cur" width="1440" height="900"></canvas></figure>
+</div>
+<div class="metrics" id="metrics">measuring...</div>
+<script>
+const STATE = {"key":"03-both","title":"State 03 - sidebar and right panel both open","reference":null,"current":"current-03-sidebar-and-right-open.png","currentRegions":[{"name":"rail","x":0,"y":0,"w":56,"h":900,"tone":"#2f6fed"},{"name":"sidebar","x":56,"y":8,"w":318,"h":892,"tone":"#1a8f4a"},{"name":"main pane","x":374,"y":8,"w":606,"h":888,"tone":"#2f6fed"},{"name":"right panel","x":980,"y":8,"w":460,"h":892,"tone":"#8b2fd9"}]};
+const CURRENT_ONLY = true;
+const TITLE_BAR_HEIGHT = 40;
+const BG = [247, 247, 248];
+const PANEL = [255, 255, 255];
+
+function load(src) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => rej(new Error('failed to load ' + src));
+    img.src = src;
+  });
+}
+
+function drawRegions(ctx, regions) {
+  for (const r of regions) {
+    ctx.save();
+    ctx.strokeStyle = r.tone;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.strokeRect(r.x + 1, r.y + 1, r.w - 2, r.h - 2);
+    ctx.setLineDash([]);
+    ctx.font = 'bold 13px ui-monospace, monospace';
+    const label = r.name + '  ' + r.w + 'x' + r.h + ' @(' + r.x + ',' + r.y + ')';
+    const tw = ctx.measureText(label).width;
+    const ly = Math.max(r.y + 16, 18);
+    ctx.fillStyle = 'rgba(16,16,20,.82)';
+    ctx.fillRect(r.x + 4, ly - 13, tw + 8, 18);
+    ctx.fillStyle = r.tone;
+    ctx.fillText(label, r.x + 8, ly);
+    ctx.restore();
+  }
+}
+
+function near(data, i, rgb, tol) {
+  return Math.abs(data[i] - rgb[0]) <= tol && Math.abs(data[i + 1] - rgb[1]) <= tol && Math.abs(data[i + 2] - rgb[2]) <= tol;
+}
+
+function fraction(data, w, x0, x1, y0, y1, rgb, stepX, stepY, tol) {
+  let hit = 0, tot = 0;
+  for (let y = y0; y < y1; y += stepY) {
+    for (let x = x0; x < x1; x += stepX) {
+      const i = (y * w + x) * 4;
+      tot++;
+      if (near(data, i, rgb, tol)) hit++;
+    }
+  }
+  return tot ? hit / tot : 0;
+}
+
+/** First x whose column is panel-white for the next 24 columns: the rail | surface boundary. */
+function firstPanelColumn(data, w, y0, y1, from, to) {
+  for (let x = from; x <= to; x++) {
+    let ok = true;
+    for (let k = 0; k < 24 && ok; k++) {
+      if (fraction(data, w, x + k, x + k + 1, y0, y1, PANEL, 1, 4, 3) < 0.9) ok = false;
+    }
+    if (ok) return x;
+  }
+  return null;
+}
+
+/** First y whose row is panel-white across the pane: the region top inset. */
+function firstPanelRow(data, w, x0, x1, from, to) {
+  for (let y = from; y <= to; y++) {
+    if (fraction(data, w, x0, x1, y, y + 1, PANEL, 6, 1, 3) >= 0.9) return y;
+  }
+  return null;
+}
+
+/** Image-derived region measurements, independent of getBoundingClientRect. */
+function measure(canvas) {
+  const ctx = canvas.getContext('2d');
+  const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const w = canvas.width;
+  return {
+    railBgFraction: +fraction(data, w, 10, 46, 300, 780, BG, 3, 5, 6).toFixed(4),
+    firstPanelColumnX: firstPanelColumn(data, w, 100, 860, 20, 200),
+    firstPanelRowY: firstPanelRow(data, w, 8, 1432, 0, 200)
+  };
+}
+
+(async () => {
+ try {
+  const refC = document.getElementById('ref');
+  const curC = document.getElementById('cur');
+  const curImg = await load(STATE.current);
+  curC.getContext('2d').drawImage(curImg, 0, 0);
+  let refImg = null;
+  if (!CURRENT_ONLY) {
+    refImg = await load(STATE.reference);
+    refC.getContext('2d').drawImage(refImg, 0, 0);
+  }
+
+  // Measure raw pixels BEFORE the annotation overlays are drawn.
+  const curM = measure(curC);
+  const refM = refImg ? measure(refC) : null;
+
+  if (refImg) drawRegions(refC.getContext('2d'), STATE.referenceRegions);
+  drawRegions(curC.getContext('2d'), STATE.currentRegions);
+
+  const report = {
+    state: STATE.key,
+    referenceImage: STATE.reference || null,
+    currentImage: STATE.current,
+    referenceRender: refImg ? { width: refImg.naturalWidth, height: refImg.naturalHeight } : null,
+    currentCapture: { width: curImg.naturalWidth, height: curImg.naturalHeight },
+    titleBarHeightRemoved: CURRENT_ONLY ? null : TITLE_BAR_HEIGHT,
+    imageDerived: { current: curM, reference: refM }
+  };
+  const lines = [
+    'viewport: 1440x900   capture mode: viewport   OS chrome: excluded (issue #42)',
+    'images: reference=' + (refImg ? refImg.naturalWidth + 'x' + refImg.naturalHeight : 'none') +
+      '  current=' + curImg.naturalWidth + 'x' + curImg.naturalHeight,
+    'current regions (measured): ' + STATE.currentRegions.map(r => r.name + '=' + r.w + 'x' + r.h + '@(' + r.x + ',' + r.y + ')').join('  ')
+  ];
+  if (refImg) {
+    lines.push(
+      'reference regions (measured): ' + STATE.referenceRegions.map(r => r.name + '=' + r.w + 'x' + r.h + '@(' + r.x + ',' + r.y + ')').join('  '),
+      'rail band (x 10..46, y 120..780) window-bg fraction:  reference=' + refM.railBgFraction + '  current=' + curM.railBgFraction,
+      'IMAGE-DERIVED first panel-white row y:  reference=' + refM.firstPanelRowY + '  current=' + curM.firstPanelRowY +
+        '  -> delta ' + (refM.firstPanelRowY - curM.firstPanelRowY) + 'px (intentional 40px title-bar removal)',
+      'IMAGE-DERIVED first panel-white column x:  reference=' + refM.firstPanelColumnX + '  current=' + curM.firstPanelColumnX
+    );
+  } else {
+    lines.push('no wireframe reference draws this state: current-state functional + geometry check only');
+  }
+  document.getElementById('metrics').textContent = lines.join('\n');
+  window.REPORT = report;
+ } catch (e) {
+  window.REPORT = { state: STATE.key, error: String(e) };
+  document.getElementById('metrics').textContent = 'ERROR: ' + String(e);
+ }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+# Issue #42 QA round 1 - environment and commands
+
+Worktree (app under QA): /home/ajosecortes/.fabrica/workspaces/nx-desktop/issue-42-qa
+PR branch: feat/issue-42-native-window-chrome   HEAD: 4c2ba361c7943bf76edda4569017bca9fce773c0
+Base: origin/main = f71ccaaa1a08dc7bf68f4e8c180b0e8c7141acde
+
+## Environment
+
+os              Linux 6.6.87.2-microsoft-standard-WSL2 x86_64 (WSL2), Ubuntu 24.04.5 LTS
+host            WSL2 - no native Windows/macOS window manager available
+node            v24.15.0
+pnpm            10.33.2
+vite            8.3.4
+browser         agent-browser 0.26.0, HeadlessChrome/152.0.0.0 (CDP), devicePixelRatio 1
+viewport        1440x900, capture mode `viewport` (never `--full` for current captures)
+qa model run    text-only; images were published for human inspection, never fed to the model
+
+## App under test
+
+$ pnpm install --frozen-lockfile            # exit 0
+$ pnpm run dev                              # vite 8.3.4 on http://localhost:1420/ (exit 0 while serving)
+
+## Functional flow (agent-browser, session `qa42`)
+
+$ agent-browser set viewport 1440 900
+$ agent-browser open http://localhost:1420/
+$ agent-browser eval "({iw:window.innerWidth,ih:window.innerHeight,dpr:window.devicePixelRatio})"
+  -> { "iw": 1440, "ih": 900, "dpr": 1 }
+
+$ agent-browser eval  < dom-probe.js            # DOM absence + rail buttons + region rects + overflow
+$ agent-browser find role button click --name "Alternar barra lateral"     # sidebar open
+$ agent-browser eval  < dom-probe.js
+$ agent-browser find role button click --name "Alternar barra lateral"     # sidebar close
+$ agent-browser eval  < dom-probe.js
+$ agent-browser find role button click --name "Alternar panel derecho"     # right panel open
+$ agent-browser eval  < dom-probe.js
+$ agent-browser find role button click --name "Alternar barra lateral"     # both open
+$ agent-browser eval  < dom-probe.js
+$ agent-browser screenshot current-03-sidebar-and-right-open.png
+$ agent-browser find role button click --name "Alternar barra lateral"     # sidebar close
+$ agent-browser screenshot current-04-right-panel-open.png
+$ agent-browser find role button click --name "Alternar panel derecho"     # right panel close
+$ agent-browser eval  < dom-probe.js
+$ agent-browser find role button click --name "Inicio"                     # home destination
+$ agent-browser console
+  -> only [vite] connecting/connected + React DevTools info; 0 errors, 0 warnings
+
+## Reference renders (agent-browser, session `qa42-ref`)
+
+$ agent-browser set viewport 1440 900
+$ agent-browser open file://<worktree>/docs/wireframes/01-home.html
+$ agent-browser eval < reference-probe.js   -> titlebar 1440x40@(0,0), body@(0,40), rail 56x860@(0,40), main 1384x848@(56,48)
+$ agent-browser screenshot reference-01-home-1440x900.png
+$ agent-browser open file://<worktree>/docs/wireframes/02-home-sidebar.html
+$ agent-browser eval < reference-probe.js   -> + sidebar 318x852@(56,48), main 1066x852@(374,48)
+$ agent-browser screenshot reference-02-home-sidebar-1440x900.png
+
+## Comparison / annotation builder
+
+$ node build-comparison.mjs
+  -> comparison-01-default.html, comparison-02-sidebar.html,
+     comparison-04-right-panel.html, comparison-03-both.html
+
+Served over HTTP (file:// taints the canvas, so pixel reads need an http origin):
+
+$ python3 -m http.server 1421 --bind 127.0.0.1      # in this directory
+$ agent-browser set viewport 2960 1000
+$ agent-browser open http://127.0.0.1:1421/comparison-<state>.html
+$ agent-browser wait --fn "!!window.REPORT"
+$ agent-browser eval "JSON.stringify(window.REPORT)"
+$ agent-browser screenshot --full comparison-<state>-1440x900.png
+
+## Source / config inspection (no rendering involved)
+
+$ sed -n '1,60p' src-tauri/src/lib.rs         # default_app_menu = Menu::default under #[cfg(desktop)]; Builder::menu(default_app_menu)
+$ cat src-tauri/tauri.conf.json               # no `decorations` key -> native decorations default true
+
+## Unavailable tool (recorded, not passed)
+
+$ node visual-qa-evaluation/scripts/evaluate-visual-diff.ts --help
+  -> supports only --capture=viewport|full-page plus --mask=<selectors>; it has no clip/selector
+     capture for the current page, so a clip baseline against a full-viewport current fails as
+     `dimension-mismatch`. Labelled UNAVAILABLE for this structural comparison, not green.

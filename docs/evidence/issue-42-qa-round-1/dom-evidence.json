@@ -1,0 +1,67 @@
+{
+  "schema": "issue-42-qa-round-1/dom-and-functional",
+  "viewport": { "width": 1440, "height": 900, "devicePixelRatio": 1 },
+  "url": "http://localhost:1420/",
+  "prHead": "4c2ba361c7943bf76edda4569017bca9fce773c0",
+  "capturedAt": "2026-10-17",
+  "i1_dom_absence_of_drawn_chrome": {
+    "query": "document.querySelectorAll('.title-bar' | '.menu-bar' | '.window-controls' | '.nav-history').length",
+    "result": { ".title-bar": 0, ".menu-bar": 0, ".window-controls": 0, ".nav-history": 0 },
+    "checkedInStates": ["default", "sidebar-open", "right-panel-open", "both-open"],
+    "verdict": "no drawn title bar, menu bar, window controls or nav history node exists in any state"
+  },
+  "i2_removed_ui_text_absent": {
+    "method": "document.body.innerText scanned for each removed string",
+    "strings": ["Archivo", "Edición", "Ver", "Ayuda", "Atrás", "Adelante", "Minimizar", "Maximizar", "Cerrar"],
+    "found": [],
+    "verdict": "none of the nine removed strings appears in rendered text"
+  },
+  "i3_rail_buttons": {
+    "count": 3,
+    "buttons": [
+      { "index": 0, "aria-label": "Inicio", "aria-pressed": null, "aria-current": "page" },
+      { "index": 1, "aria-label": "Alternar barra lateral", "aria-pressed": "false", "aria-current": null },
+      { "index": 2, "aria-label": "Alternar panel derecho", "aria-pressed": "false", "aria-current": null }
+    ],
+    "verdict": "the rail carries exactly the home destination plus the two region toggles; no window-control button in the app UI"
+  },
+  "i4_toggle_flow": {
+    "note": "clicks performed with agent-browser on a real rendered element (find role button click --name ...); each state re-measured after the click",
+    "sequence": [
+      { "step": 1, "action": "initial load", "sidebar": "closed", "rightPanel": "closed", "sidebarToggleAriaPressed": "false", "rightToggleAriaPressed": "false", "mainPaneWidth": 1384 },
+      { "step": 2, "action": "click 'Alternar barra lateral'", "sidebar": "open", "rightPanel": "closed", "sidebarToggleAriaPressed": "true", "rightToggleAriaPressed": "false", "sidebarWidth": 318, "mainPaneWidth": 1066 },
+      { "step": 3, "action": "click 'Alternar barra lateral'", "sidebar": "closed", "rightPanel": "closed", "sidebarToggleAriaPressed": "false", "rightToggleAriaPressed": "false", "sidebarWidth": null, "mainPaneWidth": 1384 },
+      { "step": 4, "action": "click 'Alternar panel derecho'", "sidebar": "closed", "rightPanel": "open", "sidebarToggleAriaPressed": "false", "rightToggleAriaPressed": "true", "rightPanelWidth": 460, "rightPanelX": 980, "mainPaneWidth": 924 },
+      { "step": 5, "action": "click 'Alternar barra lateral'", "sidebar": "open", "rightPanel": "open", "sidebarToggleAriaPressed": "true", "rightToggleAriaPressed": "true", "sidebarWidth": 318, "rightPanelWidth": 460, "mainPaneWidth": 606 },
+      { "step": 6, "action": "click 'Alternar barra lateral'", "sidebar": "closed", "rightPanel": "open", "sidebarToggleAriaPressed": "false", "rightToggleAriaPressed": "true", "mainPaneWidth": 924 },
+      { "step": 7, "action": "click 'Alternar panel derecho'", "sidebar": "closed", "rightPanel": "closed", "sidebarToggleAriaPressed": "false", "rightToggleAriaPressed": "false", "mainPaneWidth": 1384 },
+      { "step": 8, "action": "click 'Inicio' (home)", "result": "home view still rendered: '¿En qué deberíamos trabajar?'", "sidebar": "closed", "rightPanel": "closed" }
+    ],
+    "verdict": "both toggles complete CLOSED -> OPEN -> CLOSED independently; each toggle changes only its own region; aria-pressed tracks the state on both; the home destination renders the home view"
+  },
+  "i5_native_chrome_source_inspection": {
+    "note": "configuration/source inspection only, NOT a rendered comparison and NOT OS proof (see risks)",
+    "lib_rs": {
+      "path": "src-tauri/src/lib.rs",
+      "declaration": "#[cfg(desktop)] fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry>> { tauri::menu::Menu::default(handle) }",
+      "wiring": "#[cfg(desktop)] let builder = builder.menu(default_app_menu);",
+      "productCommands": "none; Menu::default contains only predefined OS/Tauri items"
+    },
+    "tauri_conf_json": {
+      "path": "src-tauri/tauri.conf.json",
+      "decorationsKey": "absent",
+      "effect": "tauri's `decorations` default is true, so the native frame stays enabled; no config file changed by #42"
+    },
+    "verdict": "source/config confirm the native menu declaration and the default native decorations; the OS frame/menu pixels remain unproven by this run"
+  },
+  "console": {
+    "entries": [
+      "[debug] [vite] connecting...",
+      "[debug] [vite] connected.",
+      "[info] Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"
+    ],
+    "errors": 0,
+    "warnings": 0,
+    "verdict": "no console errors or warnings in any tested state"
+  }
+}

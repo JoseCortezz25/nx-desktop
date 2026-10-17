@@ -1,0 +1,117 @@
+{
+  "schema": "issue-42-qa-round-1/measurements",
+  "validationType": "scoped-visual (app content area only) + functional",
+  "scope": {
+    "included": "layout regions 2-5: rail, sidebar, main pane, right panel (.window-shell__body)",
+    "excluded": "region 1 (title bar) and all OS-drawn chrome: native frame, native application menu, OS window controls"
+  },
+  "viewport": { "width": 1440, "height": 900, "devicePixelRatio": 1, "captureMode": "viewport" },
+  "runtime": {
+    "route": "/",
+    "url": "http://localhost:1420/",
+    "command": "pnpm run dev (vite 8.3.4)",
+    "auth": "none",
+    "seed": "none (mock repositories)",
+    "browser": "agent-browser 0.26.0 (Chromium via CDP, headless), viewport set to 1440x900"
+  },
+  "prHead": "4c2ba361c7943bf76edda4569017bca9fce773c0",
+  "prBase": "f71ccaaa1a08dc7bf68f4e8c180b0e8c7141acde",
+  "capturedAt": "2026-10-17",
+  "reference": {
+    "01-home": {
+      "source": "docs/wireframes/01-home.html",
+      "render": "reference-01-home-1440x900.png",
+      "regions": {
+        "titlebar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "body": { "x": 0, "y": 40, "w": 1440, "h": 860 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "main pane": { "x": 56, "y": 48, "w": 1384, "h": 848 }
+      }
+    },
+    "02-home-sidebar": {
+      "source": "docs/wireframes/02-home-sidebar.html",
+      "render": "reference-02-home-sidebar-1440x900.png",
+      "regions": {
+        "titlebar": { "x": 0, "y": 0, "w": 1440, "h": 40 },
+        "body": { "x": 0, "y": 40, "w": 1440, "h": 860 },
+        "rail": { "x": 0, "y": 40, "w": 56, "h": 860 },
+        "sidebar": { "x": 56, "y": 48, "w": 318, "h": 852 },
+        "main pane": { "x": 374, "y": 48, "w": 1066, "h": 852 }
+      }
+    }
+  },
+  "current": {
+    "default": {
+      "capture": "current-01-default-closed.png",
+      "rail home button pressed": null,
+      "regions": {
+        "window-shell": { "x": 0, "y": 0, "w": 1440, "h": 900 },
+        "window-shell__body": { "x": 0, "y": 0, "w": 1440, "h": 900 },
+        "rail": { "x": 0, "y": 0, "w": 56, "h": 900 },
+        "sidebar": null,
+        "main-pane": { "x": 56, "y": 8, "w": 1384, "h": 888 },
+        "right-panel": { "hidden": true, "display": "none", "w": 0, "h": 0 }
+      }
+    },
+    "sidebar-open": {
+      "capture": "current-02-sidebar-open.png",
+      "rail sidebar toggle aria-pressed": "true",
+      "regions": {
+        "rail": { "x": 0, "y": 0, "w": 56, "h": 900 },
+        "sidebar": { "x": 56, "y": 8, "w": 318, "h": 892 },
+        "main-pane": { "x": 374, "y": 8, "w": 1066, "h": 888 },
+        "right-panel": { "hidden": true, "display": "none", "w": 0, "h": 0 }
+      }
+    },
+    "right-panel-open": {
+      "capture": "current-04-right-panel-open.png",
+      "rail right toggle aria-pressed": "true",
+      "regions": {
+        "rail": { "x": 0, "y": 0, "w": 56, "h": 900 },
+        "sidebar": null,
+        "main-pane": { "x": 56, "y": 8, "w": 924, "h": 888 },
+        "right-panel": { "hidden": false, "display": "flex", "x": 980, "y": 8, "w": 460, "h": 892 }
+      }
+    },
+    "both-open": {
+      "capture": "current-03-sidebar-and-right-open.png",
+      "rail sidebar toggle aria-pressed": "true",
+      "rail right toggle aria-pressed": "true",
+      "regions": {
+        "rail": { "x": 0, "y": 0, "w": 56, "h": 900 },
+        "sidebar": { "x": 56, "y": 8, "w": 318, "h": 892 },
+        "main-pane": { "x": 374, "y": 8, "w": 606, "h": 888 },
+        "right-panel": { "hidden": false, "display": "flex", "x": 980, "y": 8, "w": 460, "h": 892 }
+      }
+    }
+  },
+  "geometryDelta": {
+    "note": "reference title bar occupies y 0..40, so reference content starts at y=40 and current content (no drawn title bar) starts at y=0. Every vertical delta is exactly +40px (the intentional, ticket-mandated removal); every horizontal delta is 0.",
+    "horizontal": [
+      { "metric": "rail width", "reference": 56, "current": 56, "delta": 0, "verdict": "match" },
+      { "metric": "sidebar width", "reference": 318, "current": 318, "delta": 0, "verdict": "match" },
+      { "metric": "main pane width (default)", "reference": 1384, "current": 1384, "delta": 0, "verdict": "match" },
+      { "metric": "main pane width (sidebar open)", "reference": 1066, "current": 1066, "delta": 0, "verdict": "match" },
+      { "metric": "main pane left x (sidebar open)", "reference": 374, "current": 374, "delta": 0, "verdict": "match" }
+    ],
+    "vertical": [
+      { "metric": "rail top y", "reference": 40, "current": 0, "delta": -40, "verdict": "intentional (title bar removed)" },
+      { "metric": "main pane top y (default)", "reference": 48, "current": 8, "delta": -40, "verdict": "intentional" },
+      { "metric": "main pane height (default)", "reference": 848, "current": 888, "delta": 40, "verdict": "intentional (region fills the removed band)" },
+      { "metric": "sidebar top y", "reference": 48, "current": 8, "delta": -40, "verdict": "intentional" },
+      { "metric": "sidebar height", "reference": 852, "current": 892, "delta": 40, "verdict": "intentional" }
+    ],
+    "currentOnly": [
+      { "metric": "right panel width", "current": 460, "source": "--right-panel-width token; no wireframe draws a home right-panel state" },
+      { "metric": "right panel left x", "current": 980, "source": "1440 - 460, pinned to the window's right edge" }
+    ]
+  },
+  "overflow": {
+    "note": "measured on documentElement in every state",
+    "default": { "scrollWidth": 1440, "scrollHeight": 900, "clientWidth": 1440, "clientHeight": 900 },
+    "sidebar-open": { "scrollWidth": 1440, "scrollHeight": 900, "clientWidth": 1440, "clientHeight": 900 },
+    "right-panel-open": { "scrollWidth": 1440, "scrollHeight": 900, "clientWidth": 1440, "clientHeight": 900 },
+    "both-open": { "scrollWidth": 1440, "scrollHeight": 900, "clientWidth": 1440, "clientHeight": 900 },
+    "verdict": "no horizontal or vertical overflow and no scrollbar in any state; region widths always sum to 1440 (56 + 318 + 606 + 460 when both regions are open)"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "issue-42-qa-round-1/capture-integrity",
+  "purpose": "guard against a screenshot being paired with the wrong state: the non-white pixel fraction of each region band must follow the DOM state measured at the same moment",
+  "bands": {
+    "sidebarBand": { "x": [64, 366], "y": [12, 260] },
+    "rightBand": { "x": [990, 1430], "y": [12, 260] },
+    "mainBand": { "x": [400, 900], "y": [300, 700] }
+  },
+  "nonWhiteFraction": {
+    "sidebarBand": { "01-default": 0.0, "02-sidebar": 0.0404, "03-both": 0.0404 },
+    "rightBand": { "01-default": 0.0, "04-right": 0.0044, "03-both": 0.0044 },
+    "mainBand": { "01-default": 0.2242, "02-sidebar": 0.1534 }
+  },
+  "reading": {
+    "sidebar": "the sidebar band is pure white in the default capture and carries content (0.0404) in the sidebar-open and both-open captures, at the same value in both - the sidebar is genuinely rendered only in the two states measured as open",
+    "rightPanel": "the right-panel band is pure white in the default capture and carries content (0.0044) in the right-panel-open and both-open captures, identically - the panel is genuinely rendered only in the two states measured as open",
+    "mainPane": "the main-pane centre content fraction changes from 0.2242 to 0.1534 when the sidebar opens, consistent with the main pane narrowing from 1384 to 1066 and its content re-centring"
+  },
+  "verdict": "captures and DOM measurements are consistent; no screenshot is paired with the wrong state"
+}

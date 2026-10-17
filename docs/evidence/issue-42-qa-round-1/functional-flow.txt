@@ -1,0 +1,100 @@
+Issue #42 QA round 1 - functional browser flow (user-flow-browser-qa)
+=====================================================================
+
+Use case          Native window chrome: the OS owns the frame and the application
+                  menu; the frontend draws none of it; the two region toggles and
+                  the home destination live in the rail and still work.
+Start / route     http://localhost:1420/  (route `/`, the shell root)
+Role / auth       none (mock repositories, no auth, no seed)
+Device target     desktop, 1440x900, capture mode `viewport`
+Happy path        load -> rail shows home + two toggles -> both toggles open and
+                  close their own region -> home still renders
+Critical paths    (a) drawn chrome must not exist in the DOM; (b) removed UI copy
+                  must not be rendered; (c) each toggle must not disturb the other
+                  region; (d) aria-pressed must track each toggle; (e) no overflow
+Expected failure  any drawn `.title-bar`/`.menu-bar`/`.window-controls`/`.nav-history`
+                  node, any removed string, a stuck aria-pressed, a toggle that
+                  moves the other region, or a viewport overflow
+
+Selectors used (stable, in preference order)
+  .window-shell, .window-shell__body, .rail, .sidebar, .main-pane, .right-panel   (documented region classes)
+  button[aria-label] within .rail                                                 (accessible names)
+  find role button click --name "<aria-label>"                                    (real click)
+
+TRANSCRIPT
+----------
+
+STEP 0  Load
+  action:  agent-browser open http://localhost:1420/ ; set viewport 1440 900
+  expect:  home shell renders; viewport 1440x900
+  actual:  viewport {w:1440,h:900,dpr:1}; home title "¿En qué deberíamos trabajar?";
+           composer present; 0 console errors
+
+STEP 1  Drawn chrome absence (critical path a)
+  action:  count nodes matching .title-bar | .menu-bar | .window-controls | .nav-history
+  expect:  all four counts 0
+  actual:  { ".title-bar": 0, ".menu-bar": 0, ".window-controls": 0, ".nav-history": 0 }
+
+STEP 2  Removed UI copy absence (critical path b)
+  action:  scan document.body.innerText for the 9 removed strings
+  expect:  none present
+  actual:  found = []  (Archivo, Edición, Ver, Ayuda, Atrás, Adelante, Minimizar, Maximizar, Cerrar)
+
+STEP 3  Rail contents
+  action:  enumerate buttons inside .rail
+  expect:  exactly 3: home, sidebar toggle, right-panel toggle
+  actual:  3 buttons -> "Inicio" (aria-current=page), "Alternar barra lateral",
+           "Alternar panel derecho"; both toggles aria-pressed="false"
+
+STEP 4  Sidebar toggle: CLOSED -> OPEN (critical paths c, d)
+  action:  find role button click --name "Alternar barra lateral"
+  expect:  .sidebar appears; its width 318; .main-pane shrinks; sidebar toggle aria-pressed=true;
+           right toggle still false
+  actual:  .sidebar present 318x892@(56,8); .main-pane 1066 wide; aria-pressed [false-ish, true, false];
+           right region still hidden
+
+STEP 5  Sidebar toggle: OPEN -> CLOSED
+  action:  find role button click --name "Alternar barra lateral"
+  expect:  .sidebar gone; .main-pane back to 1384; aria-pressed=false
+  actual:  .sidebar absent; .main-pane 1384x888@(56,8); aria-pressed=false
+
+STEP 6  Right-panel toggle: CLOSED -> OPEN
+  action:  find role button click --name "Alternar panel derecho"
+  expect:  .right-panel visible 460 wide pinned at x=980; .main-pane shrinks; right toggle aria-pressed=true;
+           sidebar stays closed
+  actual:  .right-panel 460x892@(980,8) display flex (hidden attr removed); .main-pane 924 wide;
+           aria-pressed [false, true]; no sidebar
+
+STEP 7  Both regions open
+  action:  find role button click --name "Alternar barra lateral"
+  expect:  sidebar 318 + main + right panel 460 all fit 1440; no overflow
+  actual:  sidebar 318x892@(56,8); main 606x888@(374,8); right 460x892@(980,8);
+           56+318+606+460 = 1440; scrollWidth 1440 / scrollHeight 900 (no scrollbar)
+
+STEP 8  Right panel stays open when the sidebar closes (critical path c)
+  action:  find role button click --name "Alternar barra lateral"
+  expect:  sidebar closes, right panel untouched (aria-pressed=true)
+  actual:  sidebar absent; right panel 460 wide; right toggle aria-pressed=true
+
+STEP 9  Right panel: OPEN -> CLOSED (cycle complete for both toggles)
+  action:  find role button click --name "Alternar panel derecho"
+  expect:  default state restored
+  actual:  both aria-pressed=false; .main-pane 1384 wide; .right-panel hidden; no overflow
+
+STEP 10 Home destination
+  action:  find role button click --name "Inicio"
+  expect:  home view renders
+  actual:  .home-view__title = "¿En qué deberíamos trabajar?"
+
+STEP 11 Console
+  action:  agent-browser console
+  expect:  no errors
+  actual:  [vite] connecting..., [vite] connected..., React DevTools info only; 0 errors, 0 warnings
+
+RESULT
+------
+Happy path:      PASS
+Critical paths:  a PASS, b PASS, c PASS, d PASS, e PASS
+Blockers:        none
+Note:            steps 4-9 cross-checked against the captured screenshots
+                 (current-01..04) and dom-evidence.json.

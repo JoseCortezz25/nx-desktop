@@ -1,0 +1,63 @@
+{
+  "schema": "issue-42-qa-round-1/manifest",
+  "purpose": "scoped-visual evidence for issue #42 / PR #46 - app content area only, 1440x900",
+  "baseline": {
+    "kind": "rendered wireframe reference (source of truth)",
+    "root": "docs/wireframes/",
+    "files": ["docs/wireframes/01-home.html", "docs/wireframes/02-home-sidebar.html"],
+    "sharedStylesheet": "docs/wireframes/assets/wireframe.css",
+    "referenceBranchTip": "feat/issue-42-native-window-chrome",
+    "referenceCommit": "4c2ba361c7943bf76edda4569017bca9fce773c0",
+    "note": "the wireframe HTML is the reference; its rendered PNGs are evidence renders taken at the same viewport (1440x900) as the current captures"
+  },
+  "current": {
+    "source": "app at PR #46 HEAD",
+    "branch": "feat/issue-42-native-window-chrome",
+    "commit": "4c2ba361c7943bf76edda4569017bca9fce773c0",
+    "base": "f71ccaaa1a08dc7bf68f4e8c180b0e8c7141acde",
+    "route": "/",
+    "url": "http://localhost:1420/",
+    "command": "pnpm run dev"
+  },
+  "viewport": { "width": 1440, "height": 900, "devicePixelRatio": 1, "captureMode": "viewport", "devices": ["desktop"] },
+  "scope": {
+    "included": "layout regions 2-5 (rail, sidebar, main pane, right panel) = .window-shell__body",
+    "excluded": ["region 1 title bar", "native OS frame", "native application menu", "native OS window controls"]
+  },
+  "dynamicAreasIgnored": [
+    "catalog-fed sidebar rows and project/conversation lists",
+    "composer provider/model/effort chips and their resolved names",
+    "home view placeholder copy and suggestion rows",
+    "rail avatar",
+    "counts and timestamps"
+  ],
+  "intentionalChange": {
+    "what": "the drawn 40px title bar is removed (#42); the OS draws the frame and menu instead",
+    "evidence": "reference content starts at y=40, current content starts at y=0; every vertical delta is exactly 40px and every horizontal delta is 0 (measurements.json)"
+  },
+  "artifacts": [
+    { "file": "reference-01-home-1440x900.png", "role": "baseline reference render", "route": "docs/wireframes/01-home.html", "viewport": "1440x900" },
+    { "file": "reference-02-home-sidebar-1440x900.png", "role": "baseline reference render", "route": "docs/wireframes/02-home-sidebar.html", "viewport": "1440x900" },
+    { "file": "current-01-default-closed.png", "role": "current capture", "state": "default", "viewport": "1440x900" },
+    { "file": "current-02-sidebar-open.png", "role": "current capture", "state": "sidebar open", "viewport": "1440x900" },
+    { "file": "current-04-right-panel-open.png", "role": "current capture", "state": "right panel open", "viewport": "1440x900" },
+    { "file": "current-03-sidebar-and-right-open.png", "role": "current capture", "state": "both open", "viewport": "1440x900" },
+    { "file": "comparison-01-default-1440x900.png", "role": "comparison + geometry annotation (reference | current)", "states": ["default"] },
+    { "file": "comparison-02-sidebar-1440x900.png", "role": "comparison + geometry annotation (reference | current)", "states": ["sidebar open"] },
+    { "file": "comparison-04-right-panel-1440x900.png", "role": "current-state annotation (no wireframe reference draws this state)" },
+    { "file": "comparison-03-both-1440x900.png", "role": "current-state annotation (no wireframe reference draws this state)" },
+    { "file": "measurements.json", "role": "measured region rectangles and deltas" },
+    { "file": "dom-evidence.json", "role": "DOM absence, rail buttons, toggle flow, console" },
+    { "file": "functional-flow.txt", "role": "functional flow transcript" },
+    { "file": "commands.txt", "role": "environment and command transcript" },
+    { "file": "build-comparison.mjs", "role": "reproducible comparison/annotation generator" },
+    { "file": "dom-probe.js", "role": "DOM/geometry probe injected with `agent-browser eval --stdin`" },
+    { "file": "reference-probe.js", "role": "wireframe-reference geometry probe" },
+    { "file": "image-derived-geometry.json", "role": "region boundaries re-derived from raw pixels" },
+    { "file": "capture-integrity.json", "role": "capture <-> DOM state pairing cross-check" }
+  ],
+  "tools": {
+    "evaluate-visual-diff.ts": "UNAVAILABLE for this comparison: it supports --capture=viewport|full-page plus --mask only, with no clip/selector capture of the current page, so a clip baseline against a full-viewport current fails as dimension-mismatch. Not passed.",
+    "usedInstead": "structural/geometric comparison on exact measured coordinates plus independent image-derived boundary detection"
+  }
+}
