@@ -25,13 +25,17 @@ describe('shared messages accessor', () => {
     expect(getSharedMessages()).toBe(sharedMessages);
   });
 
-  it('carries the wireframe window menus as the copy source', () => {
-    expect(getSharedMessages().window.menus).toEqual({
-      file: 'Archivo',
-      edit: 'Edición',
-      view: 'Ver',
-      help: 'Ayuda'
-    });
+  it('no longer carries the drawn window-chrome copy', () => {
+    // #42 supersedes the wireframe's drawn title bar: the fake menu labels
+    // (Archivo / Edición / Ver / Ayuda), the back/forward labels and the
+    // window-control labels were removed with the controls they named. The
+    // region toggle labels survived the move into the rail, the app's own
+    // surface; a native menu's labels belong to its Rust declaration instead.
+    const messages = getSharedMessages();
+
+    expect(Object.keys(messages)).not.toContain('window');
+    expect(messages.rail.toggleSidebarLabel).toBe('Alternar barra lateral');
+    expect(messages.rail.toggleRightPanelLabel).toBe('Alternar panel derecho');
   });
 
   it('builds the composer prompt placeholder from the provider name', () => {

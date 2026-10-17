@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
+import { getSharedMessages } from '@/shared/i18n/messages';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
 import {
@@ -207,5 +208,49 @@ describe('app shell sidebar brand', () => {
     expect(markup).toContain('Recientes');
     expect(markup).toContain('Composer selection chain');
     expect(markup).toContain('Diff review panel');
+  });
+});
+
+describe('app shell native window chrome (#42)', () => {
+  beforeEach(() => {
+    harness.providers = catalog;
+    harness.conversations = [];
+    harness.projects = [];
+    harness.desired = null;
+  });
+
+  it('renders no drawn title bar, menu bar, history or window controls', () => {
+    const markup = renderSidebarShell();
+
+    // #42: the window frame, its minimize/maximize/close controls and the
+    // application menu are the operating system's. The frontend draws none of
+    // them, so neither the classes nor the copy they rendered may come back.
+    // The copy is matched as a button text node (`>label<`): "Archivos
+    // abiertos" (the file tab list) legitimately contains "Archivo".
+    expect(markup).not.toContain('class="title-bar"');
+    expect(markup).not.toContain('class="menu-bar"');
+    expect(markup).not.toContain('class="window-controls"');
+    expect(markup).not.toContain('class="nav-history"');
+    expect(markup).not.toContain('>Archivo<');
+    expect(markup).not.toContain('>Edición<');
+    expect(markup).not.toContain('>Ver<');
+    expect(markup).not.toContain('>Ayuda<');
+    expect(markup).not.toContain('>Minimizar<');
+    expect(markup).not.toContain('>Maximizar<');
+    expect(markup).not.toContain('>Atrás<');
+    expect(markup).not.toContain('>Adelante<');
+  });
+
+  it('keeps the two region toggles by moving them into the rail', () => {
+    const markup = renderSidebarShell();
+    const messages = getSharedMessages();
+
+    expect(markup).toContain('class="rail"');
+    expect(markup).toContain(
+      `aria-label="${messages.rail.toggleSidebarLabel}"`
+    );
+    expect(markup).toContain(
+      `aria-label="${messages.rail.toggleRightPanelLabel}"`
+    );
   });
 });
