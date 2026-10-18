@@ -6,8 +6,12 @@ languages reference this document and the machine-checkable fixtures it indexes.
 
 ## Delivery slices
 
-Issue #16 ships as four chained PRs (stacked-to-main). This document is filled in
-by each slice; **only slice 1 is implemented today.**
+Issue #16 ships as a **Feature Branch Chain**: a draft, no-merge tracker PR on
+`feat/issue-16-ipc-kernel-tracker` (targeting `main`) integrates the slices, and
+four child PRs carry one slice each. Child PR 1 targets the tracker branch and
+each later child targets the branch of the slice before it, so no slice merges
+directly into `main`. This document is filled in by each slice; **only slice 1
+is implemented today.**
 
 | Slice | Scope                                                       | Status      |
 | ----- | ----------------------------------------------------------- | ----------- |
