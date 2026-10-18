@@ -1,0 +1,55 @@
+/* The workspace change set in the right panel (#13):
+   `docs/wireframes/18-chat-with-diff.html`, `.diffbar` and `.diffbody`. The view
+   fills the region's viewer slot, so it carries no outer margin — the panel owns
+   the frame. */
+.diff-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Summary bar: the changed-file count and the workspace totals. The wireframe
+   also draws a copy control, the `Vista dividida` / `Vista unificada` toggle and
+   an `Abrir` split button here; `split` is deferred (business-logic §3.5 item 1)
+   and `Abrir` already belongs to the file viewer (#12), so neither is drawn. */
+.diff-view__summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 13px;
+}
+
+.diff-view__count {
+  font-weight: 600;
+}
+
+.diff-view__added,
+.diff-view__removed {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.diff-view__added {
+  color: var(--color-added);
+}
+
+.diff-view__removed {
+  color: var(--color-removed);
+}
+
+.diff-view__notice {
+  margin: 0;
+  padding: 24px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.diff-view__sections {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

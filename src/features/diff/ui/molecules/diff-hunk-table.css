@@ -1,0 +1,79 @@
+/* One unified hunk of a changed file (`docs/wireframes/18-chat-with-diff.html`,
+   `table.diff`): two line-number gutters, the `+` / `-` marker and the code.
+   `split` mode is deferred (business-logic §3.5 item 1), so this is the panel's
+   only diff table. */
+.diff-hunk {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.diff-hunk__gutter {
+  width: 44px;
+}
+
+.diff-hunk__marker-column {
+  width: 26px;
+}
+
+.diff-hunk td {
+  padding: 0 8px;
+  vertical-align: top;
+}
+
+.diff-hunk__number {
+  text-align: right;
+  padding-right: 6px;
+  color: var(--color-muted);
+  user-select: none;
+}
+
+.diff-hunk__marker {
+  text-align: center;
+  color: var(--color-muted);
+  font-weight: 700;
+  user-select: none;
+}
+
+/* Code wraps instead of scrolling sideways: the region is a 460px column, so a
+   clipped line would be unreadable (the wireframe's `overflow: hidden` assumed a
+   wider pane). */
+.diff-hunk__code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.diff-hunk__row--hunk > .diff-hunk__header {
+  padding: 2px 8px;
+  background: var(--color-hunk-soft);
+  color: var(--color-hunk-text);
+  white-space: pre-wrap;
+}
+
+.diff-hunk__row--removed > td {
+  background: var(--color-removed-soft);
+}
+
+.diff-hunk__row--removed > .diff-hunk__code {
+  color: var(--color-removed);
+}
+
+.diff-hunk__row--removed > .diff-hunk__marker {
+  color: var(--color-removed);
+}
+
+.diff-hunk__row--added > td {
+  background: var(--color-added-soft);
+}
+
+.diff-hunk__row--added > .diff-hunk__code {
+  color: var(--color-added);
+}
+
+.diff-hunk__row--added > .diff-hunk__marker {
+  color: var(--color-added);
+}

@@ -25,6 +25,16 @@
   --color-warn: #d9561e; /* attention copy — approval chip and unrestricted level (#8) */
   --color-warn-soft: #fbf0ea; /* selected unrestricted approval row (#8) */
   --color-focus: #2f6fed; /* keyboard focus ring — base button, text field */
+  /* Diff palette — screen 18's table (`docs/wireframes/18-chat-with-diff.html`,
+     `table.diff`). Added and removed lines get a text colour plus the soft row
+     fill the wireframe paints; the hunk header gets its own pair of the same
+     family (#13). */
+  --color-added: #1f7a3a; /* added-line text and the `+N` counts */
+  --color-added-soft: #e8f6ec; /* added-line row fill */
+  --color-removed: #b42318; /* removed-line text and the `-N` counts */
+  --color-removed-soft: #fdecec; /* removed-line row fill */
+  --color-hunk-text: #4a5a72; /* hunk header text */
+  --color-hunk-soft: #e9eef6; /* hunk header row fill */
 
   /* Radius (wireframe: --radius). */
   --radius-sm: 8px; /* controls, list rows */
@@ -41,6 +51,8 @@
   /* Typography (wireframe body font). */
   --font-sans:
     Inter, 'Segoe UI', system-ui, sans-serif; /* .window-shell, base */
+  --font-mono:
+    'JetBrains Mono', ui-monospace, Menlo, monospace; /* code and diff rows (#12, #13) */
   --font-size-base: 14px; /* base copy */
   --line-height-base: 1.45; /* base copy */
 
