@@ -1,3 +1,8 @@
+// Shared cross-language IPC contract primitives (issue #16). Slice 1 owns the
+// closed public error contract only; feature DTOs, commands and their
+// registration belong to later slices and are not wired here yet.
+pub mod ipc;
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {

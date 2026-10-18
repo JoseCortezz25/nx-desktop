@@ -1,0 +1,6 @@
+{
+  "code": "validation_failed",
+  "message": "prompt exceeds the maximum accepted size",
+  "retryable": false,
+  "requestId": "req-9f1c4a20"
+}
