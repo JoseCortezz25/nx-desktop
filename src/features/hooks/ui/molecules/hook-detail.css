@@ -1,0 +1,29 @@
+.hook-detail {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  border-top: 1px solid var(--color-line);
+  padding: 10px 27px 18px;
+  font-size: 13px;
+}
+
+.hook-detail__field {
+  display: grid;
+  grid-template-columns: 117px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.hook-detail__field dt {
+  color: var(--color-muted);
+}
+
+.hook-detail__field dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.hook-detail__command {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
