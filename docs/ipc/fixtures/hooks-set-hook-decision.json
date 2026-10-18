@@ -1,0 +1,17 @@
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "hookId": "hook-lint-on-write",
+    "approvalStatus": "rejected"
+  },
+  "response": {
+    "id": "hook-lint-on-write",
+    "name": "Lint on write",
+    "isNew": true,
+    "origin": "Project configuration",
+    "hookType": "PreToolUse",
+    "command": "node .claude/hooks/lint-on-write.mjs",
+    "timeoutMs": 5000,
+    "approvalStatus": "rejected"
+  }
+}
