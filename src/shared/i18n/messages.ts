@@ -249,14 +249,28 @@ export const sharedMessages = {
         finished: 'Finalizados',
         cancelled: 'Cancelados',
         failed: 'Fallidos'
-      } as Readonly<Record<SubagentStatusKind, string>>
+      } as Readonly<Record<SubagentStatusKind, string>>,
+      groupHeading: (label: string, count: number) => `${label} · ${count}`,
+      loadingLabel: 'Cargando los subagentes…',
+      emptyLabel: 'Este run no tiene subagentes'
     },
     statuses: {
       processing: 'Procesando',
       finished: 'Finalizado',
       failed: 'Fallido',
       cancelled: 'Cancelado'
-    } as Readonly<Record<SubagentStatusKind, string>>
+    } as Readonly<Record<SubagentStatusKind, string>>,
+    detail: {
+      backLabel: 'Volver a la lista',
+      metaLabel: (model: string, effort: string) => `${model} · ${effort}`,
+      transcriptLabel: 'Transcripción del subagente',
+      earlierLabel: (count: number) => `${count} mensajes anteriores`,
+      expandLabel: 'Mostrar mensajes anteriores',
+      collapseLabel: 'Contraer mensajes anteriores'
+    },
+    actions: {
+      stopLabel: 'Detener'
+    }
   },
   // Right panel file viewer (#12): its tab strip, the breadcrumb toolbar and the
   // `Abrir` menu (`docs/wireframes/23-file-viewer-markdown.html`,
