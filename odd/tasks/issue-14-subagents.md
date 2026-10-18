@@ -80,7 +80,7 @@ tab and its reveal, file chips, region visibility/overlay behaviour (#40, #43)
       `use-subagent-catalog` hook that owns the local mock state and the individually
       stop transition, and the pure model (`groupSubagents`, transcript recent
       window + earlier count, stop rule, elapsed formatting). Tests for every pure
-      rule and the seed's own consistency. S3, S6, S9.
+      rule and the seed's own consistency. S3, S6, S9. Commit `6dcd87a`.
 - [ ] T2 — Subagents list surface: the `SubagentAvatar` atom (decorative SVG
       variants + tokens - like the wireframe colors), the `SubagentRow` molecule
       (avatar, name, status, elapsed; wireframe 21), copy in `messages.ts`, unit

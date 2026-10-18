@@ -12,6 +12,7 @@
  */
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
 import type { OpenTarget } from '@/shared/domain/open-target.types';
+import type { SubagentStatusKind } from '@/shared/domain/subagent.types';
 
 export const sharedMessages = {
   actions: {
@@ -232,6 +233,31 @@ export const sharedMessages = {
       tableLabel: (path: string) => `Diferencias de ${path}`
     }
   },
+
+  // Right panel subagents viewer (#14): the grouped list and the detail
+  // (`docs/wireframes/21-subagents-list.html`, `22-subagent-detail.html`).
+  // Status and group labels are keyed by the locked status vocabulary
+  // (`SUBAGENT_STATUS_KINDS`, decision 2026-10-16) through the accessors below,
+  // so a state added to the union cannot compile without its copy; names,
+  // model strings, effort levels and transcripts are runtime data, never copy.
+  subagents: {
+    panelTabLabel: 'Subagentes',
+    list: {
+      groupsLabel: 'Subagentes',
+      groupLabels: {
+        processing: 'Activados',
+        finished: 'Finalizados',
+        cancelled: 'Cancelados',
+        failed: 'Fallidos'
+      } as Readonly<Record<SubagentStatusKind, string>>
+    },
+    statuses: {
+      processing: 'Procesando',
+      finished: 'Finalizado',
+      failed: 'Fallido',
+      cancelled: 'Cancelado'
+    } as Readonly<Record<SubagentStatusKind, string>>
+  },
   // Right panel file viewer (#12): its tab strip, the breadcrumb toolbar and the
   // `Abrir` menu (`docs/wireframes/23-file-viewer-markdown.html`,
   // `24-file-open-menu.html`, `13-chat-with-editor.html`). The file paths and
@@ -278,6 +304,26 @@ export const sharedMessages = {
  */
 export function getEffortLevelLabel(level: string): string {
   return sharedMessages.composer.effort.labels[level] ?? level;
+}
+
+/**
+ * Resolves the visible status of one subagent.
+ *
+ * The map is keyed by `SubagentStatusKind`, so TypeScript fails the build if the
+ * discriminated status union gains a kind without copy the row can print — the
+ * union is never retyped here (texts follow wireframe 21).
+ */
+export function getSubagentStatusLabel(kind: SubagentStatusKind): string {
+  return sharedMessages.subagents.statuses[kind];
+}
+
+/**
+ * Resolves the list-group heading of one status bucket (wireframe 21 prints
+ * "Activados · 2": this returns the first fragment; the count is runtime data
+ * the panel composes).
+ */
+export function getSubagentGroupLabel(kind: SubagentStatusKind): string {
+  return sharedMessages.subagents.list.groupLabels[kind];
 }
 
 /**
