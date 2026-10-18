@@ -1,0 +1,31 @@
+/* One source folder of the create-project dialog
+   (`docs/wireframes/06-create-project-folder.html`, `.dialog .box .row`):
+   folder glyph, folder name, remove control pushed to the row end. Geometry and
+   colours resolve through the shared tokens. */
+.source-folder-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 53px;
+  padding: 0 12px 0 14px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.source-folder-row:last-child {
+  border-bottom: 0;
+}
+
+.source-folder-row__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-folder-row .button--icon {
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+}

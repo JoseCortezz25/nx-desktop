@@ -155,7 +155,13 @@ export const sharedMessages = {
       emptyLabel: 'Elegir proyecto',
       triggerLabel: (projectName: string) => `Proyecto: ${projectName}`,
       listLabel: 'Proyectos',
-      header: 'Seleccionar proyecto'
+      header: 'Seleccionar proyecto',
+      // The project picker's action row that opens the create-project dialog
+      // (#9). It belongs to the shared picker rather than the projects feature,
+      // because `src/shared/ui/**` may not import from `src/features/**`
+      // (`.claude/rules/atomic-design.md`). Wording follows the wireframe's
+      // `Nuevo proyecto` row (`docs/wireframes/04-project-picker.html`).
+      createLabel: 'Nuevo proyecto'
     },
     environment: {
       localMachine: 'Este ordenador',

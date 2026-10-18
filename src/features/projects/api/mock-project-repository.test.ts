@@ -74,3 +74,89 @@ describe('mock project repository', () => {
     expect(updated).toEqual(before);
   });
 });
+
+/**
+ * Creation is the write the create-project dialog (#9) needs: it must append a
+ * typed project through the port and answer with the created row **plus** the
+ * updated list, so the one catalog owner can publish both the new project and
+ * the list the picker and sidebar read.
+ */
+describe('mock project repository creation', () => {
+  it('appends a typed project and reports it with the updated list', async () => {
+    const repository = createMockProjectRepository();
+    const before = await repository.listProjects();
+
+    const created = await repository.createProject({
+      name: 'Gamma app',
+      folders: ['/workspace/gamma-site']
+    });
+
+    expect(created.projects).toHaveLength(before.length + 1);
+    expect(created.projects[created.projects.length - 1]).toEqual(
+      created.project
+    );
+    expect(created.project.name).toBe('Gamma app');
+    expect(created.project.workspaceFolders).toEqual(['/workspace/gamma-site']);
+  });
+
+  it('persists the creation through the port', async () => {
+    const repository = createMockProjectRepository();
+
+    const created = await repository.createProject({
+      name: 'Gamma app',
+      folders: []
+    });
+    const reread = await repository.listProjects();
+
+    expect(reread.some(project => project.id === created.project.id)).toBe(
+      true
+    );
+  });
+
+  it('accepts the empty state: a project with no source folder', async () => {
+    const repository = createMockProjectRepository();
+
+    const created = await repository.createProject({
+      name: 'Empty workspace',
+      folders: []
+    });
+
+    expect(created.project.workspaceFolders).toEqual([]);
+  });
+
+  it('gives each created project a deterministic unique id', async () => {
+    const repository = createMockProjectRepository();
+
+    const first = await repository.createProject({ name: 'One', folders: [] });
+    const second = await repository.createProject({ name: 'Two', folders: [] });
+
+    expect(first.project.id).toBe('proj-created-1');
+    expect(second.project.id).toBe('proj-created-2');
+    expect(first.project.id).not.toBe(second.project.id);
+  });
+
+  it('starts a created project at the most restrictive approval level', async () => {
+    const repository = createMockProjectRepository();
+
+    const { project } = await repository.createProject({
+      name: 'One',
+      folders: []
+    });
+
+    // A required field still needs a value, and the issue specifies none: the
+    // most cautious level is the honest default rather than an invented policy.
+    expect(project.approvalMode).toBe('ask_always');
+    expect(project.hookDecisions).toEqual([]);
+    expect(project.conversationIds).toEqual([]);
+  });
+
+  it('keeps each repository instance’s creations to itself', async () => {
+    const first = createMockProjectRepository();
+    const second = createMockProjectRepository();
+
+    await first.createProject({ name: 'One', folders: [] });
+    const other = await second.listProjects();
+
+    expect(other.some(project => project.id === 'proj-created-1')).toBe(false);
+  });
+});

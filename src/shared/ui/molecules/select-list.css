@@ -83,3 +83,24 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* The picker's action row — the `Nuevo proyecto` entry that opens the
+   create-project dialog (`docs/wireframes/04-project-picker.html`, the last
+   `.opt`). It is styled as a list row but drawn *outside* the listbox, so it is
+   never an option. */
+.select-list__action {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-list__action .button--list {
+  height: auto;
+  min-height: 34px;
+  padding: 6px 8px;
+}
+
+.select-list__action .select-list__text {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}

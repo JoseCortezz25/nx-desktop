@@ -5,6 +5,12 @@ import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog
 import { useWorkspaceBranches } from '@/features/projects/hooks/use-workspace-branches';
 import { useProviderCatalog } from '@/features/providers/hooks/use-provider-catalog';
 import { FilePanel } from '@/features/files/ui/organisms/file-panel';
+import { EMPTY_CREATE_PROJECT_DRAFT } from '@/features/projects/model/create-project';
+import type {
+  CreateProjectDraft,
+  CreateProjectInput
+} from '@/features/projects/model/create-project.types';
+import { CreateProjectDialog } from '@/features/projects/ui/organisms/create-project-dialog';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
 import {
@@ -82,18 +88,34 @@ function useWindowWidth(): number {
  * - the open-file request (#11) is owned once so a file chip's click has a
  *   single seam the right panel (#12) consumes without a second copy. A request
  *   also reveals the right panel, so opening a file shows it instead of leaving
- *   the region hidden.
+ *   the region hidden;
+ * - the create-project draft (#9) is owned once, and `null` means the dialog is
+ *   closed. Creation goes through this shell's one `useProjectCatalog`, so the
+ *   picker and the sidebar see the new project immediately instead of through a
+ *   second repository instance.
  *
  * It holds no persisted state and calls no IPC.
  */
 export function AppShell() {
   const [shell, setShell] = useState<ShellState>(INITIAL_SHELL_STATE);
   const [draft, setDraft] = useState<ComposerDraft>(EMPTY_COMPOSER_DRAFT);
+  /**
+   * The in-progress create-project form, or `null` while the dialog is closed.
+   * One value, one owner: `null` is the closed state, and opening the dialog is
+   * seeding the draft, so the dialog can never be open without a draft to render.
+   */
+  const [createProjectDraft, setCreateProjectDraft] =
+    useState<CreateProjectDraft | null>(null);
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
-  const { projects, activeProject, selectProject, changeApprovalMode } =
-    useProjectCatalog();
+  const {
+    projects,
+    activeProject,
+    selectProject,
+    changeApprovalMode,
+    createProject
+  } = useProjectCatalog();
   const { conversations } = useConversationCatalog();
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
 
@@ -125,6 +147,7 @@ export function AppShell() {
       activeProject={activeProject}
       branches={branches}
       onSelectProject={selectProject}
+      onCreateProject={handleOpenCreateProject}
       onChangeApprovalMode={changeApprovalMode}
       draft={draft}
       onDraftChange={setDraft}
@@ -161,6 +184,29 @@ export function AppShell() {
     // and cancel). This ticket proves the composer hands the text up; the shell
     // holds no state for it yet.
     void prompt;
+  }
+
+  /** The picker's `Nuevo proyecto` row opens the dialog on a fresh draft. */
+  function handleOpenCreateProject() {
+    setCreateProjectDraft(EMPTY_CREATE_PROJECT_DRAFT);
+  }
+
+  function handleCreateProjectDraftChange(next: CreateProjectDraft) {
+    setCreateProjectDraft(next);
+  }
+
+  function handleCloseCreateProject() {
+    setCreateProjectDraft(null);
+  }
+
+  /**
+   * Creates the project through the one catalog hook that owns the list, then
+   * closes the dialog. The new project is selected by the hook, so the composer's
+   * project chip and the sidebar both show it without a second catalog instance.
+   */
+  function handleSubmitCreateProject(input: CreateProjectInput) {
+    createProject(input);
+    setCreateProjectDraft(null);
   }
 
   return (
@@ -214,6 +260,18 @@ export function AppShell() {
           onClose={handleToggleRightPanel}
         />
       </div>
+      {/*
+        The create-project modal (#9) is mounted by the shell, not by the
+        composer, because the catalog it creates into is the shell's and because
+        the modal must cover every region — rail, sidebar and panel included. It
+        draws nothing while no draft is in progress.
+      */}
+      <CreateProjectDialog
+        draft={createProjectDraft}
+        onDraftChange={handleCreateProjectDraftChange}
+        onSubmit={handleSubmitCreateProject}
+        onClose={handleCloseCreateProject}
+      />
     </div>
   );
 }
