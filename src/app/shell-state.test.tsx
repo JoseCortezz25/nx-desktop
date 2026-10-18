@@ -3,10 +3,14 @@ import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
 import {
   INITIAL_SHELL_STATE,
+  openHookReview,
+  closeHookReview,
+  toggleShellHookSelection,
   navigateHome,
   openConversation,
   revealFileInPanel,
   revealChangesInPanel,
+  revealSubagentsInPanel,
   toggleShellRegion
 } from './shell-state';
 
@@ -24,13 +28,69 @@ const request: OpenFileRequest = {
   path: 'docs/research-tecnico/arquitectura-tauri.md'
 };
 
+describe('shell hook review state', () => {
+  it('opens on an empty selection, resetting any previous review', () => {
+    const selected = toggleShellHookSelection(INITIAL_SHELL_STATE, 'hook-lint');
+    const opened = openHookReview(selected);
+    expect(opened.hookReview).toEqual({
+      isOpen: true,
+      selectedHookIds: new Set()
+    });
+    expect(selected.hookReview.selectedHookIds.has('hook-lint')).toBe(true);
+    expect(opened.visibility).toBe(selected.visibility);
+  });
+  it('closes without changing unrelated shell state', () => {
+    const opened = openHookReview(INITIAL_SHELL_STATE);
+    const closed = closeHookReview(opened);
+    expect(closed.hookReview.isOpen).toBe(false);
+    expect(opened.hookReview.isOpen).toBe(true);
+    expect(closed.openFileRequest).toBe(opened.openFileRequest);
+  });
+  it('toggles selection immutably in either direction', () => {
+    const selected = toggleShellHookSelection(INITIAL_SHELL_STATE, 'hook-lint');
+    expect([...selected.hookReview.selectedHookIds]).toEqual(['hook-lint']);
+    expect(INITIAL_SHELL_STATE.hookReview.selectedHookIds.size).toBe(0);
+    expect(
+      toggleShellHookSelection(selected, 'hook-lint').hookReview.selectedHookIds
+        .size
+    ).toBe(0);
+    expect(selected.hookReview.selectedHookIds.size).toBe(1);
+  });
+});
+
 describe('shell state', () => {
+  it('reveals subagents with the child id and increments from the previous count without disturbing files or changes', () => {
+    const initial = {
+      ...INITIAL_SHELL_STATE,
+      openFileRequest: request,
+      openChangesRequestCount: 4,
+      openSubagentsRequestCount: 3
+    };
+    const revealed = revealSubagentsInPanel(initial, 'subagent-inspect-repo');
+    expect(revealed.openSubagentsRequestCount).toBe(4);
+    expect(revealed.openSubagentsRequestSubagentId).toBe(
+      'subagent-inspect-repo'
+    );
+    expect(revealed.visibility).toEqual({ sidebar: false, rightPanel: true });
+    expect(revealed.openFileRequest).toBe(request);
+    expect(revealed.openChangesRequestCount).toBe(4);
+    const again = revealSubagentsInPanel(revealed, 'subagent-inspect-repo');
+    expect(again.openSubagentsRequestCount).toBe(5);
+    expect(again.visibility).toBe(revealed.visibility);
+    expect(
+      revealSubagentsInPanel(again).openSubagentsRequestSubagentId
+    ).toBeNull();
+    expect(initial.openSubagentsRequestCount).toBe(3);
+  });
   it('starts home with both toggleable regions closed and no file requested', () => {
     expect(INITIAL_SHELL_STATE).toEqual({
       activeConversationId: null,
       visibility: { sidebar: false, rightPanel: false },
       openFileRequest: null,
-      openChangesRequestCount: 0
+      openChangesRequestCount: 0,
+      hookReview: { isOpen: false, selectedHookIds: new Set() },
+      openSubagentsRequestCount: 0,
+      openSubagentsRequestSubagentId: null
     });
   });
 

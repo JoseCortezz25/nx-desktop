@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useHookReview } from '@/features/hooks/hooks/use-hook-review';
+import { countNewHooks } from '@/features/hooks/model/hook-review';
+import { HookReviewDialog } from '@/features/hooks/ui/organisms/hook-review-dialog';
+import type { HookApprovalStatus } from '@/shared/domain/hook.types';
+import type { HookId } from '@/shared/domain/value-objects.types';
 import { useConversationCatalog } from '@/features/conversations/hooks/use-conversation-catalog';
 import { useComposerSelection } from '@/features/providers/hooks/use-composer-selection';
 import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
@@ -12,7 +17,10 @@ import type {
 } from '@/features/projects/model/create-project.types';
 import { CreateProjectDialog } from '@/features/projects/ui/organisms/create-project-dialog';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { ConversationId } from '@/shared/domain/value-objects.types';
+import type {
+  ConversationId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import {
   EMPTY_COMPOSER_DRAFT,
   type ComposerDraft
@@ -29,10 +37,14 @@ import {
 } from '@/shared/ui/layout/region-visibility';
 import {
   INITIAL_SHELL_STATE,
+  openHookReview,
+  closeHookReview,
+  toggleShellHookSelection,
   navigateHome,
   openConversation,
   revealFileInPanel,
   revealChangesInPanel,
+  revealSubagentsInPanel,
   toggleShellRegion,
   type ShellState
 } from './shell-state';
@@ -107,6 +119,7 @@ export function AppShell() {
    */
   const [createProjectDraft, setCreateProjectDraft] =
     useState<CreateProjectDraft | null>(null);
+  const { hooks } = useHookReview();
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
@@ -124,7 +137,9 @@ export function AppShell() {
     activeConversationId,
     visibility,
     openFileRequest,
-    openChangesRequestCount
+    openChangesRequestCount,
+    openSubagentsRequestCount,
+    openSubagentsRequestSubagentId
   } = shell;
 
   // Region *presentation* is derived from the measured window width; region
@@ -144,6 +159,8 @@ export function AppShell() {
   // the main pane re-slots it under the conversation.
   const composer = (
     <Composer
+      newHookCount={countNewHooks(hooks ?? [])}
+      onOpenHookReview={handleOpenHookReview}
       providers={providers}
       selection={resolved}
       onSelectProvider={selectProvider}
@@ -187,6 +204,33 @@ export function AppShell() {
 
   function handleRequestOpenChanges() {
     setShell(revealChangesInPanel(shell));
+  }
+
+  function handleOpenHookReview() {
+    setShell(openHookReview);
+  }
+
+  function handleCloseHookReview() {
+    setShell(closeHookReview);
+  }
+
+  function handleToggleHookSelection(hookId: HookId) {
+    setShell(current => toggleShellHookSelection(current, hookId));
+  }
+
+  function handleDecideHookReview(
+    status: HookApprovalStatus,
+    scope: 'selection' | 'all'
+  ) {
+    // Project-scoped HookDecision persistence belongs to #19/#23, not this UI, so
+    // the decision is reported and the dialog closes; nothing is written.
+    void status;
+    void scope;
+    setShell(closeHookReview);
+  }
+
+  function handleRequestOpenSubagent(subagentId: SubagentId) {
+    setShell(revealSubagentsInPanel(shell, subagentId));
   }
 
   function handleSubmitPrompt(prompt: string) {
@@ -253,6 +297,7 @@ export function AppShell() {
               openFileRequest={openFileRequest}
               onRequestOpenFile={handleRequestOpenFile}
               onRequestOpenChanges={handleRequestOpenChanges}
+              onRequestOpenSubagent={handleRequestOpenSubagent}
               composer={composer}
             />
           ) : (
@@ -267,6 +312,8 @@ export function AppShell() {
         <FilePanel
           openFileRequest={openFileRequest}
           openChangesRequestCount={openChangesRequestCount}
+          openSubagentsRequestCount={openSubagentsRequestCount}
+          openSubagentsRequestSubagentId={openSubagentsRequestSubagentId}
           isOpen={visibility.rightPanel}
           isOverlay={regionLayout.rightPanel === 'overlay'}
           onClose={handleToggleRightPanel}
@@ -278,6 +325,15 @@ export function AppShell() {
         the modal must cover every region — rail, sidebar and panel included. It
         draws nothing while no draft is in progress.
       */}
+      {shell.hookReview.isOpen ? (
+        <HookReviewDialog
+          hooks={hooks ?? []}
+          selectedHookIds={shell.hookReview.selectedHookIds}
+          onToggleSelection={handleToggleHookSelection}
+          onDecide={handleDecideHookReview}
+          onClose={handleCloseHookReview}
+        />
+      ) : null}
       <CreateProjectDialog
         draft={createProjectDraft}
         onDraftChange={handleCreateProjectDraftChange}

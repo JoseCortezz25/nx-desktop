@@ -94,6 +94,8 @@ describe('hook review dialog', () => {
   it('uses the shared dialog and feature copy, with one collapsed row per hook', () => {
     const markup = render();
     expect(markup).toContain('role="dialog"');
+    // Screen 14 draws this review on the wide surface, not the compact one.
+    expect(markup).toContain('dialog--wide');
     expect(markup).toContain(`aria-label="${messages.title}"`);
     expect(markup).toContain(`aria-label="${messages.closeLabel}"`);
     expect(markup).toContain(messages.footerNote);

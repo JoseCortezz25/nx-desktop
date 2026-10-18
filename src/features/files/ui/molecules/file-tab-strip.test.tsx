@@ -26,6 +26,33 @@ function render(activeTabId: string | null): string {
 }
 
 describe('file tab strip', () => {
+  it('renders all three tab kinds with only file close controls and a user glyph', () => {
+    const markup = renderToStaticMarkup(
+      <FileTabStrip
+        tabs={[
+          ...tabs,
+          { kind: 'changes', id: 'changes', name: 'Cambios' },
+          { kind: 'subagents', id: 'subagents', name: 'Subagentes' }
+        ]}
+        activeTabId="subagents"
+        onActivate={() => undefined}
+        onClose={() => undefined}
+      />
+    );
+    expect(markup.match(/role="tab"/g)).toHaveLength(4);
+    expect(markup.match(/<button/g)).toHaveLength(6);
+    expect(markup).toContain('aria-label="Subagentes" aria-selected="true"');
+    expect(markup).toContain('cx="12" cy="8" r="4"');
+    expect(markup).toContain(
+      getSharedMessages().fileViewer.tabs.closeLabel('App.tsx')
+    );
+    expect(markup).not.toContain(
+      getSharedMessages().fileViewer.tabs.closeLabel('Subagentes')
+    );
+    expect(markup).not.toContain(
+      getSharedMessages().fileViewer.tabs.closeLabel('Cambios')
+    );
+  });
   it('draws the changes tab with the git icon and no close control', () => {
     const markup = renderToStaticMarkup(
       <FileTabStrip

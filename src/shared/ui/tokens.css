@@ -35,6 +35,14 @@
   --color-removed-soft: #fdecec; /* removed-line row fill */
   --color-hunk-text: #4a5a72; /* hunk header text */
   --color-hunk-soft: #e9eef6; /* hunk header row fill */
+  /* Subagent avatar palette — screens 21 and 22 (`.agent-row .av`, `.av-big`).
+     The wireframe's two glyphs each carry their own pair: the globe is teal,
+     the flower pink; the generic fallback ring reads in muted ink (#14). */
+  --subagent-globe-fill: #bfe9e5; /* globe plate fill */
+  --subagent-globe-ink: #3f9f98; /* globe strokes */
+  --subagent-flower-fill: #f2b5cf; /* flower petal fill */
+  --subagent-flower-ink: #e0679c; /* flower core */
+  --subagent-avatar-soft: #eceef2; /* fallback avatar plate */
 
   /* Radius (wireframe: --radius). */
   --radius-sm: 8px; /* controls, list rows */

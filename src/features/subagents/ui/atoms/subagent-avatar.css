@@ -1,0 +1,53 @@
+/* The decorative avatar: a plate per variant with the drawn mark on top
+   (`docs/wireframes/21-subagents-list.html`, `.agent-row .av` — the globe is
+   teal, the flower pink; the palette lives in `tokens.css` so both glyphs read
+   from the same seam). */
+
+.subagent-avatar {
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.subagent-avatar svg {
+  inline-size: 28px;
+  block-size: 28px;
+}
+
+.subagent-avatar--globe {
+  background: var(--subagent-globe-fill);
+}
+
+.subagent-avatar--globe .subagent-avatar__globe {
+  fill: none;
+  stroke: var(--subagent-globe-ink);
+  stroke-width: 1.4;
+}
+
+.subagent-avatar--flower {
+  background: transparent;
+}
+
+.subagent-avatar--flower
+  .subagent-avatar__petals
+  circle:not(.subagent-avatar__core) {
+  fill: var(--subagent-flower-fill);
+  stroke: none;
+}
+
+.subagent-avatar--flower .subagent-avatar__core {
+  fill: var(--subagent-flower-ink);
+}
+
+.subagent-avatar--default {
+  background: var(--subagent-avatar-soft);
+}
+
+.subagent-avatar--default .subagent-avatar__ring {
+  fill: none;
+  stroke: var(--color-muted);
+  stroke-width: 1.6;
+}

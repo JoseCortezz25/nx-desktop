@@ -121,15 +121,3 @@
   gap: 24px;
   margin-top: 28px;
 }
-
-/* The primary action is the shared `solid` fill, but this control is a labelled
-   button rather than the composer's round send icon, so its geometry is restored
-   here instead of duplicating a new atom variant. */
-.create-project-dialog__actions .button--solid {
-  width: auto;
-  height: 35px;
-  padding: 0 20px;
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  font-size: 14px;
-}

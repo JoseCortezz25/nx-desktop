@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
+import { getSharedMessages } from '@/shared/i18n/messages';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
 import {
@@ -101,6 +102,32 @@ function renderComposer(overrides: Partial<ComposerProps> = {}) {
     />
   );
 }
+
+describe('composer hooks control', () => {
+  it('is absent unless a review opener is provided', () => {
+    expect(renderComposer({ newHookCount: 3 })).not.toContain(
+      'composer__hooks'
+    );
+  });
+  it('names the new-hook count and draws the attention dot', () => {
+    const markup = renderComposer({
+      newHookCount: 3,
+      onOpenHookReview: () => undefined
+    });
+    expect(markup).toContain(
+      `aria-label="${getSharedMessages().composer.hooks.triggerLabel(3)}"`
+    );
+    expect(markup).toContain('class="composer__hooks-dot" aria-hidden="true"');
+    expect(markup).toContain('<circle cx="12" cy="5" r="3"');
+  });
+  it('defaults to zero new hooks without an attention dot', () => {
+    const markup = renderComposer({ onOpenHookReview: () => undefined });
+    expect(markup).toContain(
+      `aria-label="${getSharedMessages().composer.hooks.triggerLabel(0)}"`
+    );
+    expect(markup).not.toContain('composer__hooks-dot');
+  });
+});
 
 describe('composer', () => {
   it('renders the prompt field, the add trigger and the send control', () => {

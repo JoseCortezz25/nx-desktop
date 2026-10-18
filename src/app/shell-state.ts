@@ -13,9 +13,14 @@
  * the missing "clear the open conversation" path, and `revealFileInPanel` makes
  * region visibility respond to a request instead of leaving the panel hidden.
  */
+import { toggleHookId } from '@/features/hooks/model/hook-review';
 import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { ConversationId } from '@/shared/domain/value-objects.types';
+import type {
+  ConversationId,
+  HookId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import {
   INITIAL_REGION_VISIBILITY,
   showRegion,
@@ -25,6 +30,10 @@ import {
 } from '@/shared/ui/layout/region-visibility';
 
 export interface ShellState {
+  readonly hookReview: {
+    readonly isOpen: boolean;
+    readonly selectedHookIds: ReadonlySet<HookId>;
+  };
   /** The conversation the main pane shows, or `null` for the home view. */
   readonly activeConversationId: ConversationId | null;
   /** The regions the rail's toggles open and close. */
@@ -37,6 +46,9 @@ export interface ShellState {
    * presses in a row still focus the same `Cambios` tab.
    */
   readonly openChangesRequestCount: number;
+  /** Monotonic requests to focus the subagents tab, including repeated children. */
+  readonly openSubagentsRequestCount: number;
+  readonly openSubagentsRequestSubagentId: SubagentId | null;
 }
 
 /**
@@ -48,8 +60,33 @@ export const INITIAL_SHELL_STATE: ShellState = {
   activeConversationId: null,
   visibility: INITIAL_REGION_VISIBILITY,
   openFileRequest: INITIAL_OPEN_FILE_REQUEST,
-  openChangesRequestCount: 0
+  openChangesRequestCount: 0,
+  hookReview: { isOpen: false, selectedHookIds: new Set() },
+  openSubagentsRequestCount: 0,
+  openSubagentsRequestSubagentId: null
 };
+
+/** A fresh review never reuses an earlier ephemeral selection. */
+export function openHookReview(state: ShellState): ShellState {
+  return { ...state, hookReview: { isOpen: true, selectedHookIds: new Set() } };
+}
+
+export function closeHookReview(state: ShellState): ShellState {
+  return { ...state, hookReview: { ...state.hookReview, isOpen: false } };
+}
+
+export function toggleShellHookSelection(
+  state: ShellState,
+  hookId: HookId
+): ShellState {
+  return {
+    ...state,
+    hookReview: {
+      ...state.hookReview,
+      selectedHookIds: toggleHookId(state.hookReview.selectedHookIds, hookId)
+    }
+  };
+}
 
 /** Selects a conversation; the main pane switches from home to that thread. */
 export function openConversation(
@@ -94,6 +131,19 @@ export function revealFileInPanel(
     ...state,
     visibility: showRegion(state.visibility, 'rightPanel'),
     openFileRequest: request
+  };
+}
+
+/** Reveals the subagents tab and requests a child's detail, or the list. */
+export function revealSubagentsInPanel(
+  state: ShellState,
+  subagentId: SubagentId | null = null
+): ShellState {
+  return {
+    ...state,
+    visibility: showRegion(state.visibility, 'rightPanel'),
+    openSubagentsRequestCount: state.openSubagentsRequestCount + 1,
+    openSubagentsRequestSubagentId: subagentId
   };
 }
 

@@ -173,7 +173,7 @@ export function CreateProjectDialog({
           {messages.cancelLabel}
         </Button>
         <Button
-          variant="solid"
+          variant="primary"
           label={messages.submitLabel}
           onPress={handleSubmit}
         >

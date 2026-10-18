@@ -58,6 +58,10 @@ describe('create project dialog — empty state', () => {
 
     expect(markup).toContain(`>${messages.cancelLabel}<`);
     expect(markup).toContain(`aria-label="${messages.submitLabel}"`);
+    // The primary action uses the shared filled text variant; `solid` is the round
+    // send icon, which needed a local geometry override to look like a button (#60).
+    expect(markup).toMatch(/button button--primary/);
+    expect(markup).not.toContain('button--solid');
   });
 
   it('keeps the create action operable on the empty state and guards it in the rule', () => {

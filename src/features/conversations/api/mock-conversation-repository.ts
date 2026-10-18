@@ -89,6 +89,32 @@ const conversations: readonly Conversation[] = [
           }
         ],
         fileReferences: [{ path: 'src/shared/domain/selection-chain.ts' }]
+      },
+      {
+        id: 'msg-composer-subagents',
+        role: 'assistant',
+        content:
+          'The delegated repository inspection and Tauri research are ready to review.',
+        createdAt: '2026-10-01T09:03:00.000Z',
+        toolCalls: [
+          {
+            id: 'tool-subagent-inspect',
+            kind: 'subagent',
+            summary: 'Subagent Inspect repo completed',
+            detail:
+              'Open the repository inspection child run and its transcript.',
+            status: 'completed',
+            subagentId: 'subagent-inspect-repo'
+          },
+          {
+            id: 'tool-subagent-research',
+            kind: 'subagent',
+            summary: 'Subagent Tauri research completed',
+            detail: 'Open the Tauri research child run and its transcript.',
+            status: 'completed',
+            subagentId: 'subagent-tauri-research'
+          }
+        ]
       }
     ]
   },

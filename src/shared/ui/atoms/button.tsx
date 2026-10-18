@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import './button.css';
 
 export type ButtonVariant =
-  'text' | 'icon' | 'plain' | 'list' | 'pill' | 'solid';
+  'text' | 'icon' | 'plain' | 'list' | 'pill' | 'solid' | 'primary';
 
 /**
  * `warn` is the caution treatment the wireframe gives the unrestricted approval
