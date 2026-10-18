@@ -106,6 +106,7 @@ vi.mock('@/features/conversations/hooks/use-conversation-catalog', () => ({
 
 import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import { AppShell } from './app-shell';
+import { INITIAL_SHELL_STATE } from './shell-state';
 
 const catalog: readonly Provider[] = [
   {
@@ -141,6 +142,9 @@ describe('shell to right panel open-file seam', () => {
     // a second copy of the request would fail this assertion.
     expect(captured.panel?.openFileRequest).toBe(INITIAL_OPEN_FILE_REQUEST);
     expect(captured.panel?.openFileRequest).toEqual(openedFile);
+    expect(captured.panel?.openChangesRequestCount).toBe(
+      INITIAL_SHELL_STATE.openChangesRequestCount
+    );
   });
 
   it('gives the panel no way to own or emit the request', () => {
@@ -152,6 +156,7 @@ describe('shell to right panel open-file seam', () => {
       'isOpen',
       'isOverlay',
       'onClose',
+      'openChangesRequestCount',
       'openFileRequest'
     ]);
   });

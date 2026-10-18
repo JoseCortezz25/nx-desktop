@@ -32,6 +32,7 @@ import {
   navigateHome,
   openConversation,
   revealFileInPanel,
+  revealChangesInPanel,
   toggleShellRegion,
   type ShellState
 } from './shell-state';
@@ -119,7 +120,12 @@ export function AppShell() {
   const { conversations } = useConversationCatalog();
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
 
-  const { activeConversationId, visibility, openFileRequest } = shell;
+  const {
+    activeConversationId,
+    visibility,
+    openFileRequest,
+    openChangesRequestCount
+  } = shell;
 
   // Region *presentation* is derived from the measured window width; region
   // *visibility* stays the ephemeral state the rail toggles own. Overlaying a
@@ -177,6 +183,10 @@ export function AppShell() {
     // chip click actually shows the file. Opening the tab is #12's; the shell
     // only holds the one value both consumers read.
     setShell(revealFileInPanel(shell, request));
+  }
+
+  function handleRequestOpenChanges() {
+    setShell(revealChangesInPanel(shell));
   }
 
   function handleSubmitPrompt(prompt: string) {
@@ -242,6 +252,7 @@ export function AppShell() {
               conversation={activeConversation}
               openFileRequest={openFileRequest}
               onRequestOpenFile={handleRequestOpenFile}
+              onRequestOpenChanges={handleRequestOpenChanges}
               composer={composer}
             />
           ) : (
@@ -255,6 +266,7 @@ export function AppShell() {
         */}
         <FilePanel
           openFileRequest={openFileRequest}
+          openChangesRequestCount={openChangesRequestCount}
           isOpen={visibility.rightPanel}
           isOverlay={regionLayout.rightPanel === 'overlay'}
           onClose={handleToggleRightPanel}

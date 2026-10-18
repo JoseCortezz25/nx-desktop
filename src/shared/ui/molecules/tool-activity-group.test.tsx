@@ -11,12 +11,14 @@ const rows: readonly ToolActivityRowItem[] = [
   {
     id: 'tool-1',
     icon: 'search',
-    summary: 'Searched src for the selection chain'
+    summary: 'Searched src for the selection chain',
+    opensChanges: false
   },
   {
     id: 'tool-2',
     icon: 'terminal',
-    summary: 'Ran pnpm test -- selection-chain'
+    summary: 'Ran pnpm test -- selection-chain',
+    opensChanges: false
   }
 ];
 
@@ -54,6 +56,33 @@ describe('tool activity group', () => {
     expect(reExpanded).toContain('aria-expanded="true"');
     expect(reExpanded).toContain('Searched src for the selection chain');
     expect(reExpanded).toContain('Ran pnpm test -- selection-chain');
+  });
+
+  it('makes only change-opening rows pressable, and only with a callback', () => {
+    const mixedRows: readonly ToolActivityRowItem[] = [
+      ...rows,
+      {
+        id: 'diff',
+        icon: 'git-branch',
+        summary: 'Ran git diff',
+        opensChanges: true
+      }
+    ];
+    function render(onOpenChanges?: () => void) {
+      return renderToStaticMarkup(
+        <ToolActivityGroup
+          summary="3 acciones"
+          expandLabel="Expandir"
+          collapseLabel="Contraer"
+          isExpanded
+          rows={mixedRows}
+          onToggle={() => undefined}
+          onOpenChanges={onOpenChanges}
+        />
+      );
+    }
+    expect(render().match(/<button/g)).toHaveLength(1);
+    expect(render(() => undefined).match(/<button/g)).toHaveLength(2);
   });
 
   it('shows the action-count summary from its caller', () => {

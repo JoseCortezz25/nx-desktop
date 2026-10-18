@@ -191,7 +191,8 @@ export const sharedMessages = {
       count: (total: number) =>
         `${total} ${total === 1 ? 'acción' : 'acciones'}`,
       expandLabel: 'Expandir actividad de herramientas',
-      collapseLabel: 'Contraer actividad de herramientas'
+      collapseLabel: 'Contraer actividad de herramientas',
+      openChangesLabel: 'Abrir los cambios en el panel derecho'
     },
     fileChip: {
       openLabel: (path: string) => `Abrir ${path}`

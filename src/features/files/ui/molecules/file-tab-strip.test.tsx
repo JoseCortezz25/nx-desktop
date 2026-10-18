@@ -1,11 +1,13 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { getSharedMessages } from '@/shared/i18n/messages';
+import type { PanelTab } from '../../model/file-tabs';
 import { FileTabStrip } from './file-tab-strip';
 
-const tabs = [
-  { id: 'src/App.tsx', path: 'src/App.tsx', name: 'App.tsx' },
+const tabs: readonly PanelTab[] = [
+  { kind: 'file', id: 'src/App.tsx', path: 'src/App.tsx', name: 'App.tsx' },
   {
+    kind: 'file',
     id: 'docs/research-tecnico/arquitectura-tauri.md',
     path: 'docs/research-tecnico/arquitectura-tauri.md',
     name: 'arquitectura-tauri.md'
@@ -24,6 +26,24 @@ function render(activeTabId: string | null): string {
 }
 
 describe('file tab strip', () => {
+  it('draws the changes tab with the git icon and no close control', () => {
+    const markup = renderToStaticMarkup(
+      <FileTabStrip
+        tabs={[{ kind: 'changes', id: 'changes', name: 'Cambios' }]}
+        activeTabId="changes"
+        onActivate={() => undefined}
+        onClose={() => undefined}
+      />
+    );
+    expect(markup).toContain('Cambios');
+    expect(markup).toContain('aria-selected="true"');
+    expect(markup.match(/<button/g)).toHaveLength(1);
+    expect(markup).not.toContain(
+      getSharedMessages().fileViewer.tabs.closeLabel('Cambios')
+    );
+    expect(markup).toContain('M6 3v15');
+  });
+
   it('marks exactly the focused tab as selected', () => {
     const markup = render('src/App.tsx');
 

@@ -107,6 +107,56 @@ describe('diff hunk rows', () => {
     ]);
   });
 
+  it('refuses a range that cannot start at the line it names', () => {
+    const rows = buildHunkRows(
+      hunk('@@ -0 +0 @@', [
+        { kind: 'context', content: 'a' },
+        { kind: 'added', content: 'b' }
+      ])
+    );
+
+    // Line numbers start at 1, so a zero start is an unreadable header: the gutters
+    // stay empty instead of printing `0` and counting up from a line that cannot
+    // exist.
+    expect(rows.map(row => [row.oldNumber, row.newNumber])).toEqual([
+      [null, null],
+      [null, null]
+    ]);
+  });
+
+  it('refuses a start it cannot represent exactly', () => {
+    const rows = buildHunkRows(
+      hunk('@@ -9007199254740993 +3 @@', [
+        { kind: 'removed', content: 'a' },
+        { kind: 'context', content: 'b' }
+      ])
+    );
+
+    // Past 2^53 the number would be silently rounded, so neither side is printed.
+    expect(rows.map(row => [row.oldNumber, row.newNumber])).toEqual([
+      [null, null],
+      [null, 3]
+    ]);
+  });
+
+  it('stops numbering a gutter it can no longer represent exactly', () => {
+    const rows = buildHunkRows(
+      hunk('@@ -9007199254740991,3 +1,3 @@', [
+        { kind: 'context', content: 'a' },
+        { kind: 'context', content: 'b' },
+        { kind: 'context', content: 'c' }
+      ])
+    );
+
+    // Advancing past 2^53 would print a rounded line number, so that gutter stops
+    // instead of lying; the other side keeps counting.
+    expect(rows.map(row => [row.oldNumber, row.newNumber])).toEqual([
+      [9007199254740991, 1],
+      [null, 2],
+      [null, 3]
+    ]);
+  });
+
   it('renders the lines without numbers when the hunk header is unreadable', () => {
     const rows = buildHunkRows(
       hunk('not a hunk header', [{ kind: 'added', content: 'x' }])

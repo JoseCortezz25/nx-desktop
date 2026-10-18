@@ -56,6 +56,7 @@ function renderMessages(
       onToggleGroup={() => undefined}
       openFileRequest={null}
       onRequestOpenFile={() => undefined}
+      onRequestOpenChanges={() => undefined}
       {...overrides}
     />
   );
@@ -94,6 +95,7 @@ describe('conversation messages', () => {
         collapsedGroupIds: new Set(),
         onToggleGroup: () => undefined,
         openFileRequest: null,
+        onRequestOpenChanges: () => undefined,
         onRequestOpenFile
       })
     );
