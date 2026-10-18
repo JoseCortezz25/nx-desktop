@@ -1,0 +1,1 @@
+"{\n  \"optionCount\": 3,\n  \"options\": [\n    {\n      \"name\": \"Design system\",\n      \"selected\": \"false\"\n    },\n    {\n      \"name\": \"API client\",\n      \"selected\": \"false\"\n    },\n    {\n      \"name\": \"QA zero folder\",\n      \"selected\": \"true\"\n    }\n  ]\n}"

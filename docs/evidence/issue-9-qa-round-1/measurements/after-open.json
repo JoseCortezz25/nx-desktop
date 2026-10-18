@@ -1,0 +1,1 @@
+"{\n  \"activeTag\": \"BUTTON\",\n  \"activeLabel\": \"Cerrar\",\n  \"activeClass\": \"button button--icon\",\n  \"dialogRect\": {\n    \"x\": 164,\n    \"y\": 170.5,\n    \"w\": 572,\n    \"h\": 359\n  },\n  \"overlayZ\": \"40\",\n  \"docScrollW\": 900,\n  \"docClientW\": 900,\n  \"docScrollH\": 700,\n  \"docClientH\": 700,\n  \"overflowX\": false,\n  \"overflowY\": false\n}"

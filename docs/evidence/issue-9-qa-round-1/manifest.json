@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "kind": "qa-visual-evidence",
+  "issue": 9,
+  "pr": 52,
+  "appCommit": "37736c5a8849a754a872f31d03d63b22384cdc3b",
+  "baseCommit": "529c19e9efe47467238fbd34c55bca553b3a1f38",
+  "branch": "feat/issue-9-create-project-dialog",
+  "url": "http://127.0.0.1:1520/",
+  "route": "/",
+  "scope": "create-project modal (empty + folder states) and its trigger: the composer project-picker popover (`Nuevo proyecto` row)",
+  "capture": "viewport",
+  "selector": null,
+  "deviceScaleFactor": 1,
+  "engine": { "name": "chromium", "version": "152.0.0.0", "headless": true },
+  "masks": [],
+  "dynamicAreasIgnored": [],
+  "baselineSource": {
+    "kind": "structural-wireframe-reference",
+    "paths": [
+      "docs/wireframes/04-project-picker.html",
+      "docs/wireframes/05-create-project-empty.html",
+      "docs/wireframes/06-create-project-folder.html"
+    ],
+    "commit": "37736c5a8849a754a872f31d03d63b22384cdc3b",
+    "note": "Low-fidelity grayscale HTML wireframes. Compared for the specified dialog/picker state and shell structure, NOT pixel equality. See comparison.md."
+  },
+  "viewports": [
+    {
+      "name": "900x700",
+      "width": 900,
+      "height": 700,
+      "reason": "Binding baseline viewport and the #43 approved native window minimum."
+    },
+    {
+      "name": "1440x900",
+      "width": 1440,
+      "height": 900,
+      "reason": "Binding baseline viewport; the size the wireframes draw."
+    }
+  ],
+  "nonComparableDimensions": [
+    "Wireframes are fixed ~1600px-wide mid-fidelity renders with a drawn native title bar, while the production shell renders at the live viewport with the native frame (#42) not drawn.",
+    "Wireframes use grayscale placeholder copy and a static 572px dialog; the production dialog is live and its height differs by state (359px empty vs 353px folder).",
+    "Pixel diff is therefore not meaningful; comparison is structural + geometric (see comparison.md)."
+  ],
+  "states": [
+    {
+      "viewport": "900x700",
+      "state": "picker-open",
+      "screenshot": "captures/900x700-picker.png"
+    },
+    {
+      "viewport": "900x700",
+      "state": "dialog-empty",
+      "screenshot": "captures/900x700-dialog-empty.png"
+    },
+    {
+      "viewport": "900x700",
+      "state": "dialog-folder",
+      "screenshot": "captures/900x700-dialog-folder.png"
+    },
+    {
+      "viewport": "1440x900",
+      "state": "picker-open",
+      "screenshot": "captures/1440x900-picker.png"
+    },
+    {
+      "viewport": "1440x900",
+      "state": "dialog-empty",
+      "screenshot": "captures/1440x900-dialog-empty.png"
+    },
+    {
+      "viewport": "1440x900",
+      "state": "dialog-folder",
+      "screenshot": "captures/1440x900-dialog-folder.png"
+    }
+  ],
+  "measurements": [
+    "measurements/after-open.json",
+    "measurements/empty-submit.json",
+    "measurements/whitespace-submit.json",
+    "measurements/typing-focus.json",
+    "measurements/folder-added.json",
+    "measurements/add-row-state.json",
+    "measurements/folder-exhausted.json",
+    "measurements/folder-removed.json",
+    "measurements/folder-back-to-empty.json",
+    "measurements/tab-forward-wrap.json",
+    "measurements/tab-backward-wrap.json",
+    "measurements/escape-close.json",
+    "measurements/close-button.json",
+    "measurements/cancel.json",
+    "measurements/backdrop-pointer.json",
+    "measurements/inside-to-outside-drag.json",
+    "measurements/drag-probe.json",
+    "measurements/project-count-after-dismissals.json",
+    "measurements/create-zero-folder.json",
+    "measurements/picker-after-create.json",
+    "measurements/sidebar-projects.json",
+    "measurements/duplicate-create.json",
+    "measurements/picker-duplicates.json",
+    "measurements/overlay-hittest-900x700.json",
+    "measurements/composer-hittest-900x700.json",
+    "measurements/picker-close-1440x900.json",
+    "measurements/dialog-folder-1440x900.json",
+    "measurements/create-folder-1440x900.json",
+    "measurements/sidebar-after-folder-create-1440x900.json",
+    "measurements/backdrop-pointer-1440x900.json",
+    "measurements/environment.json",
+    "measurements/console-900x700.txt",
+    "measurements/console-1440x900.txt"
+  ],
+  "createdAt": "2026-10-18T02:05:00Z"
+}
