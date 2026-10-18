@@ -84,6 +84,19 @@
   line-height: 20px;
 }
 
+/* The dropzone's add control is the wireframe's small filled button
+   (`05-create-project-empty.html`, `.dialog .add`): it needs its own geometry
+   because the shared `plain` variant is a bare glyph control with no gap. */
+.create-project-dialog__dropzone .button {
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px 0 11px;
+  border-radius: var(--radius-sm);
+  background: var(--color-fill);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
 /* Folder-added state: the wireframe draws the added folders and the add control
    as rows of one bordered box. */
 .create-project-dialog__folder-box {
