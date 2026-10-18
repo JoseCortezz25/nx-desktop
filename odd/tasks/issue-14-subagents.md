@@ -91,11 +91,13 @@ tab and its reveal, file chips, region visibility/overlay behaviour (#40, #43)
       navigation (S2), the individual stop control (`business-logic.md` §3.2),
       copy + tests. Commit `2185b51` (writer-assisted round; parent reviewed and
       committed the files the writer produced).
-- [ ] T4 — Reachability, the #13 pattern: the `PanelTab` kind + the single
-      `Subagentes` tab's strip rendering, `FilePanel` viewer dispatch by kind, shell
-      `revealSubagentsInPanel(state, subagentId)`, `ToolCallKind` `subagent`, the
-      subagent-activity row as a control, mock conversation seed rows, an additive
-      `user` icon. Tests, including the S10 regressions.
+- [x] T4 — Reachability, the #13 pattern: the `PanelTab` kind + the single
+      `Subagentes` tab's strip rendering, `FilePanel` viewer dispatch by kind,
+      shell `revealSubagentsInPanel(state, subagentId)`, `ToolCallKind`
+      `subagent`, the subagent-activity row as a control, mock conversation seed
+      rows, an additive `user` icon. Tests, including the S10 regressions.
+      Commit `6598f77` (writer-assisted round; the parent reviewed the diff
+      against the #13 reference commit and committed).
 
 ## Log
 
@@ -120,3 +122,72 @@ ready-for-qa → ready-for-human chain).
 L4 (base evidence): `origin/feat/issue-13-diff-view` @ `8fca4df`; before the
 first edit: `pnpm test` 48 files / 307 tests, `pnpm run typecheck` and `lint`
 clean, `pnpm run format:check` clean.
+
+## Verification observed (builder self-check — not QA)
+
+Base `origin/feat/issue-13-diff-view` @ `8fca4df` was green before the first
+edit: 48 files / 307 tests, `format:check`, `lint`, `typecheck` clean. After
+the change (HEAD `6598f77`):
+
+| Check                   | Result                               |
+| ----------------------- | ------------------------------------ |
+| `pnpm test`             | 366 passed (56 files; +59 over base) |
+| `pnpm run typecheck`    | clean                                |
+| `pnpm run lint`         | clean                                |
+| `pnpm run format:check` | clean                                |
+| `git diff --check`      | clean                                |
+
+Every rule has a test that observes its effect, in the repository's node-only
+style (`renderToStaticMarkup` plus pure-model tests; `@testing-library` is not
+installed and was not added):
+
+- S1/S4/S5 — the list rows and the detail molecules render avatar (known
+  variants with a filtered class, unknown falls back without crashing the
+  unknown string into a class name), name/status/elapsed (wireframe 21), the
+  detail header with model·effort meta and the scrollable transcript's
+  collapsed earlier window (wireframe 22); every printed string resolves
+  through `messages.ts` — no wireframe placeholder is a component constant.
+- S2 — `subagent-focus.ts` holds the select/back/request transitions
+  (immutability, repeated-count no-op) and the viewer renders both focus
+  states; row press wiring is asserted via the forwarded handler.
+- S3 — `SubagentStatus` is the `{ kind }` discriminated union over
+  `SUBAGENT_STATUS_KINDS`; the copy maps and the group order are typed by it,
+  so a new state cannot compile without label and placement;
+  `stopSubagent` resolves `processing → cancelled` and re-stops nothing.
+- S6/S9 — the mock seed (`mock-subagent-repository.test.ts`) proves the
+  wireframe mirror (two `processing` rows, the 12+3 transcript window, the
+  profiled elapsed values), avatar-variant truth and that every `modelId`/
+  `effortLevel` pair is one the provider catalog advertises.
+- S7/S10 — `file-tabs.test.ts` pins the single Subagentes tab next to the
+  untouched file/changes rules; `file-panel.test.tsx` keeps every #12/#13
+  expectation green and adds the subagents dispatch; `shell-state.test.tsx`,
+  `app-shell-panel-seam.test.tsx`, `app-shell-navigation-seam.test.tsx` prove
+  the reveal chain (row press → `revealSubagentsInPanel` → counter + child id →
+  panel), and `tool-activity-row`/`tool-activity-group`/conversation tests
+  prove diff rows still open Cambios and ordinary tools stay inert.
+
+Not verified by this round: the browser/native visual comparison against
+wireframes 21 and 22 (the issue's stated validation type) belongs to the
+independent QA round on its own evidence branch, exactly as #42/#43/#9
+delivered it.
+
+## Delivery and progress
+
+Four work-unit commits on `feat/issue-14-subagents`, in reviewable slices
+(branch forked from `origin/feat/issue-13-diff-view`, itself not yet merged to
+`main`, so the counter the hooks print from `main` covers both features):
+
+| Commit    | Slice                                            | Authored |
+| --------- | ------------------------------------------------ | -------- |
+| `6dcd87a` | subagents data seam (domain union, port, mock,   | ~540     |
+|           | hook, pure model)                                |          |
+| `cb00484` | list surface (tokens, avatar atom, row molecule, | ~330     |
+|           | copy)                                            |          |
+| `2185b51` | detail surface + navigation organism             | ~560     |
+| `6598f77` | reachability (tab model, strip, panel, shell,    | ~600     |
+|           | conversation trigger, icon)                      |          |
+
+Delivery: one PR with base `feat/issue-13-diff-view` (the same pattern PR #55
+used inside the chain; it keeps the PR's own diff reviewable), linked to
+issue #14 with status labels per the maintainer's request (Log L3). Push, PR
+creation and merge are the maintainer's decisions.
