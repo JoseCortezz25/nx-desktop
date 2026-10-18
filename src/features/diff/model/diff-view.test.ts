@@ -139,6 +139,24 @@ describe('diff hunk rows', () => {
     ]);
   });
 
+  it('stops numbering a gutter it can no longer represent exactly', () => {
+    const rows = buildHunkRows(
+      hunk('@@ -9007199254740991,3 +1,3 @@', [
+        { kind: 'context', content: 'a' },
+        { kind: 'context', content: 'b' },
+        { kind: 'context', content: 'c' }
+      ])
+    );
+
+    // Advancing past 2^53 would print a rounded line number, so that gutter stops
+    // instead of lying; the other side keeps counting.
+    expect(rows.map(row => [row.oldNumber, row.newNumber])).toEqual([
+      [9007199254740991, 1],
+      [null, 2],
+      [null, 3]
+    ]);
+  });
+
   it('renders the lines without numbers when the hunk header is unreadable', () => {
     const rows = buildHunkRows(
       hunk('not a hunk header', [{ kind: 'added', content: 'x' }])

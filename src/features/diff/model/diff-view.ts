@@ -69,8 +69,17 @@ function readStartNumber(raw: string): number | null {
   return Number.isSafeInteger(value) && value >= 1 ? value : null;
 }
 
+/**
+ * Advances one gutter. A gutter that would leave the exactly representable range
+ * stops instead of printing a rounded line number, and the other side keeps
+ * counting.
+ */
 function advance(number: number | null): number | null {
-  return number === null ? null : number + 1;
+  if (number === null) {
+    return null;
+  }
+  const next = number + 1;
+  return Number.isSafeInteger(next) ? next : null;
 }
 
 /**
