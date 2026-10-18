@@ -1,0 +1,27 @@
+{
+  "request": {
+    "projectId": "proj-design-system"
+  },
+  "response": [
+    {
+      "id": "hook-lint-on-write",
+      "name": "Lint on write",
+      "isNew": true,
+      "origin": "Project configuration",
+      "hookType": "PreToolUse",
+      "command": "node .claude/hooks/lint-on-write.mjs",
+      "timeoutMs": 5000,
+      "approvalStatus": "pending"
+    },
+    {
+      "id": "hook-notify-tool-use",
+      "name": "Notify on tool use",
+      "isNew": false,
+      "origin": "Plugin",
+      "hookType": "PostToolUse",
+      "command": "node plugins/notifications/tool-use.mjs",
+      "timeoutMs": 1500,
+      "approvalStatus": "approved"
+    }
+  ]
+}

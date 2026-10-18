@@ -1,0 +1,21 @@
+{
+  "request": {
+    "conversationId": "conv-composer-chain",
+    "projectId": "proj-design-system",
+    "providerId": "opencode",
+    "modelId": "deepseek-v3.1",
+    "effortLevel": "high",
+    "prompt": "Reconcile the provider, model, and effort selectors.",
+    "environment": {
+      "useNewWorktree": false,
+      "gitBranch": "main",
+      "environmentName": "local"
+    }
+  },
+  "response": {
+    "runId": "run-7f2a9c10",
+    "conversationId": "conv-composer-chain",
+    "projectId": "proj-design-system",
+    "status": "pending"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "title": "IPC contract review"
+  },
+  "response": {
+    "id": "conv-created-1",
+    "projectId": "proj-design-system",
+    "title": "IPC contract review",
+    "isPinned": false,
+    "createdAt": "2026-10-18T12:00:00.000Z",
+    "updatedAt": "2026-10-18T12:00:00.000Z",
+    "messages": []
+  }
+}

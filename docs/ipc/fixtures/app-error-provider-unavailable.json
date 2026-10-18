@@ -1,0 +1,6 @@
+{
+  "code": "provider_unavailable",
+  "message": "provider adapter did not respond before the timeout",
+  "retryable": true,
+  "requestId": "req-6c02f7a1"
+}
