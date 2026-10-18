@@ -1,0 +1,122 @@
+/* Create-project dialog body (#9). The modal surface itself — overlay, width,
+   padding, header — belongs to the shared `Dialog` molecule
+   (`src/shared/ui/molecules/dialog.css`); this file draws only the body the
+   organism slots into it. Geometry follows
+   `docs/wireframes/05-create-project-empty.html` / `06-create-project-folder.html`
+   and every colour resolves through the shared tokens. */
+
+/* Name field: the wireframe prefixes the input with a folder glyph and a
+   separator. The separator is drawn with the hairline token rather than a raw
+   colour so the field keeps reading as one control. */
+.create-project-dialog__field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 43px;
+  padding: 0 14px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-panel);
+}
+
+.create-project-dialog__field .text-input {
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.create-project-dialog__field .text-input:focus-visible {
+  outline: none;
+}
+
+.create-project-dialog__field:focus-within {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.14);
+}
+
+.create-project-dialog__error {
+  margin: 8px 0 0;
+  color: var(--color-warn);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.create-project-dialog__folders-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 16px 0 10px;
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 19px;
+}
+
+.create-project-dialog__folders-machine {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-muted);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+/* Empty state: the wireframe draws a dashed dropzone with the prompt and the
+   add control. */
+.create-project-dialog__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 114px;
+  padding: 16px;
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.create-project-dialog__hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Folder-added state: the wireframe draws the added folders and the add control
+   as rows of one bordered box. */
+.create-project-dialog__folder-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.create-project-dialog__folder-box .button--list {
+  height: auto;
+  min-height: 53px;
+  padding: 0 14px;
+  border-top: 1px solid var(--color-line);
+}
+
+.create-project-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+/* The primary action is the shared `solid` fill, but this control is a labelled
+   button rather than the composer's round send icon, so its geometry is restored
+   here instead of duplicating a new atom variant. */
+.create-project-dialog__actions .button--solid {
+  width: auto;
+  height: 35px;
+  padding: 0 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 14px;
+}

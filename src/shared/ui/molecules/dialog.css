@@ -1,0 +1,58 @@
+/**
+ * The shared modal surface (`docs/wireframes/05-create-project-empty.html`,
+ * `06-create-project-folder.html`, `.overlay` + `.dialog`).
+ *
+ * Unlike the popover, the modal owns its placement: it covers the window so the
+ * regions behind it cannot be interacted with. It still consumes the shared
+ * tokens, and it stacks above every region layer by deriving from the existing
+ * `--layer-composer` token instead of adding a new one (the token file is not
+ * this ticket's surface).
+ */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--layer-composer) + 10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+/* Width and padding follow the wireframe dialog (572px). The max-height keeps
+   the surface inside the 900x700 native floor: the overlay's padding and the
+   inner scroll mean a taller dialog can never push its own controls out of
+   reach. */
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(572px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 24px 22px 22px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-popover);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-popover);
+}
+
+.dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.dialog__title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.dialog__body {
+  display: flex;
+  flex-direction: column;
+}

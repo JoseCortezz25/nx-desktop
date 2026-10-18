@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import type { Project } from '@/shared/domain/project.types';
+import { getSharedMessages } from '@/shared/i18n/messages';
 import { ProjectPicker } from './project-picker';
 
 const projects: readonly Project[] = [
@@ -52,5 +53,39 @@ describe('project picker', () => {
     );
 
     expect(markup).not.toContain('role="option"');
+  });
+
+  it('offers the create-project row when the surface can open the dialog (#9)', () => {
+    const createLabel = getSharedMessages().contextBar.project.createLabel;
+    const markup = renderToStaticMarkup(
+      <ProjectPicker
+        label="Proyectos"
+        projects={projects}
+        selectedId={null}
+        onSelect={() => undefined}
+        onCreateProject={() => undefined}
+      />
+    );
+
+    // The wireframe draws `Nuevo proyecto` as the picker's last row and the row
+    // is the trigger for the dialog (`docs/wireframes/04-project-picker.html`).
+    expect(markup).toContain(`aria-label="${createLabel}"`);
+    // It is an action, not a selectable project: the listbox keeps exactly the
+    // projects it was handed, so it can never be reported as a selection.
+    expect(markup.match(/role="option"/g)?.length).toBe(projects.length);
+  });
+
+  it('draws no create-project row when no dialog handler is handed down', () => {
+    const createLabel = getSharedMessages().contextBar.project.createLabel;
+    const markup = renderToStaticMarkup(
+      <ProjectPicker
+        label="Proyectos"
+        projects={projects}
+        selectedId={null}
+        onSelect={() => undefined}
+      />
+    );
+
+    expect(markup).not.toContain(createLabel);
   });
 });
