@@ -116,7 +116,7 @@ const conversations: readonly Conversation[] = [
         toolCalls: [
           {
             id: 'tool-diff-1',
-            kind: 'command',
+            kind: 'diff',
             summary: 'Ran git diff --stat',
             detail: 'One file changed: src/App.tsx.',
             status: 'completed'

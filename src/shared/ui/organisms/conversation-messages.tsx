@@ -18,6 +18,7 @@ export interface ConversationMessagesProps {
   readonly openFileRequest: OpenFileRequest | null;
   /** Emits the open-file request a file chip produces. */
   readonly onRequestOpenFile: (request: OpenFileRequest) => void;
+  readonly onRequestOpenChanges: () => void;
 }
 
 /**
@@ -31,7 +32,8 @@ export function ConversationMessages({
   collapsedGroupIds,
   onToggleGroup,
   openFileRequest,
-  onRequestOpenFile
+  onRequestOpenFile,
+  onRequestOpenChanges
 }: ConversationMessagesProps) {
   const messages = getSharedMessages();
 
@@ -57,6 +59,7 @@ export function ConversationMessages({
               isExpanded={!collapsedGroupIds.has(message.id)}
               rows={message.toolActivity.rows}
               onToggle={() => onToggleGroup(message.id)}
+              onOpenChanges={onRequestOpenChanges}
             />
           ) : null}
 

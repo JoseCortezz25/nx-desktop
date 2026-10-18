@@ -21,6 +21,7 @@ export interface ConversationViewProps {
   readonly openFileRequest: OpenFileRequest | null;
   /** Emits an open-file request upward; the panel itself belongs to #12. */
   readonly onRequestOpenFile: (request: OpenFileRequest) => void;
+  readonly onRequestOpenChanges: () => void;
   /** The composer dock the shell composes under the conversation (#6/#8). */
   readonly composer?: ReactNode;
 }
@@ -41,6 +42,7 @@ export function ConversationView({
   conversation,
   openFileRequest,
   onRequestOpenFile,
+  onRequestOpenChanges,
   composer
 }: ConversationViewProps) {
   const model = buildConversationViewModel(conversation);
@@ -68,6 +70,7 @@ export function ConversationView({
           onToggleGroup={handleToggleGroup}
           openFileRequest={openFileRequest}
           onRequestOpenFile={onRequestOpenFile}
+          onRequestOpenChanges={onRequestOpenChanges}
         />
       </div>
 

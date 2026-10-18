@@ -6,6 +6,7 @@ import {
   navigateHome,
   openConversation,
   revealFileInPanel,
+  revealChangesInPanel,
   toggleShellRegion
 } from './shell-state';
 
@@ -28,8 +29,22 @@ describe('shell state', () => {
     expect(INITIAL_SHELL_STATE).toEqual({
       activeConversationId: null,
       visibility: { sidebar: false, rightPanel: false },
-      openFileRequest: null
+      openFileRequest: null,
+      openChangesRequestCount: 0
     });
+  });
+
+  it('reveals changes repeatedly without replacing the file request', () => {
+    const initial = { ...INITIAL_SHELL_STATE, openFileRequest: request };
+    const revealed = revealChangesInPanel(initial);
+    expect(revealed.visibility).toEqual({ sidebar: false, rightPanel: true });
+    expect(revealed.openChangesRequestCount).toBe(1);
+    expect(revealed.openFileRequest).toBe(request);
+    const again = revealChangesInPanel(revealed);
+    expect(again.openChangesRequestCount).toBe(2);
+    expect(again.visibility).toBe(revealed.visibility);
+    expect(again.openFileRequest).toBe(request);
+    expect(initial.openChangesRequestCount).toBe(0);
   });
 
   it('opens a conversation and returns home by clearing it', () => {

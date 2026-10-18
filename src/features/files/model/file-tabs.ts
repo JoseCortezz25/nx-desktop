@@ -1,5 +1,5 @@
 /**
- * Open file tabs of the right panel.
+ * The right panel's tab set holds two kinds: files and the changes view.
  *
  * The panel consumes the shell's single open-file request (#11 emits it, #12
  * reads it) and turns each request into a tab. The transition is pure and lives
@@ -14,16 +14,31 @@ import { fileName } from './file-path';
 
 /** One open file tab. */
 export interface FileTab {
-  /** Stable tab identity. A path is unique inside a workspace, so it is the id. */
+  readonly kind: 'file';
+  /** Stable tab identity: `fileTabId(path)` of the open path. */
   readonly id: string;
   readonly path: string;
   /** Tab label: the file name, as screen 23 draws it. */
   readonly name: string;
 }
 
-/** The panel's tab strip: which files are open and which one is focused. */
+/** Prefix every file tab id carries; no change-set id can start with it. */
+const FILE_TAB_PREFIX = 'file:';
+
+/** The change-set tab's fixed id, outside the namespaced file-id space. */
+export const CHANGES_TAB_ID = 'changes';
+
+export interface ChangesTab {
+  readonly kind: 'changes';
+  readonly id: typeof CHANGES_TAB_ID;
+  readonly name: string;
+}
+
+export type PanelTab = FileTab | ChangesTab;
+
+/** The panel's tab strip: which tabs are open and which one is focused. */
 export interface FileTabs {
-  readonly tabs: readonly FileTab[];
+  readonly tabs: readonly PanelTab[];
   readonly activeTabId: string | null;
 }
 
@@ -33,9 +48,16 @@ export const INITIAL_FILE_TABS: FileTabs = {
   activeTabId: null
 };
 
-/** Tab id for a workspace-relative path. */
+/**
+ * Tab id for a workspace-relative path.
+ *
+ * File ids are namespaced (`file:<path>`) so they can never equal
+ * `CHANGES_TAB_ID`: a workspace may legitimately hold a file named `changes`, and
+ * a bare path id would then collide with the change-set tab — the wrong tab would
+ * be focused, or a file tab never opened at all.
+ */
 export function fileTabId(path: string): string {
-  return path;
+  return `${FILE_TAB_PREFIX}${path}`;
 }
 
 /**
@@ -52,8 +74,19 @@ export function openFileTab(state: FileTabs, path: string): FileTabs {
   }
 
   return {
-    tabs: [...state.tabs, { id, path, name: fileName(path) }],
+    tabs: [...state.tabs, { kind: 'file', id, path, name: fileName(path) }],
     activeTabId: id
+  };
+}
+
+/** Opens the single changes tab, or focuses the existing one. */
+export function openChangesTab(state: FileTabs, name: string): FileTabs {
+  if (state.tabs.some(tab => tab.kind === 'changes')) {
+    return focusFileTab(state, CHANGES_TAB_ID);
+  }
+  return {
+    tabs: [...state.tabs, { kind: 'changes', id: CHANGES_TAB_ID, name }],
+    activeTabId: CHANGES_TAB_ID
   };
 }
 
@@ -86,7 +119,7 @@ export function closeFileTab(state: FileTabs, tabId: string): FileTabs {
 }
 
 /** The focused tab, or `null` when nothing is open. */
-export function activeFileTab(state: FileTabs): FileTab | null {
+export function activeFileTab(state: FileTabs): PanelTab | null {
   return state.tabs.find(tab => tab.id === state.activeTabId) ?? null;
 }
 

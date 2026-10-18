@@ -90,6 +90,52 @@ describe('conversation view model', () => {
     ]);
   });
 
+  it('makes only diff activity open the changes', () => {
+    const model = buildConversationViewModel({
+      ...conversation,
+      messages: [
+        {
+          ...conversation.messages[1]!,
+          toolCalls: [
+            {
+              id: 'diff-1',
+              kind: 'diff',
+              summary: 'Ran git diff',
+              detail: '',
+              status: 'completed'
+            },
+            {
+              id: 'command-1',
+              kind: 'command',
+              summary: 'Ran tests',
+              detail: '',
+              status: 'completed'
+            }
+          ]
+        }
+      ]
+    });
+    expect(model.messages[0]?.toolActivity?.rows).toEqual([
+      {
+        id: 'diff-1',
+        icon: 'git-branch',
+        summary: 'Ran git diff',
+        opensChanges: true
+      },
+      {
+        id: 'command-1',
+        icon: 'terminal',
+        summary: 'Ran tests',
+        opensChanges: false
+      }
+    ]);
+    expect(
+      buildConversationViewModel(
+        conversation
+      ).messages[1]?.toolActivity?.rows.map(row => row.opensChanges)
+    ).toEqual([false, false, false]);
+  });
+
   it('carries the actions row on assistant turns only', () => {
     const model = buildConversationViewModel(conversation);
 
