@@ -1,5 +1,10 @@
+import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  ToolActivityRow,
+  type ToolActivityRowProps
+} from './tool-activity-row';
 import type { MessageId } from '@/shared/domain/value-objects.types';
 import { toggleToolGroup } from '../organisms/conversation-view-model';
 import {
@@ -36,6 +41,65 @@ function renderGroup(collapsedGroupIds: ReadonlySet<MessageId>) {
 }
 
 describe('tool activity group', () => {
+  it('presses subagent rows through with their id while diffs open changes and ordinary tools stay inert', () => {
+    const onOpenSubagent = vi.fn();
+    const onOpenChanges = vi.fn();
+    const props = {
+      summary: '4 acciones',
+      expandLabel: 'Expandir',
+      collapseLabel: 'Contraer',
+      isExpanded: true,
+      rows: [
+        ...rows,
+        {
+          id: 'child',
+          icon: 'user' as const,
+          summary: 'Inspect repo completed',
+          opensChanges: false,
+          opensSubagentId: 'subagent-inspect-repo'
+        },
+        {
+          id: 'diff',
+          icon: 'git-branch' as const,
+          summary: 'Ran git diff',
+          opensChanges: true
+        }
+      ],
+      onToggle: () => undefined,
+      onOpenSubagent,
+      onOpenChanges
+    };
+    const group = ToolActivityGroup(props);
+    const rowContainer = group.props.children[1] as ReactElement<{
+      children: ReactElement<ToolActivityRowProps>[];
+    }>;
+    const renderedRows = rowContainer.props.children;
+    expect(renderedRows[0]?.type).toBe(ToolActivityRow);
+    expect(renderedRows[0]?.props.onPress).toBeUndefined();
+    expect(renderedRows[1]?.props.onPress).toBeUndefined();
+    expect(renderedRows[2]?.props.onPress).toBeTypeOf('function');
+    renderedRows[2]?.props.onPress?.();
+    expect(onOpenSubagent).toHaveBeenCalledExactlyOnceWith(
+      'subagent-inspect-repo'
+    );
+    expect(onOpenChanges).not.toHaveBeenCalled();
+    renderedRows[3]?.props.onPress?.();
+    expect(onOpenChanges).toHaveBeenCalledTimes(1);
+    const markup = renderToStaticMarkup(<ToolActivityGroup {...props} />);
+    expect(markup).toContain(
+      'aria-label="Ver el subagente en el panel derecho"'
+    );
+    expect(markup.match(/<button/g)).toHaveLength(3);
+    expect(
+      renderToStaticMarkup(
+        <ToolActivityGroup
+          {...props}
+          onOpenSubagent={undefined}
+          onOpenChanges={undefined}
+        />
+      ).match(/<button/g)
+    ).toHaveLength(1);
+  });
   it('collapses then expands, observing its rows in each state', () => {
     // Starts expanded — the state screens 11 and 12 draw.
     let collapsedGroupIds: ReadonlySet<MessageId> = new Set<MessageId>();

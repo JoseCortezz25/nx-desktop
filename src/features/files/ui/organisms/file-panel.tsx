@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { SubagentsViewer } from '@/features/subagents/ui/organisms/subagents-viewer';
+import type { SubagentId } from '@/shared/domain/value-objects.types';
 import { DiffView } from '@/features/diff/ui/organisms/diff-view';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
@@ -10,6 +12,7 @@ import {
   INITIAL_FILE_TABS,
   openFileTab,
   openChangesTab,
+  openSubagentsTab,
   type FileTabs
 } from '../../model/file-tabs';
 import { FileTabStrip } from '../molecules/file-tab-strip';
@@ -29,6 +32,9 @@ export interface FilePanelProps {
    * so the panel never keeps a second copy of that decision.
    */
   readonly openChangesRequestCount: number;
+  /** New requests open or refocus the subagents tab and its requested child. */
+  readonly openSubagentsRequestCount?: number;
+  readonly openSubagentsRequestSubagentId?: SubagentId | null;
   /**
    * Whether the region is visible. Region visibility is owned by the shell; the
    * panel only reflects it. It is a presentation toggle (`hidden`) rather than
@@ -64,6 +70,8 @@ export interface FilePanelProps {
 export function FilePanel({
   openFileRequest,
   openChangesRequestCount,
+  openSubagentsRequestCount = 0,
+  openSubagentsRequestSubagentId = null,
   isOpen,
   isOverlay,
   onClose
@@ -81,12 +89,22 @@ export function FilePanel({
   const [handledChangesRequestCount, setHandledChangesRequestCount] =
     useState(0);
 
+  const [handledSubagentsRequestCount, setHandledSubagentsRequestCount] =
+    useState(0);
+
   // Same render-phase reconciliation as the file request above: a new count opens
   // or refocuses the `Cambios` tab in the same commit that carries it. The count
   // is monotonic, so two presses focus the one tab that exists.
   if (openChangesRequestCount !== handledChangesRequestCount) {
     setHandledChangesRequestCount(openChangesRequestCount);
     setTabs(current => openChangesTab(current, messages.diff.panelTabLabel));
+  }
+
+  if (openSubagentsRequestCount !== handledSubagentsRequestCount) {
+    setHandledSubagentsRequestCount(openSubagentsRequestCount);
+    setTabs(current =>
+      openSubagentsTab(current, messages.subagents.panelTabLabel)
+    );
   }
 
   // The shell's request is reconciled during render rather than in an effect:
@@ -126,6 +144,11 @@ export function FilePanel({
     >
       {activeTab?.kind === 'changes' ? (
         <DiffView />
+      ) : activeTab?.kind === 'subagents' ? (
+        <SubagentsViewer
+          focusRequestCount={openSubagentsRequestCount}
+          focusedSubagentId={openSubagentsRequestSubagentId}
+        />
       ) : activeTab ? (
         <FileViewer key={activeTab.path} path={activeTab.path} />
       ) : (

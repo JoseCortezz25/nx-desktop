@@ -147,6 +147,12 @@ describe('shell to right panel open-file seam', () => {
     );
   });
 
+  it('hands the panel the shell-owned initial subagents request', () => {
+    renderToStaticMarkup(<AppShell />);
+    expect(captured.panel?.openSubagentsRequestCount).toBe(0);
+    expect(captured.panel?.openSubagentsRequestSubagentId).toBeNull();
+  });
+
   it('gives the panel no way to own or emit the request', () => {
     renderToStaticMarkup(<AppShell />);
 
@@ -157,7 +163,9 @@ describe('shell to right panel open-file seam', () => {
       'isOverlay',
       'onClose',
       'openChangesRequestCount',
-      'openFileRequest'
+      'openFileRequest',
+      'openSubagentsRequestCount',
+      'openSubagentsRequestSubagentId'
     ]);
   });
 

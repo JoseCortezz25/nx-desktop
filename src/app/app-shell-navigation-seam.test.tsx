@@ -1,4 +1,6 @@
 import type { ReactElement } from 'react';
+import type { FilePanel as FilePanelComponent } from '@/features/files/ui/organisms/file-panel';
+import type { ShellState } from './shell-state';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
@@ -29,6 +31,7 @@ const capture = vi.hoisted(() => ({
   navigateHome: vi.fn(),
   revealFileInPanel: vi.fn(),
   revealChangesInPanel: vi.fn(),
+  revealSubagentsInPanel: vi.fn(),
   actual: {} as Record<string, unknown>,
   /** The shell's initial state, seeded to the conversation-open defect state. */
   shellState: {
@@ -36,7 +39,9 @@ const capture = vi.hoisted(() => ({
     visibility: { sidebar: true, rightPanel: false },
     openFileRequest: null as OpenFileRequest | null,
     openChangesRequestCount: 0,
-    hookReview: { isOpen: false, selectedHookIds: new Set<string>() }
+    hookReview: { isOpen: false, selectedHookIds: new Set<string>() },
+    openSubagentsRequestCount: 0,
+    openSubagentsRequestSubagentId: null as string | null
   }
 }));
 
@@ -104,6 +109,10 @@ vi.mock('./shell-state', async () => {
     navigateHome: (state: unknown) => {
       capture.navigateHome(state);
       return (actual.navigateHome as (value: unknown) => unknown)(state);
+    },
+    revealSubagentsInPanel: (state: unknown, id: unknown) => {
+      capture.revealSubagentsInPanel(state, id);
+      return (actual.revealSubagentsInPanel as Transition)(state, id);
     },
     revealChangesInPanel: (state: unknown) => {
       capture.revealChangesInPanel(state);
@@ -208,6 +217,9 @@ describe('shell navigation seam', () => {
     capture.navigateHome.mockReset();
     capture.revealFileInPanel.mockReset();
     capture.revealChangesInPanel.mockReset();
+    capture.revealSubagentsInPanel.mockReset();
+    capture.shellState.openSubagentsRequestCount = 0;
+    capture.shellState.openSubagentsRequestSubagentId = null;
     capture.shellState.openChangesRequestCount = 0;
     layout.value = { sidebar: 'inline', rightPanel: 'inline' };
 
@@ -312,6 +324,48 @@ describe('shell navigation seam', () => {
     };
     expect(revealed.openChangesRequestCount).toBe(4);
     expect(revealed.visibility.rightPanel).toBe(true);
+  });
+
+  it('routes a subagent row request to the panel reveal and opens Subagentes', async () => {
+    capture.shellState.openSubagentsRequestCount = 3;
+    capture.shellState.openSubagentsRequestSubagentId =
+      'subagent-tauri-research';
+    renderToStaticMarkup(<AppShell />);
+    expect(capture.filePanel?.openSubagentsRequestCount).toBe(3);
+    expect(capture.filePanel?.openSubagentsRequestSubagentId).toBe(
+      'subagent-tauri-research'
+    );
+    const onRequest = capture.conversationView?.onRequestOpenSubagent as
+      ((id: string) => void) | undefined;
+    expect(typeof onRequest).toBe('function');
+    onRequest?.('subagent-inspect-repo');
+    expect(capture.revealSubagentsInPanel).toHaveBeenCalledWith(
+      capture.shellState,
+      'subagent-inspect-repo'
+    );
+    const revealed = (capture.actual.revealSubagentsInPanel as Transition)(
+      capture.shellState,
+      'subagent-inspect-repo'
+    ) as ShellState;
+    expect(revealed.visibility.rightPanel).toBe(true);
+    expect(revealed.openSubagentsRequestCount).toBe(4);
+    const { FilePanel } = await vi.importActual<{
+      FilePanel: typeof FilePanelComponent;
+    }>('@/features/files/ui/organisms/file-panel');
+    const markup = renderToStaticMarkup(
+      <FilePanel
+        openFileRequest={revealed.openFileRequest}
+        openChangesRequestCount={revealed.openChangesRequestCount}
+        openSubagentsRequestCount={revealed.openSubagentsRequestCount}
+        openSubagentsRequestSubagentId={revealed.openSubagentsRequestSubagentId}
+        isOpen={revealed.visibility.rightPanel}
+        isOverlay={false}
+        onClose={() => undefined}
+      />
+    );
+    expect(markup).toContain('aria-label="Subagentes" aria-selected="true"');
+    expect(markup).toContain('class="subagents-viewer"');
+    expect(markup).not.toContain('hidden=""');
   });
 
   it('hands the composer one shell-owned draft, in whichever view is active', () => {

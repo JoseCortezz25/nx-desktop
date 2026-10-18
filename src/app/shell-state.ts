@@ -18,7 +18,8 @@ import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-requ
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type {
   ConversationId,
-  HookId
+  HookId,
+  SubagentId
 } from '@/shared/domain/value-objects.types';
 import {
   INITIAL_REGION_VISIBILITY,
@@ -45,6 +46,9 @@ export interface ShellState {
    * presses in a row still focus the same `Cambios` tab.
    */
   readonly openChangesRequestCount: number;
+  /** Monotonic requests to focus the subagents tab, including repeated children. */
+  readonly openSubagentsRequestCount: number;
+  readonly openSubagentsRequestSubagentId: SubagentId | null;
 }
 
 /**
@@ -57,7 +61,9 @@ export const INITIAL_SHELL_STATE: ShellState = {
   visibility: INITIAL_REGION_VISIBILITY,
   openFileRequest: INITIAL_OPEN_FILE_REQUEST,
   openChangesRequestCount: 0,
-  hookReview: { isOpen: false, selectedHookIds: new Set() }
+  hookReview: { isOpen: false, selectedHookIds: new Set() },
+  openSubagentsRequestCount: 0,
+  openSubagentsRequestSubagentId: null
 };
 
 /** A fresh review never reuses an earlier ephemeral selection. */
@@ -125,6 +131,19 @@ export function revealFileInPanel(
     ...state,
     visibility: showRegion(state.visibility, 'rightPanel'),
     openFileRequest: request
+  };
+}
+
+/** Reveals the subagents tab and requests a child's detail, or the list. */
+export function revealSubagentsInPanel(
+  state: ShellState,
+  subagentId: SubagentId | null = null
+): ShellState {
+  return {
+    ...state,
+    visibility: showRegion(state.visibility, 'rightPanel'),
+    openSubagentsRequestCount: state.openSubagentsRequestCount + 1,
+    openSubagentsRequestSubagentId: subagentId
   };
 }
 

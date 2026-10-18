@@ -3,6 +3,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
+import {
+  ToolActivityGroup,
+  type ToolActivityGroupProps
+} from '../molecules/tool-activity-group';
 import { FileChip, type FileChipProps } from '../atoms/file-chip';
 import {
   ConversationMessages,
@@ -86,6 +90,48 @@ function collectFileChips(node: ReactNode): ReactElement<FileChipProps>[] {
 }
 
 describe('conversation messages', () => {
+  it('threads a subagent request through the activity group with its child id', () => {
+    const onRequestOpenSubagent = vi.fn();
+    const messages = buildConversationViewModel({
+      ...conversation,
+      messages: [
+        {
+          ...conversation.messages[1]!,
+          toolCalls: [
+            {
+              id: 'child',
+              kind: 'subagent',
+              summary: 'Inspect repo completed',
+              detail: '',
+              status: 'completed',
+              subagentId: 'subagent-inspect-repo'
+            }
+          ]
+        }
+      ]
+    }).messages;
+    const tree = ConversationMessages({
+      messages,
+      collapsedGroupIds: new Set(),
+      onToggleGroup: () => undefined,
+      openFileRequest: null,
+      onRequestOpenFile: () => undefined,
+      onRequestOpenChanges: () => undefined,
+      onRequestOpenSubagent
+    });
+    const article = tree.props.children[0];
+    const group = article.props
+      .children[0] as ReactElement<ToolActivityGroupProps>;
+    expect(group.type).toBe(ToolActivityGroup);
+    expect(group.props.onOpenSubagent).toBe(onRequestOpenSubagent);
+    group.props.onOpenSubagent?.('subagent-inspect-repo');
+    expect(onRequestOpenSubagent).toHaveBeenCalledExactlyOnceWith(
+      'subagent-inspect-repo'
+    );
+    expect(renderMessages({ messages, onRequestOpenSubagent })).toContain(
+      'aria-label="Ver el subagente en el panel derecho"'
+    );
+  });
   it('emits the open-file request a file chip produces, carrying its path', () => {
     const onRequestOpenFile = vi.fn();
 
