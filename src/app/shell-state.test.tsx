@@ -7,6 +7,7 @@ import {
   openConversation,
   revealFileInPanel,
   revealChangesInPanel,
+  revealSubagentsInPanel,
   toggleShellRegion
 } from './shell-state';
 
@@ -25,12 +26,37 @@ const request: OpenFileRequest = {
 };
 
 describe('shell state', () => {
+  it('reveals subagents with the child id and increments from the previous count without disturbing files or changes', () => {
+    const initial = {
+      ...INITIAL_SHELL_STATE,
+      openFileRequest: request,
+      openChangesRequestCount: 4,
+      openSubagentsRequestCount: 3
+    };
+    const revealed = revealSubagentsInPanel(initial, 'subagent-inspect-repo');
+    expect(revealed.openSubagentsRequestCount).toBe(4);
+    expect(revealed.openSubagentsRequestSubagentId).toBe(
+      'subagent-inspect-repo'
+    );
+    expect(revealed.visibility).toEqual({ sidebar: false, rightPanel: true });
+    expect(revealed.openFileRequest).toBe(request);
+    expect(revealed.openChangesRequestCount).toBe(4);
+    const again = revealSubagentsInPanel(revealed, 'subagent-inspect-repo');
+    expect(again.openSubagentsRequestCount).toBe(5);
+    expect(again.visibility).toBe(revealed.visibility);
+    expect(
+      revealSubagentsInPanel(again).openSubagentsRequestSubagentId
+    ).toBeNull();
+    expect(initial.openSubagentsRequestCount).toBe(3);
+  });
   it('starts home with both toggleable regions closed and no file requested', () => {
     expect(INITIAL_SHELL_STATE).toEqual({
       activeConversationId: null,
       visibility: { sidebar: false, rightPanel: false },
       openFileRequest: null,
-      openChangesRequestCount: 0
+      openChangesRequestCount: 0,
+      openSubagentsRequestCount: 0,
+      openSubagentsRequestSubagentId: null
     });
   });
 

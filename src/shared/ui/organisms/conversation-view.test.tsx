@@ -39,6 +39,50 @@ describe('conversation view', () => {
     expect(markup).toContain('composer-dock');
   });
 
+  it('threads the subagent detail affordance through the messages while leaving unrelated tools inert', () => {
+    const markup = renderToStaticMarkup(
+      <ConversationView
+        conversation={{
+          ...conversation,
+          messages: [
+            {
+              ...conversation.messages[0]!,
+              toolCalls: [
+                {
+                  id: 'child',
+                  kind: 'subagent',
+                  summary: 'Inspect repo completed',
+                  detail: '',
+                  status: 'completed',
+                  subagentId: 'subagent-inspect-repo'
+                },
+                {
+                  id: 'command',
+                  kind: 'command',
+                  summary: 'Ran tests',
+                  detail: '',
+                  status: 'completed'
+                }
+              ]
+            }
+          ]
+        }}
+        openFileRequest={null}
+        onRequestOpenFile={() => undefined}
+        onRequestOpenChanges={() => undefined}
+        onRequestOpenSubagent={() => undefined}
+      />
+    );
+    expect(markup).toContain(
+      'aria-label="Ver el subagente en el panel derecho"'
+    );
+    expect(markup).toContain('Inspect repo completed');
+    expect(markup).toContain('Ran tests');
+    expect(
+      markup.match(/aria-label="Ver el subagente en el panel derecho"/g)
+    ).toHaveLength(1);
+  });
+
   it('threads the open-changes affordance through the message group', () => {
     const markup = renderToStaticMarkup(
       <ConversationView

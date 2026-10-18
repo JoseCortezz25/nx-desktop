@@ -1,5 +1,8 @@
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { MessageId } from '@/shared/domain/value-objects.types';
+import type {
+  MessageId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { FileChip } from '../atoms/file-chip';
 import { MessageActions } from '../molecules/message-actions';
@@ -19,6 +22,7 @@ export interface ConversationMessagesProps {
   /** Emits the open-file request a file chip produces. */
   readonly onRequestOpenFile: (request: OpenFileRequest) => void;
   readonly onRequestOpenChanges: () => void;
+  readonly onRequestOpenSubagent?: (subagentId: SubagentId) => void;
 }
 
 /**
@@ -33,7 +37,8 @@ export function ConversationMessages({
   onToggleGroup,
   openFileRequest,
   onRequestOpenFile,
-  onRequestOpenChanges
+  onRequestOpenChanges,
+  onRequestOpenSubagent
 }: ConversationMessagesProps) {
   const messages = getSharedMessages();
 
@@ -60,6 +65,7 @@ export function ConversationMessages({
               rows={message.toolActivity.rows}
               onToggle={() => onToggleGroup(message.id)}
               onOpenChanges={onRequestOpenChanges}
+              onOpenSubagent={onRequestOpenSubagent}
             />
           ) : null}
 

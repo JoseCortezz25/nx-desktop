@@ -10,6 +10,7 @@ export interface ToolActivityRowProps {
   /** Short description of the executed tool, from `ToolCall.summary`. */
   readonly summary: string;
   readonly onPress?: () => void;
+  readonly ariaLabel?: string;
 }
 
 /**
@@ -26,16 +27,13 @@ export interface ToolActivityRowProps {
 export function ToolActivityRow({
   icon,
   summary,
-  onPress
+  onPress,
+  ariaLabel = getSharedMessages().conversation.toolActivity.openChangesLabel
 }: ToolActivityRowProps) {
   if (onPress) {
     return (
       <div className="tool-activity-row">
-        <Button
-          variant="plain"
-          label={getSharedMessages().conversation.toolActivity.openChangesLabel}
-          onPress={onPress}
-        >
+        <Button variant="plain" label={ariaLabel} onPress={onPress}>
           <Icon name={icon} size="sm" />
           <span className="tool-activity-row__summary">{summary}</span>
         </Button>

@@ -90,6 +90,65 @@ describe('conversation view model', () => {
     ]);
   });
 
+  it('projects only subagent activity with a child id into a user-glyph detail opener', () => {
+    const model = buildConversationViewModel({
+      ...conversation,
+      messages: [
+        {
+          ...conversation.messages[1]!,
+          toolCalls: [
+            {
+              id: 'child',
+              kind: 'subagent',
+              summary: 'Inspect repo completed',
+              detail: '',
+              status: 'completed',
+              subagentId: 'subagent-inspect-repo'
+            },
+            {
+              id: 'missing',
+              kind: 'subagent',
+              summary: 'No child id',
+              detail: '',
+              status: 'completed'
+            },
+            {
+              id: 'command',
+              kind: 'command',
+              summary: 'Ran tests',
+              detail: '',
+              status: 'completed',
+              subagentId: 'subagent-inspect-repo'
+            }
+          ]
+        }
+      ]
+    });
+    expect(model.messages[0]?.toolActivity?.rows).toEqual([
+      {
+        id: 'child',
+        icon: 'user',
+        summary: 'Inspect repo completed',
+        opensChanges: false,
+        opensSubagentId: 'subagent-inspect-repo'
+      },
+      {
+        id: 'missing',
+        icon: 'user',
+        summary: 'No child id',
+        opensChanges: false,
+        opensSubagentId: null
+      },
+      {
+        id: 'command',
+        icon: 'terminal',
+        summary: 'Ran tests',
+        opensChanges: false,
+        opensSubagentId: null
+      }
+    ]);
+  });
+
   it('makes only diff activity open the changes', () => {
     const model = buildConversationViewModel({
       ...conversation,
@@ -120,13 +179,15 @@ describe('conversation view model', () => {
         id: 'diff-1',
         icon: 'git-branch',
         summary: 'Ran git diff',
-        opensChanges: true
+        opensChanges: true,
+        opensSubagentId: null
       },
       {
         id: 'command-1',
         icon: 'terminal',
         summary: 'Ran tests',
-        opensChanges: false
+        opensChanges: false,
+        opensSubagentId: null
       }
     ]);
     expect(
