@@ -228,7 +228,7 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 | `list_subagents`            | `{ runId }`                        | `SubagentDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the parent run context            | #19/#23 (open) |
 | `cancel_subagent`           | `{ runId, subagentId }`            | `SubagentDto`        | `validation_failed`, `permission_denied`, `internal_error`    | `runId` + `subagentId` both authority-bearing | #19/#23 (open) |
 | `read_file`                 | `{ projectId, path }`              | `FileDocumentDto \| null` | `validation_failed`, `permission_denied`, `internal_error` | `projectId` + canonicalized roots; `path` workspace-relative | #21 |
-| `read_workspace_diff`       | `{ projectId }`                    | `DiffFileDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + canonicalized workspace roots   | #24 |
+| `read_workspace_diff`       | `{ projectId }`                    | `DiffFileDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + canonicalized workspace roots   | #21 |
 | `list_open_targets`         | —                                  | `OpenTargetAvailabilityDto[]` | `internal_error`                                     | machine-scoped report; no project authority   | #21 (with #12) |
 | `open_in_target`            | `{ projectId, target, path }`      | `null`               | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + workspace path; allowlisted target | #21 (with #12) |
 | `list_hooks`                | `{ projectId }`                    | `HookDto[]`          | `permission_denied`, `internal_error`                         | `projectId` owns the hook decisions           | #20 |
@@ -521,7 +521,7 @@ implements the path policy and the read.
 `read_workspace_diff` sends `{ projectId }` and resolves `DiffFileDto[]`. A clean
 workspace is `[]`, never `null`. The view is **unified only**; `split` is
 deferred (`.claude/knowledge/business-logic.md` §3.5 item 1, #13). The panel
-never runs `git diff` itself; #24 owns the inspection and validates `projectId`
+never runs `git diff` itself; #21 owns the inspection and validates `projectId`
 against the canonicalized roots.
 
 ### `list_open_targets` and `open_in_target`
@@ -578,7 +578,7 @@ field.
 | Command               | Shape            | Limits                              | Authority                                        | Owner |
 | --------------------- | ---------------- | ----------------------------------- | ------------------------------------------------ | ----- |
 | `read_file`           | Serde DTO        | path/content bounds                 | canonicalized project roots, no traversal/symlink escape | #21 |
-| `read_workspace_diff` | Serde DTO        | change-set bounds                   | canonicalized project roots                      | #24 |
+| `read_workspace_diff` | Serde DTO        | change-set bounds                   | canonicalized project roots                      | #21 |
 | `list_open_targets`   | Serde DTO        | probe timeout                       | machine-scoped probe only                        | #21 |
 | `open_in_target`      | Serde DTO        | path bounds, launch timeout         | roots + target allowlist, no shell string        | #21/#12 |
 | `list_hooks`          | Serde DTO        | collection bounds                   | `projectId` owns the decision record             | #20 |
