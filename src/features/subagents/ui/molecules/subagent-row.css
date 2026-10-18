@@ -1,0 +1,39 @@
+/* One subagent row of the grouped list (`docs/wireframes/
+   21-subagents-list.html`, `.agent-row`): the whole row is the press target,
+   the avatar leads, the name and status stack, the elapsed time sits at the
+   trailing edge with tabular figures so the column reads aligned. */
+
+.subagent-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  inline-size: 100%;
+}
+
+.subagent-row__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.subagent-row__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-inline-size: 100%;
+}
+
+.subagent-row__status {
+  color: var(--color-muted);
+  font-size: var(--font-size-sm, 12px);
+}
+
+.subagent-row__elapsed {
+  flex: none;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}

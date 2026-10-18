@@ -41,7 +41,8 @@ export const ICON_NAMES = [
   // (`docs/wireframes/24-file-open-menu.html`). The wireframe draws the VS Code
   // vendor mark there; a neutral "open externally" glyph keeps a vendor logo out
   // of the shared icon set.
-  'external'
+  'external',
+  'user'
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -52,6 +53,12 @@ export type IconSize = 'sm' | 'md' | 'lg';
  * single token set drives every glyph.
  */
 const ICON_GLYPHS: Record<IconName, ReactNode> = {
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21v-2a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v2" />
+    </>
+  ),
   'arrow-left': (
     <>
       <path d="M19 12H5" />

@@ -1,5 +1,5 @@
 /**
- * The right panel's tab set holds two kinds: files and the changes view.
+ * The right panel's tab set holds files, changes and subagents views.
  *
  * The panel consumes the shell's single open-file request (#11 emits it, #12
  * reads it) and turns each request into a tab. The transition is pure and lives
@@ -34,7 +34,15 @@ export interface ChangesTab {
   readonly name: string;
 }
 
-export type PanelTab = FileTab | ChangesTab;
+export const SUBAGENTS_TAB_ID = 'subagents';
+
+export interface SubagentsTab {
+  readonly kind: 'subagents';
+  readonly id: typeof SUBAGENTS_TAB_ID;
+  readonly name: string;
+}
+
+export type PanelTab = FileTab | ChangesTab | SubagentsTab;
 
 /** The panel's tab strip: which tabs are open and which one is focused. */
 export interface FileTabs {
@@ -87,6 +95,17 @@ export function openChangesTab(state: FileTabs, name: string): FileTabs {
   return {
     tabs: [...state.tabs, { kind: 'changes', id: CHANGES_TAB_ID, name }],
     activeTabId: CHANGES_TAB_ID
+  };
+}
+
+/** Opens the single subagents tab, or focuses the existing one. */
+export function openSubagentsTab(state: FileTabs, name: string): FileTabs {
+  if (state.tabs.some(tab => tab.kind === 'subagents')) {
+    return focusFileTab(state, SUBAGENTS_TAB_ID);
+  }
+  return {
+    tabs: [...state.tabs, { kind: 'subagents', id: SUBAGENTS_TAB_ID, name }],
+    activeTabId: SUBAGENTS_TAB_ID
   };
 }
 

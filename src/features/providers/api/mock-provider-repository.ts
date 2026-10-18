@@ -114,3 +114,11 @@ export function createMockProviderRepository(): ProviderRepository {
     }
   };
 }
+
+/**
+ * The raw fixture rows, for cross-feature consistency checks only: a seed that
+ * names a model or an effort stop the catalog does not advertise fails before
+ * it ever reaches the panel. Not a second catalog — the single source of truth
+ * for the selection chain stays the factory's port above.
+ */
+export const PROVIDER_FIXTURES = providers;

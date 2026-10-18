@@ -6,13 +6,14 @@
  * covers the values named in `.claude/knowledge/business-logic.md` §2; it is
  * extended as new tool kinds appear.
  */
-import type { ToolCallId } from './value-objects.types';
+import type { ToolCallId, SubagentId } from './value-objects.types';
 
 export const TOOL_CALL_KINDS = [
   'search',
   'command',
   'list_files',
-  'diff'
+  'diff',
+  'subagent'
 ] as const;
 
 /** The kind of tool that ran, e.g. a search or a shell command. */
@@ -35,4 +36,6 @@ export interface ToolCall {
   /** Expandable detail shown when the row is opened. */
   readonly detail: string;
   readonly status: ToolCallStatus;
+  /** Child run opened by a subagent activity row; absent for other tools. */
+  readonly subagentId?: SubagentId;
 }

@@ -8,13 +8,46 @@ import {
   INITIAL_FILE_TABS,
   openFileTab,
   openChangesTab,
-  CHANGES_TAB_ID
+  CHANGES_TAB_ID,
+  SUBAGENTS_TAB_ID,
+  openSubagentsTab
 } from './file-tabs';
 
 const APP = 'src/App.tsx';
 const DOC = 'docs/research-tecnico/arquitectura-tauri.md';
 
 describe('right panel file tabs', () => {
+  it('opens and refocuses one subagents tab alongside files and changes without id collisions', () => {
+    const files = openFileTab(INITIAL_FILE_TABS, 'subagents');
+    const changes = openChangesTab(files, 'Cambios');
+    const opened = openSubagentsTab(changes, 'Subagentes');
+    expect(opened.tabs.map(tab => tab.id)).toEqual([
+      'file:subagents',
+      'changes',
+      'subagents'
+    ]);
+    expect(opened.activeTabId).toBe(SUBAGENTS_TAB_ID);
+    expect(openSubagentsTab(opened, 'Subagentes')).toBe(opened);
+    const focused = openFileTab(opened, 'subagents');
+    expect(openSubagentsTab(focused, 'Subagentes').activeTabId).toBe(
+      SUBAGENTS_TAB_ID
+    );
+    expect(openSubagentsTab(focused, 'Subagentes').tabs).toBe(opened.tabs);
+    expect(
+      closeFileTab(focused, fileTabId('subagents')).tabs.map(tab => tab.kind)
+    ).toEqual(['changes', 'subagents']);
+    expect(
+      closeFileTab(openChangesTab(opened, 'Cambios'), CHANGES_TAB_ID)
+        .activeTabId
+    ).toBe(fileTabId('subagents'));
+    expect(
+      openFileTab(
+        openSubagentsTab(INITIAL_FILE_TABS, 'Subagentes'),
+        'subagents'
+      ).tabs
+    ).toHaveLength(2);
+    expect(files.tabs).toHaveLength(1);
+  });
   it('opens a single changes tab and refocuses it without losing file tabs', () => {
     const files = openFileTab(INITIAL_FILE_TABS, APP);
     const changes = openChangesTab(files, 'Cambios');

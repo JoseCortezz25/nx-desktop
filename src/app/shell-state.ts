@@ -15,7 +15,10 @@
  */
 import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { ConversationId } from '@/shared/domain/value-objects.types';
+import type {
+  ConversationId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import {
   INITIAL_REGION_VISIBILITY,
   showRegion,
@@ -37,6 +40,9 @@ export interface ShellState {
    * presses in a row still focus the same `Cambios` tab.
    */
   readonly openChangesRequestCount: number;
+  /** Monotonic requests to focus the subagents tab, including repeated children. */
+  readonly openSubagentsRequestCount: number;
+  readonly openSubagentsRequestSubagentId: SubagentId | null;
 }
 
 /**
@@ -48,7 +54,9 @@ export const INITIAL_SHELL_STATE: ShellState = {
   activeConversationId: null,
   visibility: INITIAL_REGION_VISIBILITY,
   openFileRequest: INITIAL_OPEN_FILE_REQUEST,
-  openChangesRequestCount: 0
+  openChangesRequestCount: 0,
+  openSubagentsRequestCount: 0,
+  openSubagentsRequestSubagentId: null
 };
 
 /** Selects a conversation; the main pane switches from home to that thread. */
@@ -94,6 +102,19 @@ export function revealFileInPanel(
     ...state,
     visibility: showRegion(state.visibility, 'rightPanel'),
     openFileRequest: request
+  };
+}
+
+/** Reveals the subagents tab and requests a child's detail, or the list. */
+export function revealSubagentsInPanel(
+  state: ShellState,
+  subagentId: SubagentId | null = null
+): ShellState {
+  return {
+    ...state,
+    visibility: showRegion(state.visibility, 'rightPanel'),
+    openSubagentsRequestCount: state.openSubagentsRequestCount + 1,
+    openSubagentsRequestSubagentId: subagentId
   };
 }
 
