@@ -145,6 +145,11 @@ export function Dialog({ title, closeLabel, onClose, children }: DialogProps) {
     // Presses that start on the backdrop dismiss; presses inside the surface do
     // not bubble a dismissal, so a drag that ends outside cannot close the form.
     if (event.target === event.currentTarget) {
+      // Closing on mousedown is intentional: it makes the backdrop the only
+      // hit target and avoids an inside-to-outside drag dismissing the form.
+      // Cancel its native focus action before unmount so it cannot replace the
+      // cleanup's deterministic return focus target with document.body.
+      event.preventDefault();
       onClose();
     }
   }
