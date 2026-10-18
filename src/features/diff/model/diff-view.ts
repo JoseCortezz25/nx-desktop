@@ -59,6 +59,16 @@ const MARKERS: Readonly<Record<DiffLineKind, '' | '+' | '-'>> = {
   removed: '-'
 };
 
+/**
+ * Reads a hunk header's starting numbers. A header whose numbers are not
+ * positive safe integers is treated as unreadable, so an `@@ -0 +0 @@` or an
+ * out-of-range offset prints no gutter instead of a wrong or rounded one.
+ */
+function readStartNumber(raw: string): number | null {
+  const value = Number(raw);
+  return Number.isSafeInteger(value) && value >= 1 ? value : null;
+}
+
 function advance(number: number | null): number | null {
   return number === null ? null : number + 1;
 }
@@ -70,8 +80,8 @@ function advance(number: number | null): number | null {
  */
 export function buildHunkRows(hunk: DiffHunk): readonly DiffHunkRow[] {
   const start = HUNK_HEADER.exec(hunk.header);
-  let oldNumber = start ? Number(start[1]) : null;
-  let newNumber = start ? Number(start[2]) : null;
+  let oldNumber = start ? readStartNumber(start[1]) : null;
+  let newNumber = start ? readStartNumber(start[2]) : null;
 
   return hunk.lines.map(line => {
     const marker = MARKERS[line.kind];
