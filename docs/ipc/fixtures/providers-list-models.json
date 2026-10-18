@@ -1,0 +1,19 @@
+{
+  "request": {
+    "providerId": "opencode"
+  },
+  "response": [
+    {
+      "id": "deepseek-v3.1",
+      "displayName": "DeepSeek V3.1",
+      "providerId": "opencode",
+      "supportedEffortLevels": ["light", "standard", "high"]
+    },
+    {
+      "id": "kimi-k2",
+      "displayName": "Kimi K2",
+      "providerId": "opencode",
+      "supportedEffortLevels": ["light", "standard"]
+    }
+  ]
+}

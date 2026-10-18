@@ -10,18 +10,20 @@ Issue #16 ships as a **Feature Branch Chain**: a draft, no-merge tracker PR on
 `feat/issue-16-ipc-kernel-tracker` (targeting `main`) integrates the slices, and
 four child PRs carry one slice each. Child PR 1 targets the tracker branch and
 each later child targets the branch of the slice before it, so no slice merges
-directly into `main`. This document is filled in by each slice; **only slice 1
-is implemented today.**
+directly into `main`. This document is filled in by each slice; **slices 1 and 2
+are implemented today.**
 
 | Slice | Scope                                                       | Status      |
 | ----- | ----------------------------------------------------------- | ----------- |
 | 1     | Shared kernel: error contract, typed invoke, Channel factory | implemented |
-| 2     | Providers / projects / conversations contracts and clients   | pending     |
+| 2     | Providers / projects / conversations contracts and clients   | implemented |
 | 3     | Runs / subagents contracts and the run-stream union          | pending     |
 | 4     | Workspace / files / diff / hooks contracts and clients       | pending     |
 
-The command catalog at the end of this file is appended by slices 2–4 as their
-DTOs land; slice 1 registers no commands.
+Slices 2–4 append their rows to the command catalog at the end of this file.
+Slice 2 registers no commands yet: it defines the wire contract, the typed
+clients and the Rust DTO skeletons. Command registration and the Rust services
+belong to #17–#21.
 
 ## 1. Public error contract (`AppErrorDto`)
 
@@ -154,23 +156,35 @@ owned by slice 3. Clean listeners up idempotently (`unlisten`) on unmount.
 
 ## 3. Contract tests and fixtures
 
-Fixtures live in `docs/ipc/fixtures/` and are shared by both suites:
+Fixtures live in `docs/ipc/fixtures/` and are shared by both suites. Slice 1
+fixtures are error DTOs; slice 2 fixtures are command envelopes with `request`
+(where the command is parameterized) and `response` members.
 
-| Fixture                                     | Pins                                                |
-| ------------------------------------------- | --------------------------------------------------- |
-| `app-error-validation-failed.json`          | `validation_failed`, `retryable: false`             |
-| `app-error-permission-denied.json`          | `permission_denied`, `retryable: false`             |
-| `app-error-provider-unavailable.json`       | `provider_unavailable`, `retryable: true`           |
-| `app-error-cancelled.json`                  | `cancelled`, `retryable: false`                     |
-| `app-error-internal-error.json`             | `internal_error`, `retryable: true`                 |
+| Fixture                                       | Pins                                                           |
+| --------------------------------------------- | -------------------------------------------------------------- |
+| `app-error-validation-failed.json`            | `validation_failed`, `retryable: false`                        |
+| `app-error-permission-denied.json`            | `permission_denied`, `retryable: false`                        |
+| `app-error-provider-unavailable.json`         | `provider_unavailable`, `retryable: true`                      |
+| `app-error-cancelled.json`                    | `cancelled`, `retryable: false`                                |
+| `app-error-internal-error.json`               | `internal_error`, `retryable: true`                            |
+| `providers-list-providers.json`               | `ProviderDto[]` with nested `availableModels`                  |
+| `providers-list-models.json`                  | `{ providerId }` → `ModelDto[]`                                |
+| `projects-list-projects.json`                 | `ProjectDto[]` with approval mode and hook decisions           |
+| `projects-create-project.json`                | `{ name, folders }` → `CreatedProjectDto`                      |
+| `projects-set-project-approval-mode.json`     | `{ projectId, approvalMode }` → updated `ProjectDto[]`         |
+| `projects-list-workspace-branches.json`       | `{ projectId }` → repository branch order                      |
+| `conversations-list-conversations.json`       | `ConversationDto[]` with messages, tools and file references   |
+| `conversations-create-conversation.json`      | `{ projectId, title? }` → `ConversationDto`                    |
 
 - TypeScript: `src/shared/ipc/contracts.test.ts` and `src/shared/ipc/client.test.ts`
-  (`pnpm test`).
+  (`pnpm test`), plus one `src/features/<feature>/api/*.test.ts` per slice-2
+  feature. Each compares the fixture against a typed literal and stubs
+  `ipcInvoke` to pin the command name and envelope.
 - Rust: `src-tauri/tests/ipc_contract.rs` (`cargo test`), which serializes and
-  deserializes each fixture through `AppErrorDto`.
+  deserializes each fixture through its DTO and rejects unknown request fields.
 
-Because both sides read the same JSON, a `request_id` vs `requestId` mismatch or
-a renamed code fails deterministically at test time.
+Because both sides read the same JSON, a `request_id` vs `requestId` mismatch, a
+renamed DTO field, or a drifted enum value fails deterministically at test time.
 
 ## 4. Command catalog
 
@@ -178,11 +192,122 @@ Each command that lands in slices 2–4 adds one row and one request/response
 fixture. Columns: **command** (`snake_case`), **request**, **response**,
 **errors**, **authority**, **owning ticket**.
 
-| Command | Request | Response | Errors | Authority | Ticket |
-| ------- | ------- | -------- | ------ | --------- | ------ |
-| _(none yet — slice 1 is the shared kernel)_ | | | | | |
+| Command                     | Request                            | Response             | Errors                                                        | Authority                                    | Ticket |
+| --------------------------- | ---------------------------------- | -------------------- | ------------------------------------------------------------- | -------------------------------------------- | ------ |
+| `list_providers`            | —                                  | `ProviderDto[]`      | `provider_unavailable`, `internal_error`                      | —                                            | #17    |
+| `list_models`               | `{ providerId }`                   | `ModelDto[]`         | `validation_failed`, `provider_unavailable`                   | provider belongs to the configured registry  | #17    |
+| `list_projects`             | —                                  | `ProjectDto[]`       | `internal_error`                                              | —                                            | #18    |
+| `create_project`            | `{ name, folders }`                | `CreatedProjectDto`  | `validation_failed`, `permission_denied`                      | folders become authorized workspace roots    | #18    |
+| `set_project_approval_mode` | `{ projectId, approvalMode }`      | `ProjectDto[]`       | `validation_failed`, `permission_denied`                      | `projectId` must be a known project          | #18    |
+| `list_workspace_branches`   | `{ projectId }`                    | `string[]`           | `permission_denied`, `internal_error`                         | `projectId` + canonicalized workspace roots  | #18    |
+| `list_conversations`        | —                                  | `ConversationDto[]`  | `internal_error`                                              | —                                            | #18    |
+| `create_conversation`       | `{ projectId, title? }`            | `ConversationDto`    | `validation_failed`, `permission_denied`                      | `projectId` must be a known project          | #18    |
 
-### Adding a command (slices 2–4)
+Parameterless commands take no `args`; every parameterized command passes a
+named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
+Slice 2 defines the contract only — the rows above register no command until
+#17/#18 implement the service and `generate_handler!`.
+
+## 5. Feature catalogs (slice 2)
+
+Wire shapes are `camelCase`; the Rust structs keep `snake_case` fields. Closed
+enums serialize with `snake_case` values that match the TypeScript domain unions.
+
+### `ProviderDto` / `ModelDto`
+
+| Field                    | Type                    | Meaning                                                    |
+| ------------------------ | ----------------------- | ---------------------------------------------------------- |
+| `id`                     | `string`                | Provider id (`opencode`, `codex`, `claude`).               |
+| `displayName`            | `string`                | Provider name drawn in the composer selector.              |
+| `icon`                   | `string`                | Icon key resolved by the UI, never a hardcoded asset path. |
+| `subtitle`               | `string`                | Short provider descriptor.                                 |
+| `availableModels`        | `ModelDto[]`            | Models this provider exposes.                              |
+| `ModelDto.id`            | `string`                | Model id, unique within its provider.                      |
+| `ModelDto.providerId`    | `string`                | Parent provider id; models are provider-scoped.            |
+| `ModelDto.supportedEffortLevels` | `string[]`      | Effort stops the model exposes.                            |
+
+**`provider → model → effort` invariant.** A model belongs to exactly one
+provider and the effort stops come from that provider/model pair
+(`.claude/knowledge/business-logic.md` §3.1). This contract documents the
+invariant and the request shape; **enforcement is deferred to the Rust service
+in #17** (`Shape` → `Limits` → `Invariants` → `Authority`). No client may assume
+a cross-provider model id is valid.
+
+### `ProjectDto` and its requests
+
+| Field               | Type                 | Meaning                                                              |
+| ------------------- | -------------------- | -------------------------------------------------------------------- |
+| `id`                | `string`             | Project id.                                                          |
+| `name`              | `string`             | Project name.                                                        |
+| `workspaceFolders`  | `string[]`           | Authorized local workspace roots.                                    |
+| `approvalMode`      | `ApprovalMode`       | `ask_always` \| `auto_approve` \| `full_access`, project-scoped.     |
+| `hookDecisions`     | `HookDecisionDto[]`  | One `{ hookId, approvalStatus }` per reviewed hook.                  |
+| `conversationIds`   | `string[]`           | Conversations owned by the conversations module.                     |
+| `CreatedProjectDto` | `{ project, projects }` | The created row plus the updated catalog.                         |
+
+- `create_project` sends `{ request: { name, folders } }`; the core decides the
+  id and the defaults, so the client never invents one.
+- `set_project_approval_mode` and `list_workspace_branches` send
+  `{ request: { projectId, ... } }`. The `projectId` is **authority-bearing**:
+  Rust resolves it to the project's canonicalized workspace roots before any
+  filesystem access (`.claude/knowledge/business-logic.md` §3.3).
+
+### `ConversationDto`
+
+| Field            | Type                       | Meaning                                             |
+| ---------------- | -------------------------- | --------------------------------------------------- |
+| `id`             | `string`                   | Conversation id.                                    |
+| `projectId`      | `string`                   | Owning project; authority-bearing.                  |
+| `title`          | `string`                   | Conversation title.                                 |
+| `messages`       | `ConversationMessageDto[]` | Turns, oldest first.                                |
+| `isPinned`       | `boolean`                  | Drives the sidebar pinned group.                    |
+| `createdAt` / `updatedAt` | `string`           | ISO-8601 timestamps.                                |
+| `role`           | `user` \| `assistant` \| `system` | Author of a message.                        |
+| `toolCalls`      | `ToolCallDto[]`            | Tool activity surfaced in the message.              |
+| `fileReferences` | `FileReferenceDto[]?`      | Inline file chips; omitted when empty.              |
+
+`create_conversation` sends `{ request: { projectId, title? } }`; when `title`
+is absent the core derives one, so the request stays valid without inventing UI
+copy. `ToolCallDto.subagentId` is present only for `kind: "subagent"`.
+
+### Exact wire examples
+
+These are excerpts of the byte-exact fixtures; both suites consume the files.
+
+`projects-create-project.json` (request)
+
+```json
+{
+  "request": {
+    "name": "Docs site",
+    "folders": ["/workspace/docs-site"]
+  }
+}
+```
+
+`projects-set-project-approval-mode.json` (request)
+
+```json
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "approvalMode": "full_access"
+  }
+}
+```
+
+`conversations-create-conversation.json` (request)
+
+```json
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "title": "IPC contract review"
+  }
+}
+```
+
+### Adding a command (slices 3–4)
 
 1. Define the `camelCase` request/response DTO and its fixture in
    `docs/ipc/fixtures/`.

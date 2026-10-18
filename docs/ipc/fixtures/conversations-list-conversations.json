@@ -1,0 +1,47 @@
+{
+  "response": [
+    {
+      "id": "conv-composer-chain",
+      "projectId": "proj-design-system",
+      "title": "Composer selection chain",
+      "isPinned": true,
+      "createdAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-10-14T16:30:00.000Z",
+      "messages": [
+        {
+          "id": "msg-composer-1",
+          "role": "user",
+          "content": "Reconcile the provider, model, and effort selectors.",
+          "createdAt": "2026-10-01T09:00:05.000Z",
+          "toolCalls": []
+        },
+        {
+          "id": "msg-composer-2",
+          "role": "assistant",
+          "content": "Model ids are provider-scoped, so switching a provider resets the model.",
+          "createdAt": "2026-10-01T09:00:40.000Z",
+          "toolCalls": [
+            {
+              "id": "tool-composer-1",
+              "kind": "search",
+              "summary": "Searched src for the selection chain",
+              "detail": "Matched selection-chain.ts and the composer organisms.",
+              "status": "completed"
+            },
+            {
+              "id": "tool-composer-2",
+              "kind": "subagent",
+              "summary": "Subagent Inspect repo completed",
+              "detail": "Open the repository inspection child run.",
+              "status": "completed",
+              "subagentId": "subagent-inspect-repo"
+            }
+          ],
+          "fileReferences": [
+            { "path": "src/shared/domain/selection-chain.ts" }
+          ]
+        }
+      ]
+    }
+  ]
+}
