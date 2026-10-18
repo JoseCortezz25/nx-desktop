@@ -23,6 +23,27 @@ function renderPanel(
 }
 
 describe('file panel', () => {
+  it('opens and focuses Subagentes for a pre-mount request while retaining file and changes tabs', () => {
+    const markup = renderToStaticMarkup(
+      <FilePanel
+        openFileRequest={{ path: DOC }}
+        openChangesRequestCount={1}
+        openSubagentsRequestCount={2}
+        openSubagentsRequestSubagentId="subagent-inspect-repo"
+        isOpen
+        isOverlay={false}
+        onClose={() => undefined}
+      />
+    );
+    expect(markup).toContain('class="subagents-viewer"');
+    expect(markup).toContain('aria-label="Subagentes" aria-selected="true"');
+    expect(markup).toContain('Cambios');
+    expect(markup).toContain('arquitectura-tauri.md');
+    expect(markup.match(/role="tab"/g)).toHaveLength(3);
+    expect(markup.match(/aria-selected="true"/g)).toHaveLength(1);
+    expect(markup).not.toContain('class="diff-view"');
+    expect(renderPanel(null)).not.toContain('Subagentes');
+  });
   it('focuses Cambios and renders the diff surface for a changes request', () => {
     const markup = renderPanel({ path: DOC }, true, false, 1);
     expect(markup).toContain('Cambios');

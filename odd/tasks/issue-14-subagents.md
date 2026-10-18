@@ -81,15 +81,16 @@ tab and its reveal, file chips, region visibility/overlay behaviour (#40, #43)
       stop transition, and the pure model (`groupSubagents`, transcript recent
       window + earlier count, stop rule, elapsed formatting). Tests for every pure
       rule and the seed's own consistency. S3, S6, S9. Commit `6dcd87a`.
-- [ ] T2 — Subagents list surface: the `SubagentAvatar` atom (decorative SVG
-      variants + tokens - like the wireframe colors), the `SubagentRow` molecule
+- [x] T2 — Subagents list surface: the `SubagentAvatar` atom (decorative SVG
+      variants + tokens, the wireframe colours), the `SubagentRow` molecule
       (avatar, name, status, elapsed; wireframe 21), copy in `messages.ts`, unit
-      tests. S1, S4, S5.
-- [ ] T3 — Subagents detail surface: the `SubagentDetail` molecule (back, avatar,
+      tests. S1, S4, S5. Commit `cb00484`.
+- [x] T3 — Subagents detail surface: the `SubagentDetail` molecule (back, avatar,
       name, model·effort meta, scrollable transcript with the collapsed earlier
       window; wireframe 22), the `SubagentsViewer` organism owning the list-to-detail
       navigation (S2), the individual stop control (`business-logic.md` §3.2),
-      copy + tests.
+      copy + tests. Commit `2185b51` (writer-assisted round; parent reviewed and
+      committed the files the writer produced).
 - [ ] T4 — Reachability, the #13 pattern: the `PanelTab` kind + the single
       `Subagentes` tab's strip rendering, `FilePanel` viewer dispatch by kind, shell
       `revealSubagentsInPanel(state, subagentId)`, `ToolCallKind` `subagent`, the

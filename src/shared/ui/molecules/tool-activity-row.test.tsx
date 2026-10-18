@@ -4,6 +4,22 @@ import { getSharedMessages } from '@/shared/i18n/messages';
 import { ToolActivityRow } from './tool-activity-row';
 
 describe('tool activity row', () => {
+  it('uses an explicit subagent accessible name without changing the default diff name', () => {
+    const markup = renderToStaticMarkup(
+      <ToolActivityRow
+        icon="user"
+        summary="Inspect repo completed"
+        ariaLabel="Ver el subagente en el panel derecho"
+        onPress={() => undefined}
+      />
+    );
+    expect(markup).toContain(
+      'aria-label="Ver el subagente en el panel derecho"'
+    );
+    expect(markup).not.toContain(
+      getSharedMessages().conversation.toolActivity.openChangesLabel
+    );
+  });
   it('draws an inert row when the tool opens nothing', () => {
     const markup = renderToStaticMarkup(
       <ToolActivityRow icon="terminal" summary="Ran pnpm test" />

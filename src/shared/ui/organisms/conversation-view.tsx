@@ -1,7 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { MessageId } from '@/shared/domain/value-objects.types';
+import type {
+  MessageId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import { Icon } from '../atoms/icon';
 import { ConversationMessages } from './conversation-messages';
 import {
@@ -22,6 +25,7 @@ export interface ConversationViewProps {
   /** Emits an open-file request upward; the panel itself belongs to #12. */
   readonly onRequestOpenFile: (request: OpenFileRequest) => void;
   readonly onRequestOpenChanges: () => void;
+  readonly onRequestOpenSubagent?: (subagentId: SubagentId) => void;
   /** The composer dock the shell composes under the conversation (#6/#8). */
   readonly composer?: ReactNode;
 }
@@ -43,6 +47,7 @@ export function ConversationView({
   openFileRequest,
   onRequestOpenFile,
   onRequestOpenChanges,
+  onRequestOpenSubagent,
   composer
 }: ConversationViewProps) {
   const model = buildConversationViewModel(conversation);
@@ -71,6 +76,7 @@ export function ConversationView({
           openFileRequest={openFileRequest}
           onRequestOpenFile={onRequestOpenFile}
           onRequestOpenChanges={onRequestOpenChanges}
+          onRequestOpenSubagent={onRequestOpenSubagent}
         />
       </div>
 

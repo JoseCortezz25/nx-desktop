@@ -26,7 +26,8 @@ import type {
   ConversationId,
   IsoTimestamp,
   MessageId,
-  ToolCallId
+  ToolCallId,
+  SubagentId
 } from '@/shared/domain/value-objects.types';
 import type { IconName } from '../atoms/icon';
 
@@ -36,6 +37,7 @@ export interface ToolActivityRowView {
   readonly icon: IconName;
   readonly summary: string;
   readonly opensChanges: boolean;
+  readonly opensSubagentId: SubagentId | null;
 }
 
 /** The collapsible tool-activity group of one message, keyed by the message. */
@@ -69,7 +71,8 @@ const TOOL_CALL_ICONS: Readonly<Record<ToolCallKind, IconName>> = {
   search: 'search',
   command: 'terminal',
   list_files: 'folder',
-  diff: 'git-branch'
+  diff: 'git-branch',
+  subagent: 'user'
 };
 
 /**
@@ -134,7 +137,9 @@ function toMessageView(message: ConversationMessage): ConversationMessageView {
               id: call.id,
               icon: TOOL_CALL_ICONS[call.kind],
               summary: call.summary,
-              opensChanges: call.kind === 'diff'
+              opensChanges: call.kind === 'diff',
+              opensSubagentId:
+                call.kind === 'subagent' ? (call.subagentId ?? null) : null
             }))
           }
         : null,

@@ -1,3 +1,5 @@
+import type { SubagentId } from '@/shared/domain/value-objects.types';
+import { getSharedMessages } from '@/shared/i18n/messages';
 import type { IconName } from '../atoms/icon';
 import { Button } from '../atoms/button';
 import { Icon } from '../atoms/icon';
@@ -11,6 +13,8 @@ export interface ToolActivityRowItem {
   readonly summary: string;
   /** Whether pressing the row opens the workspace change set (#13). */
   readonly opensChanges: boolean;
+  /** Child detail to open; omitted or null for ordinary tools and diff rows. */
+  readonly opensSubagentId?: SubagentId | null;
 }
 
 export interface ToolActivityGroupProps {
@@ -26,6 +30,7 @@ export interface ToolActivityGroupProps {
   readonly onToggle: () => void;
   /** Opens the change set in the right panel; only the `diff` rows use it (#13). */
   readonly onOpenChanges?: () => void;
+  readonly onOpenSubagent?: (subagentId: SubagentId) => void;
 }
 
 /**
@@ -43,7 +48,8 @@ export function ToolActivityGroup({
   isExpanded,
   rows,
   onToggle,
-  onOpenChanges
+  onOpenChanges,
+  onOpenSubagent
 }: ToolActivityGroupProps) {
   return (
     <div className="tool-activity-group">
@@ -59,14 +65,30 @@ export function ToolActivityGroup({
 
       {isExpanded ? (
         <div className="tool-activity-group__rows">
-          {rows.map(row => (
-            <ToolActivityRow
-              key={row.id}
-              icon={row.icon}
-              summary={row.summary}
-              onPress={row.opensChanges ? onOpenChanges : undefined}
-            />
-          ))}
+          {rows.map(row => {
+            const subagentId = row.opensSubagentId;
+            const onPress = subagentId
+              ? onOpenSubagent
+                ? () => onOpenSubagent(subagentId)
+                : undefined
+              : row.opensChanges
+                ? onOpenChanges
+                : undefined;
+            return (
+              <ToolActivityRow
+                key={row.id}
+                icon={row.icon}
+                summary={row.summary}
+                ariaLabel={
+                  subagentId
+                    ? getSharedMessages().conversation.toolActivity
+                        .openSubagentLabel
+                    : undefined
+                }
+                onPress={onPress}
+              />
+            );
+          })}
         </div>
       ) : null}
     </div>

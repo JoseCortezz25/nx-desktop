@@ -12,7 +12,10 @@ import type {
 } from '@/features/projects/model/create-project.types';
 import { CreateProjectDialog } from '@/features/projects/ui/organisms/create-project-dialog';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
-import type { ConversationId } from '@/shared/domain/value-objects.types';
+import type {
+  ConversationId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import {
   EMPTY_COMPOSER_DRAFT,
   type ComposerDraft
@@ -33,6 +36,7 @@ import {
   openConversation,
   revealFileInPanel,
   revealChangesInPanel,
+  revealSubagentsInPanel,
   toggleShellRegion,
   type ShellState
 } from './shell-state';
@@ -124,7 +128,9 @@ export function AppShell() {
     activeConversationId,
     visibility,
     openFileRequest,
-    openChangesRequestCount
+    openChangesRequestCount,
+    openSubagentsRequestCount,
+    openSubagentsRequestSubagentId
   } = shell;
 
   // Region *presentation* is derived from the measured window width; region
@@ -187,6 +193,10 @@ export function AppShell() {
 
   function handleRequestOpenChanges() {
     setShell(revealChangesInPanel(shell));
+  }
+
+  function handleRequestOpenSubagent(subagentId: SubagentId) {
+    setShell(revealSubagentsInPanel(shell, subagentId));
   }
 
   function handleSubmitPrompt(prompt: string) {
@@ -253,6 +263,7 @@ export function AppShell() {
               openFileRequest={openFileRequest}
               onRequestOpenFile={handleRequestOpenFile}
               onRequestOpenChanges={handleRequestOpenChanges}
+              onRequestOpenSubagent={handleRequestOpenSubagent}
               composer={composer}
             />
           ) : (
@@ -267,6 +278,8 @@ export function AppShell() {
         <FilePanel
           openFileRequest={openFileRequest}
           openChangesRequestCount={openChangesRequestCount}
+          openSubagentsRequestCount={openSubagentsRequestCount}
+          openSubagentsRequestSubagentId={openSubagentsRequestSubagentId}
           isOpen={visibility.rightPanel}
           isOverlay={regionLayout.rightPanel === 'overlay'}
           onClose={handleToggleRightPanel}

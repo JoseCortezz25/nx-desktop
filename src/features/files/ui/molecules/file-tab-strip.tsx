@@ -55,7 +55,13 @@ export function FileTabStrip({
               onPress={() => onActivate(tab.id)}
             >
               <Icon
-                name={tab.kind === 'file' ? 'file' : 'git-branch'}
+                name={
+                  tab.kind === 'file'
+                    ? 'file'
+                    : tab.kind === 'subagents'
+                      ? 'user'
+                      : 'git-branch'
+                }
                 size="sm"
               />
               <span className="file-tab-strip__name">{tab.name}</span>

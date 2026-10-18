@@ -193,7 +193,8 @@ export const sharedMessages = {
         `${total} ${total === 1 ? 'acción' : 'acciones'}`,
       expandLabel: 'Expandir actividad de herramientas',
       collapseLabel: 'Contraer actividad de herramientas',
-      openChangesLabel: 'Abrir los cambios en el panel derecho'
+      openChangesLabel: 'Abrir los cambios en el panel derecho',
+      openSubagentLabel: 'Ver el subagente en el panel derecho'
     },
     fileChip: {
       openLabel: (path: string) => `Abrir ${path}`
