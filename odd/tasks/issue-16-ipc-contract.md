@@ -96,7 +96,7 @@ Workspace (`read_file`, `read_workspace_diff`, `list_open_targets`, `open_in_tar
 - **Forecast:** ~2,300 authored lines across the four slices (Explorer forecast 2,200–2,400, advisory). Slice 1 forecast ~450. Advisory only; the kernel is not to be code-golfed under the budget at the cost of its tests or docs.
 - **Review budget / `size:exception` recommendation:** slice 1 is **978 changed lines (978 additions, 0 deletions) across 15 files**, above the advisory 400; the maintainer authorized a `size:exception` for **PR #63 only** (issue #16 comment `6254393097`), and it does not transfer to slice 2. One honest slicing pass on slice 1 found no cohesive sub-slice: the closed error contract, its five cross-language fixtures, the TS and Rust contract suites and the slice-1 doc are one inseparable unit — a fixture-only or test-only slice would neither compile nor gate on its own, and `src/shared/ipc/client.ts` (46 lines) has no independent behavior without `contracts.ts`. The earlier 949 figure was `33bcd2d`; the frozen chain-accounting commit made it 978. Slices 2–4 each carry the same recommendation at their own boundary.
 
-- **Slice-2 review budget:** slice 2 was implemented and measured in its own round (see the slice-2 delivery section below); it exceeds the advisory 400 for the same reason and its exact count and proposed split are recorded there.
+- **Slice-2 review budget / `size:exception`:** the first slice-2 round measured **1615 changed lines (1577 additions, 38 deletions, 31 files)** and returned `blocked` because PR #63's exception explicitly did not transfer. The maintainer then accepted the cohesive slice-2 overage and directed the factory to stop re-asking the same review-size question for the remaining issue #16 slices: [issue #16 comment `6254871354`](https://github.com/JoseCortezz25/nx-desktop/issues/16#issuecomment-6254871354). That authorization is a delivery-size decision only — it is not a Verifier/QA pass and not merge authorization. The unblocked continuation is recorded in the slice-2 continuation section below.
 - **Risk:** the error codes / DTO fields are public contract — renaming later cascades through #17–#27; slice 1 pins them exactly to `messages.ts` and the fixtures. Remote CI on this account has historically shown `startup_failure`; the real local checks are the evidence of record. Engram **is** available in this runtime, so the mirror below is a real save, not faked.
 - **Corrected cosmetic deviation (round 2):** the earlier note claimed `docs/ipc/README.md` still said the slices ship "stacked-to-main". That is no longer true: commit `67bb1b9` corrected the README to the Feature Branch Chain wording, and `docs/ipc/README.md` now has zero occurrences of "stacked-to-main". The stale note is corrected here rather than left standing.
 - **Runtime gotcha:** `@types/node` is not part of the `src` TypeScript program, so `node:fs`/`node:url` do not typecheck inside `src/**`. `tsconfig.json` is outside this slice's edit surface, so the shared fixtures are consumed from TS through `resolveJsonModule` imports instead.
@@ -110,7 +110,7 @@ Workspace (`read_file`, `read_workspace_diff`, `list_open_targets`, `open_in_tar
 T1–T3 are delivered by the frozen slice-1 implementation commit `33bcd2dc9674be7008ccb6aa57731b6044499c8a` on `feat/issue-16-ipc-kernel`, which is **preserved byte-for-byte** (not amended, rebased or squashed). The chain-strategy correction is recorded in a second, docs-only commit on the same branch. Both identities and the tracker branch are recorded in the issue #16 `Coder Agent says:` receipt and the PR bodies.
 
 - [x] **T7 — Chain accounting** (`SLICE-1`): record the `feature-branch-chain` boundaries, the tracker branch and the actual checks in this document without rewriting T1–T3.
-- [x] **T4 — SLICE-2** providers/projects/conversations: TS contracts + clients, Rust DTOs, shared command-envelope fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by the slice-2 commit(s) on `feat/issue-16-ipc-catalog`; see the slice-2 delivery section below for the exact count and checks.
+- [x] **T4 — SLICE-2** providers/projects/conversations: TS contracts + clients, Rust DTOs, shared command-envelope fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by `83e3cee` plus the docs-only continuation commit on `feat/issue-16-ipc-catalog`; see the slice-2 delivery section below for the exact count and checks.
 - [ ] **T5 — SLICE-3** runs/subagents. Pending.
 - [ ] **T6 — SLICE-4** workspace/files/diff/hooks. Pending.
 
@@ -120,7 +120,7 @@ T1–T3 are delivered by the frozen slice-1 implementation commit `33bcd2dc9674b
 | -------------------- | ---------------------------------- | ----------------------------------- | ------------------ | ------------------------------------ |
 | Tracker / final      | `feat/issue-16-ipc-kernel-tracker` | `3e3e907`                           | `main` @ `6af748f` | empty tracker commit (0 files)       |
 | Child PR 1 (slice 1) | `feat/issue-16-ipc-kernel`         | `33bcd2d` + chain-accounting commit | tracker branch     | 15 files, 978 additions, 0 deletions |
-| Child PR 2 (slice 2) | `feat/issue-16-ipc-catalog`        | slice-2 commit(s)                   | child PR 1 branch  | see slice-2 delivery section         |
+| Child PR 2 (slice 2) | `feat/issue-16-ipc-catalog`        | `83e3cee` + continuation commit     | child PR 1 branch  | 31 files, 1577 +, 38 −               |
 | Child PR 3 (slice 3) | not created                        | —                                   | child PR 2 branch  | pending                              |
 | Child PR 4 (slice 4) | not created                        | —                                   | child PR 3 branch  | pending                              |
 
@@ -196,7 +196,8 @@ slice-2 commit:
 | `cargo test --manifest-path src-tauri/Cargo.toml`                                | all targets green; `tests/ipc_contract.rs` 10 passed |
 | `git diff --cached --check`                                                      | clean (no whitespace/conflict errors)                |
 
-**Review-size gate (blocking).** Slice 2 is **31 files, 1577 additions, 38
+**Review-size gate (blocking in this round; unblocked in the continuation round
+below — kept as history).** Slice 2 is **31 files, 1577 additions, 38
 deletions = 1615 changed lines** against `67bb1b9` (measured with `git diff
 --numstat 67bb1b9..HEAD`). This is over the advisory 400
 and PR #63's `size:exception` explicitly does not transfer. One honest cohesive
@@ -221,9 +222,52 @@ maintainer options: (a) an explicit `size:exception` for this slice-2 PR, or (b)
 authorize a re-slice of slice 2 into ≤400 sub-slices (providers, project catalog,
 workspace branches, conversations) and continue the chain.
 
-**State.** No PR was opened and the branch was not pushed, so nothing oversized
-or premature entered review. Labels were left as the orchestrator set them
-(`ready-for-agent` on #16); no issue transition is implied by a blocked receipt.
+**State (this round).** No PR was opened and the branch was not pushed, so
+nothing oversized or premature entered review. Labels were left as the
+orchestrator set them (`ready-for-agent` on #16); no issue transition is implied
+by a blocked receipt. **Superseded by the continuation round below:** the
+maintainer accepted the `size:exception`, the branch was pushed and child PR 2
+was opened.
+
+## Slice-2 delivery — Builder continuation (`size:exception` accepted)
+
+**Authorization.** The maintainer accepted the cohesive slice-2 overage of
+**1615 changed lines (1577 additions, 38 deletions, 31 files)** and directed the
+factory not to pause again on the review-size threshold for the remaining issue
+#16 slices: [issue #16 comment `6254871354`](https://github.com/JoseCortezz25/nx-desktop/issues/16#issuecomment-6254871354).
+The blocked round is preserved at [issue #16 comment `6254707877`](https://github.com/JoseCortezz25/nx-desktop/issues/16#issuecomment-6254707877).
+The authorization is a delivery-size decision only: it is not a Verifier/QA pass,
+not a merge, and it does not permit weakening tests or docs, skipping
+Verifier/QA, or closing issue #16.
+
+**Preservation.** The slice-2 implementation commit
+`83e3ceede92c62bb6267b900a214a7486af59d0c` is preserved byte-for-byte — not
+amended, rebased, squashed, re-sliced or refactored. The only repository change
+in this round is this document (one docs-only commit recording the accepted
+exception and the new PR evidence). No source, test, fixture, README or config
+file was touched.
+
+**Child PR (2 of 4).**
+
+| Field        | Value                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- |
+| Branch       | `feat/issue-16-ipc-catalog`                                                         |
+| Target base  | `feat/issue-16-ipc-kernel` (child PR 1 / PR #63 head) — not `main`, not the tracker |
+| Position     | 2 of 4 in the issue-16 Feature Branch Chain                                         |
+| Diff vs base | 31 files, 1577 additions, 38 deletions = 1615 changed lines                         |
+| Review size  | 1615 / 400 — cohesive overage, **accepted `size:exception`** (rationale above)      |
+| Tracker      | PR #62 stays draft / no-merge; issue #16 stays open until the chain integrates      |
+
+**Checks at this round's HEAD.** Only this Markdown document changed in the
+round, so the slice-2 source checks in the round-2 table still describe the same
+unchanged source files; they are attributed to the HEAD that measured them
+(`83e3cee`). Run at the continuation HEAD:
+
+| Check                                           | Result                                    |
+| ----------------------------------------------- | ----------------------------------------- |
+| `pnpm run format:check`                         | all matched files use Prettier code style |
+| `git diff --check` (base..HEAD)                 | clean (no whitespace/conflict errors)     |
+| `pnpm run check:pr` (live PR branch/title/body) | JUDGE OK                                  |
 
 ## Log
 
@@ -235,3 +279,4 @@ or premature entered review. Labels were left as the orchestrator set them
 - L6 (slice 2, round 2): implemented `SLICE-2` contracts/clients/DTOs/fixtures/tests/docs on `feat/issue-16-ipc-catalog` from `67bb1b9`. Typed `satisfies`/typed-literal parity plus Rust `include_str!` round-trip keep both sides on the same fixture bytes.
 - L7: `docs` is in `.prettierignore`, so slice-2 fixtures are not reformatted by `format:check`; they are still validated by both contract suites.
 - L8 (review-size gate): slice 2 measures 1615 changed lines (1577 additions, 38 deletions, 31 files). One cohesive per-feature split still leaves projects (~555) and conversations (~447) above 400, so no cohesive ≤400 slice preserves the accepted deliverable; the Builder stopped before opening an oversized PR and returned `blocked` for a maintainer `size:exception` or a re-slice. Implementation preserved locally; no PR, no push, no label change.
+- L9 (slice 2, Builder continuation): the maintainer accepted the cohesive 1615-line slice-2 overage and told the factory not to re-ask the review-size question for the remaining issue #16 slices (issue #16 comment `6254871354`). The branch was pushed and child PR 2 was opened against `feat/issue-16-ipc-kernel`; the implementation commit `83e3cee` was preserved byte-for-byte and only this ODD document changed in the round.
