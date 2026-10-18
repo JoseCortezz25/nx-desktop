@@ -10,8 +10,8 @@ The issue does not specify a unique-name rule, character restrictions, exact err
 
 ## Tasks
 
-- [ ] T1 — Model and reusable components: create the shared Dialog molecule, project name validator, typed mock create/folder ports, create-project dialog and source-folder row, with focused tests. Route: delegated direct writer (multi-file implementation); trigger: architecture seams and >=2 nontrivial files. Risk: medium/unclear until review. Verification: observe RED for deterministic logic/interaction tests where runnable, GREEN, focused test/typecheck/lint/format:check and diff --check. Commit a coherent work unit on feature branch.
-- [ ] T2 — Integrate and prove full flow: wire the project-picker row through composer to app-shell-owned catalog, show saved project consistently in picker/sidebar, and cover open/close, validation, empty/folder submit, backdrop/keyboard behavior and 900×700 layout without regressing #43. Route: delegated direct same writer, same worktree; trigger: multi-file seams. Risk: high if focus/overlay or shared state changes. Verification: focused tests plus applicable full checks and browser behavior; separate independent Verifier and QA after Builder PR. Commit work unit and record receipts.
+- [x] T1 — Model and reusable components: create the shared Dialog molecule, project name validator, typed mock create/folder ports, create-project dialog and source-folder row, with focused tests. Route: delegated direct writer (multi-file implementation); trigger: architecture seams and >=2 nontrivial files. Risk: medium/unclear until review. Verification: observe RED for deterministic logic/interaction tests where runnable, GREEN, focused test/typecheck/lint/format:check and diff --check. Commit a coherent work unit on feature branch.
+- [x] T2 — Integrate and prove full flow: wire the project-picker row through composer to app-shell-owned catalog, show saved project consistently in picker/sidebar, and cover open/close, validation, empty/folder submit, backdrop/keyboard behavior and 900×700 layout without regressing #43. Route: delegated direct same writer, same worktree; trigger: multi-file seams. Risk: high if focus/overlay or shared state changes. Verification: focused tests plus applicable full checks and browser behavior; separate independent Verifier and QA after Builder PR. Commit work unit and record receipts.
 
 ## Scope, evidence and recovery
 
@@ -35,3 +35,44 @@ Base `529c19e9efe47467238fbd34c55bca553b3a1f38` (post-#43 main), branch `feat/is
 - Stacking reuses `calc(var(--layer-composer) + 10)` from `tokens.css` instead of adding a token (`tokens.css` is out of the allowed surface).
 
 **Untracked-file preservation:** this file was untracked on the assigned worktree and is committed before any source edit.
+
+## Implemented design (as built)
+
+- **Model (`src/features/projects/model/`)** — `create-project.types.ts` (`SourceFolder`, `CreateProjectDraft`, `CreateProjectInput`, `ProjectNameValidation`, `SourceFolderAvailability`) and `create-project.ts` with the pure rules: `validateProjectName` (trimmed non-empty only), `changeProjectName`, `nextSourceFolder`/`addSourceFolder` (typed deterministic `MOCK_SOURCE_FOLDERS` catalog, no `nx-desktop`), `removeSourceFolder`, `toCreateProjectInput` (returns `null` when not submittable).
+- **Shared `Dialog` molecule (`src/shared/ui/molecules/dialog.tsx`)** — overlay + centred surface, `role="dialog"`/`aria-modal`, labelled close control, Escape / backdrop press / initial-focus behaviour with idempotent cleanup. Stacking derives from `calc(var(--layer-composer) + 10)`, so no token was added.
+- **Feature UI** — `ui/molecules/source-folder-row.*` (folder glyph, name, remove) and `ui/organisms/create-project-dialog.*` (controlled: `draft | null`, `onDraftChange`, `onSubmit`, `onClose`). Empty state = dropzone + `Añadir`; folder state = bordered box with one row per folder + `Añadir carpeta`.
+- **Copy** — `src/features/projects/messages.ts` (feature) and `sharedMessages.contextBar.project.createLabel` (the shared picker row cannot import a feature message under Atomic Design).
+- **Port** — `ProjectRepository.createProject(input) => { project, projects }`; the mock appends with a deterministic id (`proj-created-N`) and starts at `ask_always`.
+- **One catalog owner** — `useProjectCatalog` gains `createProject`, which writes through the same repository instance and selects the created project.
+- **Trigger and shell** — `ProjectPicker` renders the `Nuevo proyecto` row **outside** its listbox; `Composer` takes `onCreateProject` and closes its popover when it fires; `AppShell` holds `createProjectDraft | null` (null = closed) and mounts the modal, whose submit goes to the one `useProjectCatalog`.
+
+## Verification observed (builder self-check — not QA)
+
+Base `529c19e` was green before the change: 224 tests, typecheck/lint/format clean. After the change:
+
+| Check                     | Result                           |
+| ------------------------- | -------------------------------- |
+| `pnpm test`               | 263 passed (42 files); +39 tests |
+| `pnpm run typecheck`      | clean                            |
+| `pnpm run lint`           | clean                            |
+| `pnpm run format:check`   | clean                            |
+| `pnpm run build`          | clean (`tsc` + vite build)       |
+| `pnpm run rust:fmt:check` | clean                            |
+| `pnpm run rust:clippy`    | clean (`-D warnings`)            |
+
+Test-first RED/GREEN was recorded per work unit: T1 RED = 5 files / 7 failing tests for the missing modules and port method, then GREEN; T2 RED = the new shell seam test failing 5 tests (no dialog mounted, no opener handed to the composer), then GREEN.
+
+Browser smoke (Vite dev server, mock repositories, agent-browser; `elementFromPoint` hit tests and DOM rectangles):
+
+| Size     | Dialog rect      | Close hit | Submit hit | Overlay z               | Overflow |
+| -------- | ---------------- | --------- | ---------- | ----------------------- | -------- |
+| 900×700  | 572×359 @164,171 | yes       | yes        | 40 (drawer 20, dock 30) | none     |
+| 1440×900 | 572×359 @434,271 | yes       | yes        | 40                      | none     |
+
+Flow observed at 900×700: project chip → popover lists the projects plus a `Nuevo proyecto` row outside the listbox → the row opens the modal (empty state) → submitting a blank name shows `Escribe un nombre para el proyecto.` and keeps the modal open → typing a name and pressing `Añadir` produces the folder row, `Quitar alpha-app` returns to the empty dropzone → `Crear proyecto` closes the modal and the chip becomes `Proyecto: Gamma app` while the sidebar `Proyectos` group gains `Gamma app`; reopening the picker lists `Gamma app` and marks it selected → submitting with the name only creates `Empty workspace` with no folders, visible in both the chip and the sidebar → `Cerrar`, `Escape` and a backdrop press each close the modal. With the sidebar drawer open the modal stays above it (z 40 > 20) with every control hit-testable, and with the modal closed the composer send control is hit-testable at 900×700.
+
+Known limitations (reported honestly): the folder source is a typed deterministic mock as the issue requires, not a real filesystem picker; the native OS window frame cannot be exercised here, so the 900×700 viewport was driven in the browser rather than through the Tauri shell. Composer→picker wiring sits behind a popover that a node-environment static render cannot open, so that one hop is covered by the browser flow above plus the picker's own suite rather than by a unit test.
+
+## Delivery record
+
+Forecast was ~350–450 authored lines; the observed change is **1,688 insertions / 20 deletions across 27 files in 4 commits** (task record `d904f78`, T1 `82ab409` = 19 files, T2 `afad94f` = 7 files, browser-fix `9fb1e0d`), well above the repository's advisory ~400-line threshold. The envelope-approved single-PR strategy was kept (see the recorded risk above); the oversized diff is carried as a handoff risk rather than silently split. Next step: independent Verifier, then independent visual+functional QA.
