@@ -1,0 +1,38 @@
+{
+  "response": [
+    {
+      "id": "opencode",
+      "displayName": "OpenCode",
+      "icon": "opencode",
+      "subtitle": "Open-source coding agent",
+      "availableModels": [
+        {
+          "id": "deepseek-v3.1",
+          "displayName": "DeepSeek V3.1",
+          "providerId": "opencode",
+          "supportedEffortLevels": ["light", "standard", "high"]
+        },
+        {
+          "id": "kimi-k2",
+          "displayName": "Kimi K2",
+          "providerId": "opencode",
+          "supportedEffortLevels": ["light", "standard"]
+        }
+      ]
+    },
+    {
+      "id": "codex",
+      "displayName": "Codex",
+      "icon": "codex",
+      "subtitle": "OpenAI coding agent",
+      "availableModels": [
+        {
+          "id": "gpt-5-codex",
+          "displayName": "GPT-5 Codex",
+          "providerId": "codex",
+          "supportedEffortLevels": ["light", "standard", "high", "extended"]
+        }
+      ]
+    }
+  ]
+}

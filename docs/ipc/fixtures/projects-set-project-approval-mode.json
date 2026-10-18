@@ -1,0 +1,32 @@
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "approvalMode": "full_access"
+  },
+  "response": [
+    {
+      "id": "proj-design-system",
+      "name": "Design system",
+      "workspaceFolders": ["/workspace/design-system"],
+      "approvalMode": "full_access",
+      "hookDecisions": [],
+      "conversationIds": ["conv-composer-chain", "conv-diff-review"]
+    },
+    {
+      "id": "proj-api-client",
+      "name": "API client",
+      "workspaceFolders": [
+        "/workspace/api-client",
+        "/workspace/shared-contracts"
+      ],
+      "approvalMode": "auto_approve",
+      "hookDecisions": [
+        {
+          "hookId": "hook-lint-on-write",
+          "approvalStatus": "rejected"
+        }
+      ],
+      "conversationIds": ["conv-hooks-review"]
+    }
+  ]
+}

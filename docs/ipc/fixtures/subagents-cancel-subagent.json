@@ -1,0 +1,16 @@
+{
+  "request": {
+    "runId": "run-7f2a9c10",
+    "subagentId": "subagent-verify-tests"
+  },
+  "response": {
+    "id": "subagent-verify-tests",
+    "name": "Verify tests",
+    "avatar": "flower",
+    "status": "cancelled",
+    "elapsedMs": 8000,
+    "modelId": "glm-4.6",
+    "effortLevel": "maximum",
+    "transcript": []
+  }
+}
