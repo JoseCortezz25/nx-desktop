@@ -1,5 +1,5 @@
 /**
- * Open file tabs of the right panel.
+ * The right panel's tab set holds two kinds: files and the changes view.
  *
  * The panel consumes the shell's single open-file request (#11 emits it, #12
  * reads it) and turns each request into a tab. The transition is pure and lives
@@ -14,6 +14,7 @@ import { fileName } from './file-path';
 
 /** One open file tab. */
 export interface FileTab {
+  readonly kind: 'file';
   /** Stable tab identity. A path is unique inside a workspace, so it is the id. */
   readonly id: string;
   readonly path: string;
@@ -21,9 +22,19 @@ export interface FileTab {
   readonly name: string;
 }
 
-/** The panel's tab strip: which files are open and which one is focused. */
+export const CHANGES_TAB_ID = 'changes';
+
+export interface ChangesTab {
+  readonly kind: 'changes';
+  readonly id: typeof CHANGES_TAB_ID;
+  readonly name: string;
+}
+
+export type PanelTab = FileTab | ChangesTab;
+
+/** The panel's tab strip: which tabs are open and which one is focused. */
 export interface FileTabs {
-  readonly tabs: readonly FileTab[];
+  readonly tabs: readonly PanelTab[];
   readonly activeTabId: string | null;
 }
 
@@ -52,8 +63,19 @@ export function openFileTab(state: FileTabs, path: string): FileTabs {
   }
 
   return {
-    tabs: [...state.tabs, { id, path, name: fileName(path) }],
+    tabs: [...state.tabs, { kind: 'file', id, path, name: fileName(path) }],
     activeTabId: id
+  };
+}
+
+/** Opens the single changes tab, or focuses the existing one. */
+export function openChangesTab(state: FileTabs, name: string): FileTabs {
+  if (state.tabs.some(tab => tab.kind === 'changes')) {
+    return focusFileTab(state, CHANGES_TAB_ID);
+  }
+  return {
+    tabs: [...state.tabs, { kind: 'changes', id: CHANGES_TAB_ID, name }],
+    activeTabId: CHANGES_TAB_ID
   };
 }
 
@@ -86,7 +108,7 @@ export function closeFileTab(state: FileTabs, tabId: string): FileTabs {
 }
 
 /** The focused tab, or `null` when nothing is open. */
-export function activeFileTab(state: FileTabs): FileTab | null {
+export function activeFileTab(state: FileTabs): PanelTab | null {
   return state.tabs.find(tab => tab.id === state.activeTabId) ?? null;
 }
 

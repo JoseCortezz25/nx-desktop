@@ -8,11 +8,13 @@ const DOC = 'docs/research-tecnico/arquitectura-tauri.md';
 function renderPanel(
   openFileRequest: { path: string } | null,
   isOpen = true,
-  isOverlay = false
+  isOverlay = false,
+  openChangesRequestCount = 0
 ): string {
   return renderToStaticMarkup(
     <FilePanel
       openFileRequest={openFileRequest}
+      openChangesRequestCount={openChangesRequestCount}
       isOpen={isOpen}
       isOverlay={isOverlay}
       onClose={() => undefined}
@@ -21,6 +23,16 @@ function renderPanel(
 }
 
 describe('file panel', () => {
+  it('focuses Cambios and renders the diff surface for a changes request', () => {
+    const markup = renderPanel({ path: DOC }, true, false, 1);
+    expect(markup).toContain('Cambios');
+    expect(markup).toContain('class="diff-view"');
+    expect(markup).not.toContain('class="file-viewer"');
+    expect(markup).toContain('arquitectura-tauri.md');
+    expect(markup.match(/aria-selected="true"/g)).toHaveLength(1);
+    expect(renderPanel(null, false, true, 2)).toContain('class="diff-view"');
+  });
+
   it('opens a tab for the file the shell requested', () => {
     const markup = renderPanel({ path: DOC });
 

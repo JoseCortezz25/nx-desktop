@@ -8,6 +8,13 @@
   font-size: 14px;
 }
 
+.tool-activity-row > .button {
+  min-width: 0;
+  justify-content: flex-start;
+  gap: 8px;
+  color: inherit;
+}
+
 .tool-activity-row__summary {
   min-width: 0;
   overflow: hidden;

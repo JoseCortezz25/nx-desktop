@@ -28,12 +28,14 @@ const capture = vi.hoisted(() => ({
   filePanel: null as Record<string, unknown> | null,
   navigateHome: vi.fn(),
   revealFileInPanel: vi.fn(),
+  revealChangesInPanel: vi.fn(),
   actual: {} as Record<string, unknown>,
   /** The shell's initial state, seeded to the conversation-open defect state. */
   shellState: {
     activeConversationId: 'conv-composer-chain' as string | null,
     visibility: { sidebar: true, rightPanel: false },
-    openFileRequest: null as OpenFileRequest | null
+    openFileRequest: null as OpenFileRequest | null,
+    openChangesRequestCount: 0
   }
 }));
 
@@ -101,6 +103,12 @@ vi.mock('./shell-state', async () => {
     navigateHome: (state: unknown) => {
       capture.navigateHome(state);
       return (actual.navigateHome as (value: unknown) => unknown)(state);
+    },
+    revealChangesInPanel: (state: unknown) => {
+      capture.revealChangesInPanel(state);
+      return (actual.revealChangesInPanel as (value: unknown) => unknown)(
+        state
+      );
     },
     revealFileInPanel: (state: unknown, request: unknown) => {
       capture.revealFileInPanel(state, request);
@@ -198,6 +206,8 @@ describe('shell navigation seam', () => {
     capture.filePanel = null;
     capture.navigateHome.mockReset();
     capture.revealFileInPanel.mockReset();
+    capture.revealChangesInPanel.mockReset();
+    capture.shellState.openChangesRequestCount = 0;
     layout.value = { sidebar: 'inline', rightPanel: 'inline' };
 
     capture.shellState.activeConversationId = 'conv-composer-chain';
@@ -280,6 +290,27 @@ describe('shell navigation seam', () => {
     expect(revealed.visibility.rightPanel).toBe(true);
     expect(revealed.visibility.sidebar).toBe(true);
     expect(revealed.openFileRequest).toBe(fileRequest);
+  });
+
+  it('routes a diff request to the reveal transition and hands the counter to the panel', () => {
+    capture.shellState.openChangesRequestCount = 3;
+    renderToStaticMarkup(<AppShell />);
+    expect(capture.filePanel?.openChangesRequestCount).toBe(3);
+    const onRequestOpenChanges = capture.conversationView
+      ?.onRequestOpenChanges as (() => void) | undefined;
+    expect(typeof onRequestOpenChanges).toBe('function');
+    onRequestOpenChanges?.();
+    expect(capture.revealChangesInPanel).toHaveBeenCalledWith(
+      capture.shellState
+    );
+    const revealed = (capture.actual.revealChangesInPanel as Transition)(
+      capture.shellState
+    ) as {
+      openChangesRequestCount: number;
+      visibility: { rightPanel: boolean };
+    };
+    expect(revealed.openChangesRequestCount).toBe(4);
+    expect(revealed.visibility.rightPanel).toBe(true);
   });
 
   it('hands the composer one shell-owned draft, in whichever view is active', () => {

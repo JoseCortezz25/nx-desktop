@@ -8,7 +8,12 @@
  */
 import type { ToolCallId } from './value-objects.types';
 
-export const TOOL_CALL_KINDS = ['search', 'command', 'list_files'] as const;
+export const TOOL_CALL_KINDS = [
+  'search',
+  'command',
+  'list_files',
+  'diff'
+] as const;
 
 /** The kind of tool that ran, e.g. a search or a shell command. */
 export type ToolCallKind = (typeof TOOL_CALL_KINDS)[number];

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DiffView } from '@/features/diff/ui/organisms/diff-view';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { RightPanel } from '@/shared/ui/organisms/right-panel';
@@ -8,6 +9,7 @@ import {
   focusFileTab,
   INITIAL_FILE_TABS,
   openFileTab,
+  openChangesTab,
   type FileTabs
 } from '../../model/file-tabs';
 import { FileTabStrip } from '../molecules/file-tab-strip';
@@ -21,6 +23,12 @@ export interface FilePanelProps {
    * (`.claude/knowledge/business-logic.md` §3.5; the seam #11 built).
    */
   readonly openFileRequest: OpenFileRequest | null;
+  /**
+   * How many times the conversation has asked for the change set (#13). A new
+   * count opens or refocuses the single `Cambios` tab; the counter is the shell's,
+   * so the panel never keeps a second copy of that decision.
+   */
+  readonly openChangesRequestCount: number;
   /**
    * Whether the region is visible. Region visibility is owned by the shell; the
    * panel only reflects it. It is a presentation toggle (`hidden`) rather than
@@ -55,6 +63,7 @@ export interface FilePanelProps {
  */
 export function FilePanel({
   openFileRequest,
+  openChangesRequestCount,
   isOpen,
   isOverlay,
   onClose
@@ -66,6 +75,19 @@ export function FilePanel({
       : INITIAL_FILE_TABS
   );
   const [handledRequest, setHandledRequest] = useState(openFileRequest);
+  // The panel has handled no changes request yet, which is also the shell's
+  // starting count: a prop that already counts one (a request that happened
+  // before this panel mounted) is therefore reconciled on the first render.
+  const [handledChangesRequestCount, setHandledChangesRequestCount] =
+    useState(0);
+
+  // Same render-phase reconciliation as the file request above: a new count opens
+  // or refocuses the `Cambios` tab in the same commit that carries it. The count
+  // is monotonic, so two presses focus the one tab that exists.
+  if (openChangesRequestCount !== handledChangesRequestCount) {
+    setHandledChangesRequestCount(openChangesRequestCount);
+    setTabs(current => openChangesTab(current, messages.diff.panelTabLabel));
+  }
 
   // The shell's request is reconciled during render rather than in an effect:
   // React re-runs this component immediately after a render-phase update, so a
@@ -102,7 +124,9 @@ export function FilePanel({
         />
       }
     >
-      {activeTab ? (
+      {activeTab?.kind === 'changes' ? (
+        <DiffView />
+      ) : activeTab ? (
         <FileViewer key={activeTab.path} path={activeTab.path} />
       ) : (
         <div className="file-panel__empty">
