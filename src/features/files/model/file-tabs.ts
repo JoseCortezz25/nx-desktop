@@ -15,13 +15,17 @@ import { fileName } from './file-path';
 /** One open file tab. */
 export interface FileTab {
   readonly kind: 'file';
-  /** Stable tab identity. A path is unique inside a workspace, so it is the id. */
+  /** Stable tab identity: `fileTabId(path)` of the open path. */
   readonly id: string;
   readonly path: string;
   /** Tab label: the file name, as screen 23 draws it. */
   readonly name: string;
 }
 
+/** Prefix every file tab id carries; no change-set id can start with it. */
+const FILE_TAB_PREFIX = 'file:';
+
+/** The change-set tab's fixed id, outside the namespaced file-id space. */
 export const CHANGES_TAB_ID = 'changes';
 
 export interface ChangesTab {
@@ -44,9 +48,16 @@ export const INITIAL_FILE_TABS: FileTabs = {
   activeTabId: null
 };
 
-/** Tab id for a workspace-relative path. */
+/**
+ * Tab id for a workspace-relative path.
+ *
+ * File ids are namespaced (`file:<path>`) so they can never equal
+ * `CHANGES_TAB_ID`: a workspace may legitimately hold a file named `changes`, and
+ * a bare path id would then collide with the change-set tab — the wrong tab would
+ * be focused, or a file tab never opened at all.
+ */
 export function fileTabId(path: string): string {
-  return path;
+  return `${FILE_TAB_PREFIX}${path}`;
 }
 
 /**

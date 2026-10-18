@@ -33,6 +33,22 @@ describe('file panel', () => {
     expect(renderPanel(null, false, true, 2)).toContain('class="diff-view"');
   });
 
+  it('gives a file named like the changes tab its own tab and viewer', () => {
+    // Identity regression: a workspace path may be literally `changes`, so a
+    // change-set request must never swallow that file's tab (nor the reverse).
+    const fileOnly = renderPanel({ path: 'changes' });
+
+    expect(fileOnly).toContain('class="file-viewer');
+    expect(fileOnly).not.toContain('class="diff-view"');
+    expect(fileOnly).toContain('>changes<');
+
+    const both = renderPanel({ path: 'changes' }, true, false, 1);
+
+    expect(both).toContain('class="diff-view"');
+    expect(both.match(/role="tab"/g)).toHaveLength(2);
+    expect(both.match(/aria-selected="true"/g)).toHaveLength(1);
+  });
+
   it('opens a tab for the file the shell requested', () => {
     const markup = renderPanel({ path: DOC });
 
