@@ -1,0 +1,6 @@
+{
+  "code": "permission_denied",
+  "message": "path is outside the authorized workspace root",
+  "retryable": false,
+  "requestId": "req-3b7e15d8"
+}

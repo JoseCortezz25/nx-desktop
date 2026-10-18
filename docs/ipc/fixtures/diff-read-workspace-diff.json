@@ -1,0 +1,33 @@
+{
+  "request": {
+    "projectId": "proj-design-system"
+  },
+  "response": [
+    {
+      "path": "src/App.tsx",
+      "addedCount": 2,
+      "removedCount": 1,
+      "hunks": [
+        {
+          "header": "@@ -6,7 +6,8 @@ function App()",
+          "lines": [
+            { "kind": "context", "content": "function App() {" },
+            {
+              "kind": "removed",
+              "content": "  const [name, setName] = useState(\"\");"
+            },
+            {
+              "kind": "added",
+              "content": "  const [provider, setProvider] = useState(\"claude\");"
+            },
+            {
+              "kind": "added",
+              "content": "  const [model, setModel] = useState(\"sonnet\");"
+            },
+            { "kind": "context", "content": "}" }
+          ]
+        }
+      ]
+    }
+  ]
+}
