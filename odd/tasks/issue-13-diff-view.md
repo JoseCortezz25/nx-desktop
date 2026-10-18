@@ -50,7 +50,7 @@ Base `9af62b0` was green before the first edit: 42 test files / 263 tests, `form
 
 | Check                   | Result                                             |
 | ----------------------- | -------------------------------------------------- |
-| `pnpm test`             | 302 passed (48 files); +39 tests over the base     |
+| `pnpm test`             | 306 passed (48 files); +43 tests over the base     |
 | `pnpm run typecheck`    | clean                                              |
 | `pnpm run lint`         | clean                                              |
 | `pnpm run format:check` | clean                                              |
@@ -64,7 +64,27 @@ Every rule has a test that observes its effect, in the repository's node-only st
 - S5 — every string the diff surface prints comes from `sharedMessages.diff`; the mock bodies are file content (data), not UI copy.
 - S9/S10 — `file-tabs.test.ts` pins the changes-tab rules next to the untouched file-tab rules; `file-panel.test.tsx` keeps every #12/#40/#43 expectation green and adds the `Cambios` focus; `shell-state.test.tsx`, `app-shell-panel-seam.test.tsx` and `app-shell-navigation-seam.test.tsx` prove the shell's real wiring (row press → `revealChangesInPanel` → counter → panel), and `tool-activity-row.test.tsx` proves a non-diff row is still inert.
 
-Not verified by this round: the browser/native visual comparison against wireframe 18 (the issue's stated validation type) belongs to the independent QA round on its own evidence branch, exactly as #42/#43 delivered it.
+Browser check of the real surface (Vite dev server on the mock repositories, agent-browser, window 1280x577, conversation `Diff review panel`):
+
+- the `git diff` activity row renders as a control named `Abrir los cambios en el panel derecho`, and pressing it reveals the right panel on a selected `Cambios` tab;
+- the summary bar reads `2 archivos cambiados +14 -6`, and the two sections read `src/App.tsx +9 -4` and `src-tauri/src/lib.rs +5 -2`;
+- each section expands to its hunk tables with both gutters, blue-grey hunk headers, green added rows and red removed rows, and the chevron collapses one section to its header while the other keeps its tables;
+- a screenshot was compared side by side with `docs/wireframes/18-chat-with-diff.html`: layout, colour treatment, gutters, markers, counts and tab all correspond.
+
+Still pending, and not claimed by this round: the formal independent visual/functional QA pass on its own evidence branch (the issue's stated validation type, delivered for #42/#43 with annotated screenshots).
+
+## Round 2 — verification findings and fixes (2026-10-18)
+
+An independent verifier reviewed the three implementation commits and returned **FAIL** with one high finding, one medium and two low ones. All four were addressed in the branch; nothing was waived.
+
+| Finding                                                                                                                             | Severity | Resolution                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The changes tab id `changes` collided with a workspace file of the same name: the wrong tab was focused, or a file tab never opened | High     | File tab ids are now namespaced (`fileTabId(path)` returns `file:<path>`), so the two id spaces cannot meet. RED observed first: `openFileTab(openChangesTab(...), 'changes')` produced one tab instead of two. Commit `9642919`.                                                                                                                  |
+| Tests did not observe two presses, refocus after a file tab, or a request for a file named `changes`                                | Medium   | Added the panel-level identity test (a file `changes` keeps its own tab and viewer, with and without a change-set tab) and the model test that a repeated `openChangesTab` refocuses the single tab. The static-render harness cannot simulate a second press on a mounted panel; that limit is stated rather than papered over. Commit `9642919`. |
+| Hunk header parsing accepted impossible ranges (`@@ -0 +0 @@`) and silently rounded offsets past 2^53                               | Low      | `readStartNumber` requires a positive safe integer; otherwise the gutters stay empty. RED observed first with both inputs printing wrong numbers. Commit `200a89e`.                                                                                                                                                                                |
+| Three departures from the wireframe were not recorded                                                                               | Low      | Recorded below in L7.                                                                                                                                                                                                                                                                                                                              |
+
+After the fixes: `pnpm test` 306 passed (48 files), `typecheck`, `lint`, `format:check` and `git diff --check` clean.
 
 ## Delivery and progress
 
@@ -76,7 +96,7 @@ Three work-unit commits on `feat/issue-13-diff-view`, in reviewable slices:
 | `5c4802c` | diff rendering (tokens, copy, two molecules, organism)    | ~700           |
 | `8e10fae` | reachability (domain kind, row control, tab model, shell) | ~440           |
 
-Total ≈1787 authored changed lines, past the ~400-line review slice. The recorded delivery strategy is **two chained PRs** so each slice is reviewable on its own: PR 1 = `5920760..5c4802c` (the `DiffView` surface, satisfying S1-S8 on its own), PR 2 = `8e10fae` (reachability, S9-S10, based on PR 1's branch). A single PR remains the maintainer's call; the commits are already split so either works. Push, PR creation and merge are the maintainer's decisions, not this record's.
+Total ≈2003 authored changed lines, past the ~400-line review slice. The recorded delivery strategy is **two chained PRs** so each slice is reviewable on its own: PR 1 = `5920760..5c4802c` plus the two verification fixes (the `DiffView` surface and its tab model, satisfying S1-S8 on its own), PR 2 = `8e10fae` (reachability, S9-S10, based on PR 1's branch). A single PR remains the maintainer's call; the commits are already split so either works. Push, PR creation and merge are the maintainer's decisions, not this record's.
 
 Next step after the builder round: independent verification (this diff changes an additive domain contract and shared component props, Risk item 3), then the independent visual/functional QA round against wireframe 18.
 
@@ -91,3 +111,7 @@ L3 (base evidence): `main` @ `9af62b0`; `pnpm run format:check`, `pnpm run lint`
 L4 (delegation): T1 and T2 were implemented inline by the parent (test-first: RED observed on the missing modules, then GREEN). T3 was delegated to a bounded writer with an explicit allowlist after the parent's context hit the backstop; it stopped once at a scope conflict (`src/shared/ui/organisms/conversation-messages.test.tsx` needed the new required prop) and the parent authorized exactly that one extra path.
 
 L5 (deviation, recorded not silent): the wireframe's diff summary bar also prints the workspace name and draws a copy control, the `Vista dividida` / `Vista unificada` toggle and an `Abrir` split button. The bar prints the changed-file count and the `+N` / `-N` totals only: the workspace name is the active project's data (#8), `split` is deferred by the locked decision (S8), and `Abrir` already belongs to the file viewer's `OpenWithMenu` (#12), so neither control is duplicated here. Code lines wrap instead of clipping (`overflow: hidden` in the wireframe assumed a wider pane than the 460px region) so no diff line becomes unreadable.
+
+L6 (verification round, 2026-10-18): an independent verifier returned FAIL on the first candidate. The high finding was a real identity collision between the change-set tab and a file named `changes`; the medium finding was test coverage that asserted the initial handoff instead of a repeated request; the low findings were unchecked hunk-header numbers and three unrecorded wireframe departures. All were fixed in `9642919` and `200a89e` with RED observed before each fix, and the round is recorded above.
+
+L7 (further deviations from the wireframe, recorded not silent): every section starts **expanded** (screen 18 draws the second file collapsed, which is a state, not a default); code lines are drawn as plain monospace text without the wireframe's keyword/string/comment colouring, because the domain carries `kind` and `content` only and no tokenizer is in scope; the tab strip draws no `+` tab-add control and no expand/layout controls, which belong to no ticket here and would be invented surfaces.
