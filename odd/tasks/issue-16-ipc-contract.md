@@ -51,7 +51,7 @@ Slice 1 is the only slice in scope here. Slices 2–4 are listed for the shared 
 | `SLICE-1` | Shared kernel (error + invoke/channel)       | delivered |
 | `SLICE-2` | Providers / projects / conversations catalog | delivered |
 | `SLICE-3` | Runs / subagents (stream union)              | delivered |
-| `SLICE-4` | Workspace / files / diff / hooks             | pending   |
+| `SLICE-4` | Workspace / files / diff / hooks             | delivered |
 
 ## Acceptance criteria and checks per slice
 
@@ -93,9 +93,19 @@ Runs (`start_run`, `cancel_run`, `get_run`) and the closed six-kind `RunStreamEv
 - **S3-A7** Rust DTOs use `#[serde(rename_all = "camelCase")]`, `snake_case` Rust fields, `deny_unknown_fields` on every request and closed `snake_case` enums; six shared fixtures are read by both suites.
 - **S3-A8** All slice-3 checks (install, typecheck, lint, focused and full tests, format:check, rust fmt/clippy/test, `git diff --check`) pass; exact outputs in the slice-3 delivery section below.
 
-### SLICE-4 (pending)
+### SLICE-4 (implemented in round 4)
 
-Workspace (`read_file`, `read_workspace_diff`, `list_open_targets`, `open_in_target`) and hooks (`list_hooks`, `set_hook_decision`) contracts + clients, each carrying the `projectId`/`runId` authority context. Checks: fixtures per command; authority fields present.
+Workspace (`read_file`, `read_workspace_diff`, `list_open_targets`, `open_in_target`) and hooks (`list_hooks`, `set_hook_decision`) contracts + clients, each carrying the relevant `projectId`/`runId` authority context. Checks: fixtures per command; authority fields present.
+
+- **S4-A1** The six commands are typed with the exact intent-driven `snake_case` names and the `{ request }` envelope for every parameterized call: `read_file` (`{ projectId, path }`), `read_workspace_diff` (`{ projectId }`), `open_in_target` (`{ projectId, target, path }`), `list_hooks` (`{ projectId }`), `set_hook_decision` (`{ projectId, hookId, approvalStatus }`); `list_open_targets` is parameterless because its report is machine-scoped.
+- **S4-A2** Feature ownership follows the existing repository boundaries: `read_file` in `src/features/projects/api/workspace-*` (workspace read), open targets in `src/features/files/api/open-target-*`, the diff in `src/features/diff/api/diff-*`, hooks in `src/features/hooks/api/hook-*`. Command names stay exact regardless of module.
+- **S4-A3** Request/result DTOs come from the real UI-facing types: `FileDocumentDto | null` (the port resolves `null` for no document), `DiffFileDto[]` with the closed `context | added | removed` line kinds, `OpenTargetAvailabilityDto[]`, `HookDto[]`, and the updated `HookDto` for a decision. `open_in_target` resolves `null`, matching the port's `void`.
+- **S4-A4** Authority anchors are explicit, not spoofed: `projectId` on every workspace/hook request that resolves roots or decisions; `path` stays workspace-relative on `read_file` and `open_in_target`. `list_open_targets` intentionally has no `projectId` (machine-scoped). Hooks requests deliberately carry **no** `runId`: the decision is project-scoped and survives the run. The DTOs are not enforcement; the Rust services #20 (hooks) and #21 (workspace/file/diff) validate Shape / Limits / Invariants / Authority, while #24 is the UI-connection ticket that consumes those commands.
+- **S4-A5** Hooks follow the actual policy: the closed `HookApprovalStatus` (`pending | approved | rejected`) is shared with `ProjectDto.hookDecisions`, and no seventh `RunStreamEventDto` kind (`hookReviewRequired`) is invented.
+- **S4-A6** Rust serde skeletons in `src-tauri/src/features/{workspace,files,diff,hooks}/dto.rs` use `camelCase` on the wire, `snake_case` fields, closed `snake_case` enums and `deny_unknown_fields` on every request; `HookApprovalStatusDto` is reused from the project catalog so the two hook statuses cannot drift.
+- **S4-A7** Six shared fixtures (`workspace-read-file`, `diff-read-workspace-diff`, `files-list-open-targets`, `files-open-in-target`, `hooks-list-hooks`, `hooks-set-hook-decision`) are read by the TS and Rust suites; the Rust negative tests pin unknown fields, unknown enum values, the nullable read and the void open response.
+- **S4-A8** `docs/ipc/README.md` catalogs the six commands, the DTO tables, the authority/deferred-enforcement notes, the exact wire examples and the fixture index; the slice table and delivery narrative cover slice 4.
+- **S4-A9** All slice-4 checks (install, typecheck, lint, focused and full tests, format:check, rust fmt/clippy/test, `git diff --check`, live PR judge) pass; exact outputs in the slice-4 delivery section below.
 
 ## Delivery, routing and risk
 
@@ -121,7 +131,7 @@ T1–T3 are delivered by the frozen slice-1 implementation commit `33bcd2dc9674b
 - [x] **T7 — Chain accounting** (`SLICE-1`): record the `feature-branch-chain` boundaries, the tracker branch and the actual checks in this document without rewriting T1–T3.
 - [x] **T4 — SLICE-2** providers/projects/conversations: TS contracts + clients, Rust DTOs, shared command-envelope fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by `83e3cee` plus the docs-only continuation commit on `feat/issue-16-ipc-catalog`; see the slice-2 delivery section below for the exact count and checks.
 - [x] **T5 — SLICE-3** runs/subagents: TS contracts + clients, Rust DTO skeletons, six shared fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by the slice-3 work-unit commit on `feat/issue-16-ipc-runs`; see the slice-3 delivery section below.
-- [ ] **T6 — SLICE-4** workspace/files/diff/hooks. Pending.
+- [x] **T6 — SLICE-4** workspace/files/diff/hooks: TS contracts + clients, Rust DTO skeletons, six shared fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by the slice-4 work-unit commit on `feat/issue-16-ipc-workspace`; see the slice-4 delivery section below.
 
 ## Chain boundaries (actual)
 
@@ -131,7 +141,7 @@ T1–T3 are delivered by the frozen slice-1 implementation commit `33bcd2dc9674b
 | Child PR 1 (slice 1) | `feat/issue-16-ipc-kernel`         | `33bcd2d` + chain-accounting commit | tracker branch                | 15 files, 978 additions, 0 deletions |
 | Child PR 2 (slice 2) | `feat/issue-16-ipc-catalog`        | `83e3cee` + continuation commit     | child PR 1 branch             | 31 files, 1577 +, 38 −               |
 | Child PR 3 (slice 3) | `feat/issue-16-ipc-runs`           | work-unit commit                    | child PR 2 branch @ `8e64eef` | 20 files, 1451 +, 25 -               |
-| Child PR 4 (slice 4) | not created                        | —                                   | child PR 3 branch             | pending                              |
+| Child PR 4 (slice 4) | `feat/issue-16-ipc-workspace`      | work-unit commit                    | child PR 3 branch @ `f69ed76` | 30 files, 1496 +, 33 −               |
 
 ## Engram mirror
 
@@ -353,6 +363,95 @@ authorization.
 the PR are set to `ready-for-review` for the Verifier. No self-approval, no
 merge, no remote-CI claim.
 
+## Slice-4 delivery (round 4, Builder round 1)
+
+**Branch / base.** `feat/issue-16-ipc-workspace`, cut from the approved slice-3
+child HEAD `f69ed7686e4e3220fac1c22305b53b4a5e8839f1` (PR #65 head), not `main`.
+The child PR targets `feat/issue-16-ipc-runs` (the immediate predecessor branch,
+PR #65's branch), never `main` or the tracker.
+
+**Historical note.** The slice-1 planning paragraph near the top of this file
+("Slice 1 is the only slice in scope here … slices 2–4 … stay pending") is the
+round-1 record and is preserved byte-for-byte. Slices 2, 3 and 4 are delivered in
+the sections below; the current status is also in the stable-slice-ID table.
+
+**What landed (contract only).**
+
+- TS contracts + clients: `src/features/projects/api/{workspace.contracts,workspace-client}.ts`
+  (`read_file`, appended to the slice-2 branch contract), `src/features/diff/api/{diff.contracts,diff-client}.ts`,
+  `src/features/files/api/{open-target.contracts,open-target-client}.ts` and
+  `src/features/hooks/api/{hook.contracts,hook-client}.ts`.
+- TS tests: `workspace.test.ts` (slice-4 cases), `diff.test.ts`,
+  `open-target.test.ts` and `hook.test.ts`.
+- Rust DTO skeletons: `src-tauri/src/features/{workspace,files,diff,hooks}/{mod,dto}.rs`,
+  wired in `src-tauri/src/features/mod.rs`. No service, command, port, adapter,
+  supervisor or `generate_handler!` entry (all #20/#21/#24).
+- Shared fixtures: six JSON files in `docs/ipc/fixtures/` (`workspace-read-file`,
+  `diff-read-workspace-diff`, `files-list-open-targets`, `files-open-in-target`,
+  `hooks-list-hooks`, `hooks-set-hook-decision`).
+- Rust contract tests: nine new tests in `src-tauri/tests/ipc_contract.rs`.
+- Docs: `docs/ipc/README.md` command catalog (6 new rows), the file/diff/open-target/hook
+  DTO tables, the authority and deferred-enforcement notes, exact wire examples
+  and the fixture index; this ODD file's S4 acceptance, T6 and chain accounting.
+
+**Feature ownership and contract decisions.**
+
+- Ownership follows the existing repository boundaries: `read_file` extends the
+  workspace client in `projects/api`; the open targets live in `files/api`; the
+  diff in `diff/api`; the hooks in `hooks/api`. Command names stay exact.
+- `read_file` resolves `FileDocumentDto | null` (the port's missing-document
+  case) and `open_in_target` resolves `null`, matching the port's `void`.
+  `list_open_targets` is parameterless because the installed-target report is
+  machine-scoped; giving it a `projectId` would be false ownership.
+- Authority anchors are explicit: `projectId` on the file read, the diff read,
+  the external open and both hook calls; `path` stays workspace-relative on the
+  two path-bearing calls. Hooks requests deliberately carry **no** `runId`: the
+  decision is project-scoped and survives the run. The DTOs are not enforcement;
+  #20/#21/#24 validate Shape / Limits / Invariants / Authority.
+- The hook status uses the closed `HookApprovalStatus` shared with
+  `ProjectDto.hookDecisions`, so the two catalogs cannot drift; no seventh
+  `RunStreamEventDto` kind is invented.
+- The `OpenTarget` enum stays the closed five-value domain vocabulary while the
+  locked `Abrir` decision offers only VS Code when installed; the restriction is
+  a product rule enforced by the menu and the core, not by shrinking the wire
+  enum (#12/#21).
+
+**RED → GREEN.** A focused deterministic RED was observed for the Rust suite by
+temporarily replacing `pub mod workspace;` with a commented declaration:
+`cargo test --test ipc_contract` failed with
+`error[E0433]: cannot find workspace in features`. The declaration was restored
+byte-for-byte and the suite passed. The TS focused suite was authored and run in
+the same pass, so no destructive RED reproduction was performed there (the same
+honesty as the carried-over slice-1/2/3 notes).
+
+| Check                                                                                                                                                                           | Result                                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                                                                                                                | lockfile up to date; no resolution change            |
+| `pnpm vitest run src/features/projects/api/workspace.test.ts src/features/diff/api/diff.test.ts src/features/files/api/open-target.test.ts src/features/hooks/api/hook.test.ts` | 4 files / 21 tests passed                            |
+| `pnpm test`                                                                                                                                                                     | 74 files / 461 tests passed                          |
+| `pnpm run typecheck`                                                                                                                                                            | clean (0 errors)                                     |
+| `pnpm run lint`                                                                                                                                                                 | clean (0 problems)                                   |
+| `pnpm run format:check`                                                                                                                                                         | all matched files use Prettier code style            |
+| `cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check`                                                                                                               | clean                                                |
+| `cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings`                                                                                                | finished with no warnings                            |
+| `cargo test --manifest-path src-tauri/Cargo.toml`                                                                                                                               | all targets green; `tests/ipc_contract.rs` 29 passed |
+| `git diff --cached --check`                                                                                                                                                     | clean (no whitespace/conflict errors)                |
+
+**Review size.** The slice-4 work unit measures **30 files, 1496 additions, 33
+deletions = 1529 changed lines** against `f69ed76` (`git show --shortstat
+HEAD`). It is one cohesive contract unit: the six fixtures, both language
+contracts, the four contract suites and the catalog docs do not compile or gate
+independently (a fixture-only or test-only slice would not typecheck), and a
+per-feature split would still leave the workspace/diff/hooks groups plus the
+shared Rust test helper over budget. The maintainer's standing authorization for
+cohesive issue #16 overages applies (issue #16 comment `6254871354`): it is a
+delivery-size decision only — not a Verifier/QA pass and not merge authorization.
+
+**State.** Child PR 4 opened against `feat/issue-16-ipc-runs`; issue #16 and the
+PR are set to `ready-for-review` for the Verifier. No self-approval, no merge, no
+remote-CI claim; PRs #63/#64/#65 stay `ready-for-human` and unmerged, tracker #62
+stays draft.
+
 ## Log
 
 - L1 (orchestrator handoff): implement `SLICE-1` only, four chained PRs, stacked-to-main, no PR/merge to `main`, no false pass.
@@ -365,3 +464,4 @@ merge, no remote-CI claim.
 - L8 (review-size gate): slice 2 measures 1615 changed lines (1577 additions, 38 deletions, 31 files). One cohesive per-feature split still leaves projects (~555) and conversations (~447) above 400, so no cohesive ≤400 slice preserves the accepted deliverable; the Builder stopped before opening an oversized PR and returned `blocked` for a maintainer `size:exception` or a re-slice. Implementation preserved locally; no PR, no push, no label change.
 - L9 (slice 2, Builder continuation): the maintainer accepted the cohesive 1615-line slice-2 overage and told the factory not to re-ask the review-size question for the remaining issue #16 slices (issue #16 comment `6254871354`). The branch was pushed and child PR 2 was opened against `feat/issue-16-ipc-kernel`; the implementation commit `83e3cee` was preserved byte-for-byte and only this ODD document changed in the round.
 - L10 (slice 3, round 3): implemented `SLICE-3` on `feat/issue-16-ipc-runs` from `8e64eef`. The run stream is the closed six-kind union; `hookReviewRequired` stays out as a #20 amendment. `start_run` omits `approvalMode` and carries `projectId` as the authority anchor; the subagent intents are defined with an open #19/#23 owner and no invented lifecycle. The run stream and subagent DTOs reuse the conversation `ToolCallDto`/`ConversationMessageDto` so one product entity has one wire shape.
+- L11 (slice 4, round 4): implemented `SLICE-4` on `feat/issue-16-ipc-workspace` from `f69ed76`. Feature ownership follows the existing boundaries (`read_file` in `projects/api` workspace, open targets in `files/api`, diff in `diff/api`, hooks in `hooks/api`). `read_file` keeps the port's nullable document and `open_in_target` the void response; `list_open_targets` is parameterless because it is machine-scoped. Hook decisions are project-scoped, so both hook requests carry `projectId` and no `runId`, with the closed `HookApprovalStatus` reused from the project catalog. The DTOs name the Shape/Limits/Authority tiers and defer enforcement to #20/#21/#24.

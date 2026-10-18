@@ -1,0 +1,12 @@
+{
+  "response": [
+    {
+      "target": "editor",
+      "isInstalled": true
+    },
+    {
+      "target": "reveal_in_file_manager",
+      "isInstalled": true
+    }
+  ]
+}

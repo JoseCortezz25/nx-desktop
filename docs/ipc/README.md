@@ -10,20 +10,20 @@ Issue #16 ships as a **Feature Branch Chain**: a draft, no-merge tracker PR on
 `feat/issue-16-ipc-kernel-tracker` (targeting `main`) integrates the slices, and
 four child PRs carry one slice each. Child PR 1 targets the tracker branch and
 each later child targets the branch of the slice before it, so no slice merges
-directly into `main`. This document is filled in by each slice; **slices 1, 2 and
-3 are implemented today.**
+directly into `main`. This document is filled in by each slice; **all four slices
+are implemented today.**
 
 | Slice | Scope                                                       | Status      |
 | ----- | ----------------------------------------------------------- | ----------- |
 | 1     | Shared kernel: error contract, typed invoke, Channel factory | implemented |
 | 2     | Providers / projects / conversations contracts and clients   | implemented |
 | 3     | Runs / subagents contracts and the run-stream union          | implemented |
-| 4     | Workspace / files / diff / hooks contracts and clients       | pending     |
+| 4     | Workspace / files / diff / hooks contracts and clients       | implemented |
 
 Slices 2–4 append their rows to the command catalog at the end of this file.
-No slice registers commands yet: they define the wire contract, the typed
-clients and the Rust DTO skeletons. Command registration and the Rust services
-belong to #17–#23.
+The four slices define the wire contract, the typed clients and the Rust DTO
+skeletons; none registers a command yet. Command registration and the Rust
+services belong to #17–#24.
 
 ## 1. Public error contract (`AppErrorDto`)
 
@@ -164,7 +164,9 @@ Fixtures live in `docs/ipc/fixtures/` and are shared by both suites. Slice 1
 fixtures are error DTOs; slice 2 fixtures are command envelopes with `request`
 (where the command is parameterized) and `response` members; slice 3 adds the
 run and subagent envelopes plus `runs-stream-events.json`, which holds one
-canonical frame per stream kind rather than a timeline.
+canonical frame per stream kind rather than a timeline; slice 4 adds the
+workspace file, workspace diff, open-target and hook envelopes. Parameterless
+commands (`list_open_targets`) have a `response` only.
 
 | Fixture                                       | Pins                                                           |
 | --------------------------------------------- | -------------------------------------------------------------- |
@@ -187,11 +189,17 @@ canonical frame per stream kind rather than a timeline.
 | `runs-stream-events.json`                     | one canonical frame per each of the six `RunStreamEventDto` kinds |
 | `subagents-list-subagents.json`               | `{ runId }` → `SubagentDto[]`                                  |
 | `subagents-cancel-subagent.json`              | `{ runId, subagentId }` → stopped `SubagentDto`               |
+| `workspace-read-file.json`                    | `{ projectId, path }` → `FileDocumentDto \| null`             |
+| `diff-read-workspace-diff.json`               | `{ projectId }` → `DiffFileDto[]` with `context`/`added`/`removed` lines |
+| `files-list-open-targets.json`                | no request → `OpenTargetAvailabilityDto[]`                    |
+| `files-open-in-target.json`                   | `{ projectId, target, path }` → `null`                         |
+| `hooks-list-hooks.json`                       | `{ projectId }` → `HookDto[]` with the closed approval statuses |
+| `hooks-set-hook-decision.json`                | `{ projectId, hookId, approvalStatus }` → updated `HookDto`    |
 
 - TypeScript: `src/shared/ipc/contracts.test.ts` and `src/shared/ipc/client.test.ts`
-  (`pnpm test`), plus one `src/features/<feature>/api/*.test.ts` per slice-2
-  feature. Each compares the fixture against a typed literal and stubs
-  `ipcInvoke` to pin the command name and envelope.
+  (`pnpm test`), plus one `src/features/<feature>/api/*.test.ts` per slice-2,
+  slice-3 and slice-4 feature. Each compares the fixture against a typed literal
+  and stubs `ipcInvoke` to pin the command name and envelope.
 - Rust: `src-tauri/tests/ipc_contract.rs` (`cargo test`), which serializes and
   deserializes each fixture through its DTO and rejects unknown request fields.
 
@@ -219,11 +227,17 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 | `get_run`                   | `{ runId }`                        | `RunDto`             | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the authority token               | #19    |
 | `list_subagents`            | `{ runId }`                        | `SubagentDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the parent run context            | #19/#23 (open) |
 | `cancel_subagent`           | `{ runId, subagentId }`            | `SubagentDto`        | `validation_failed`, `permission_denied`, `internal_error`    | `runId` + `subagentId` both authority-bearing | #19/#23 (open) |
+| `read_file`                 | `{ projectId, path }`              | `FileDocumentDto \| null` | `validation_failed`, `permission_denied`, `internal_error` | `projectId` + canonicalized roots; `path` workspace-relative | #21 |
+| `read_workspace_diff`       | `{ projectId }`                    | `DiffFileDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + canonicalized workspace roots   | #21 |
+| `list_open_targets`         | —                                  | `OpenTargetAvailabilityDto[]` | `internal_error`                                     | machine-scoped report; no project authority   | #21 (with #12) |
+| `open_in_target`            | `{ projectId, target, path }`      | `null`               | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + workspace path; allowlisted target | #21 (with #12) |
+| `list_hooks`                | `{ projectId }`                    | `HookDto[]`          | `permission_denied`, `internal_error`                         | `projectId` owns the hook decisions           | #20 |
+| `set_hook_decision`         | `{ projectId, hookId, approvalStatus }` | `HookDto`       | `validation_failed`, `permission_denied`, `internal_error`    | `projectId` + `hookId`; decision is project-scoped | #20 |
 
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
-Slices 2–3 define the contract only — the rows above register no command until
-#17–#23 implement the services and `generate_handler!`.
+Slices 2–4 define the contract only — the rows above register no command until
+#17–#24 implement the services and `generate_handler!`.
 
 ## 5. Feature catalogs (slice 2)
 
@@ -470,7 +484,160 @@ These are excerpts of the byte-exact fixtures; both suites consume the files.
 }
 ```
 
-## 7. Adding a command (slice 4)
+## 7. Feature catalogs (slice 4)
+
+Workspace reads, open targets and hooks are contract-only here. Path authority,
+filesystem reads, process launches and hook approval enforcement belong to
+#20/#21/#24; this section pins the wire shapes and names the enforcing ticket so
+the DTO is never mistaken for enforcement.
+
+### `read_file` and `FileDocumentDto`
+
+| Field       | Type     | Meaning                                                        |
+| ----------- | -------- | -------------------------------------------------------------- |
+| `projectId` | `string` | Authority anchor: resolves the project's authorized roots.     |
+| `path`      | `string` | Workspace-relative path, the same form a `FileChip` emits.     |
+| `content`   | `string` | Full file body; never a provider payload or a secret.          |
+
+`read_file` sends `{ request: { projectId, path } }` and resolves
+`FileDocumentDto | null`. `null` means the path holds no document, matching the
+existing `FileRepository.readDocument`; it is never empty content. Rust must
+canonicalize the project roots and reject `..`, symlink escapes and absolute
+paths outside the workspace before reading
+(`.claude/knowledge/business-logic.md` §3.3). The DTO carries intent only; #21
+implements the path policy and the read.
+
+### `read_workspace_diff` and `DiffFileDto`
+
+| Field          | Type             | Meaning                                              |
+| -------------- | ---------------- | ---------------------------------------------------- |
+| `path`         | `string`         | Changed file path, workspace-relative.               |
+| `addedCount`   | `number`         | Repository's own added-line count; never recomputed.  |
+| `removedCount` | `number`         | Repository's own removed-line count.                  |
+| `hunks`        | `DiffHunkDto[]`  | Unified hunks, in the order the panel draws them.     |
+| `header`       | `string`         | Hunk header, e.g. `@@ -12,7 +12,9 @@`.               |
+| `lines`        | `DiffLineDto[]`  | `{ kind, content }`, `kind` closed to `context`, `added`, `removed`. |
+
+`read_workspace_diff` sends `{ projectId }` and resolves `DiffFileDto[]`. A clean
+workspace is `[]`, never `null`. The view is **unified only**; `split` is
+deferred (`.claude/knowledge/business-logic.md` §3.5 item 1, #13). The panel
+never runs `git diff` itself; #21 owns the inspection and validates `projectId`
+against the canonicalized roots.
+
+### `list_open_targets` and `open_in_target`
+
+| Field         | Type           | Meaning                                                     |
+| ------------- | -------------- | ----------------------------------------------------------- |
+| `target`      | `OpenTarget`   | Closed to `editor`, `view_source`, `search_in_file`, `reveal_in_file_manager`, `copy_path`. |
+| `isInstalled` | `boolean`      | Whether the machine reports the target as installed.        |
+| `projectId`   | `string`       | Authority anchor for the file being opened.                 |
+| `path`        | `string`       | Workspace-relative file path.                               |
+
+`list_open_targets` is **parameterless** and resolves
+`OpenTargetAvailabilityDto[]`: the installed-target report is machine-scoped, so
+inventing a `projectId` there would be false ownership. `open_in_target` sends
+`{ projectId, target, path }` and resolves `null` (the port resolves `void`).
+
+The locked `Abrir` decision offers **only VS Code**, and only while it is
+installed (`.claude/knowledge/business-logic.md` §3.5 item 3). That is a product
+rule, not a smaller wire enum: the closed `OpenTarget` vocabulary still lists the
+other domain destinations, while the menu and the Rust core restrict what may be
+launched. #21 (with #12) must validate the target allowlist, the project roots
+and the workspace-relative path before spawning anything; the DTO carries no
+client-supplied approval flag and performs no launch.
+
+### `HookDto`, `list_hooks` and `set_hook_decision`
+
+| Field            | Type                 | Meaning                                                    |
+| ---------------- | -------------------- | ---------------------------------------------------------- |
+| `id`             | `string`             | `HookId`.                                                  |
+| `name`           | `string`             | Display name.                                              |
+| `isNew`          | `boolean`            | Drives the `Nuevo` badge.                                  |
+| `origin`         | `string`             | Provider-reported origin (project, user, plugin, ...).     |
+| `hookType`       | `string`             | Provider-reported trigger, e.g. `PreToolUse`.              |
+| `command`        | `string`             | Command the hook would run; rendered, never executed by the UI. |
+| `timeoutMs`      | `number`             | Provider-reported timeout.                                 |
+| `approvalStatus` | `HookApprovalStatus` | Closed to `pending`, `approved`, `rejected`.               |
+
+`list_hooks` sends `{ projectId }` and resolves `HookDto[]`.
+`set_hook_decision` sends `{ projectId, hookId, approvalStatus }` and resolves
+the updated `HookDto`.
+
+The decision is **project-scoped**, not run-scoped
+(`.claude/knowledge/business-logic.md` §2 `Hook`, decision 2026-10-16): declining
+a hook (`Ahora no`) is remembered per `Project`, so the next run in that project
+does not re-prompt for it. Both requests therefore carry `projectId`, neither
+carries `runId`, and the status set is the same closed `HookApprovalStatus` the
+project catalog uses in `ProjectDto.hookDecisions`. #20 validates that `hookId`
+belongs to the project and enforces the approval policy in the Rust core; the
+modal's selection scope (`selection` or `all`) is UI intent and never a wire
+field.
+
+### Deferred enforcement
+
+| Command               | Shape            | Limits                              | Authority                                        | Owner |
+| --------------------- | ---------------- | ----------------------------------- | ------------------------------------------------ | ----- |
+| `read_file`           | Serde DTO        | path/content bounds                 | canonicalized project roots, no traversal/symlink escape | #21 |
+| `read_workspace_diff` | Serde DTO        | change-set bounds                   | canonicalized project roots                      | #21 |
+| `list_open_targets`   | Serde DTO        | probe timeout                       | machine-scoped probe only                        | #21 |
+| `open_in_target`      | Serde DTO        | path bounds, launch timeout         | roots + target allowlist, no shell string        | #21/#12 |
+| `list_hooks`          | Serde DTO        | collection bounds                   | `projectId` owns the decision record             | #20 |
+| `set_hook_decision`   | Serde DTO        | non-empty ids, closed status        | `projectId` + `hookId`; approval policy          | #20 |
+
+Wire shapes are `camelCase`; the Rust structs keep `snake_case` fields. Every
+slice-4 request uses `deny_unknown_fields`, and the closed `DiffLineKind`,
+`OpenTarget` and `HookApprovalStatus` sets serialize with `snake_case` values
+that match the TypeScript domain unions.
+
+### Exact wire examples
+
+These are excerpts of the byte-exact fixtures; both suites consume the files.
+
+`workspace-read-file.json` (request)
+
+```json
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "path": "docs/research-tecnico/arquitectura-tauri.md"
+  }
+}
+```
+
+`diff-read-workspace-diff.json` (one line of the response)
+
+```json
+{
+  "kind": "removed",
+  "content": "  const [name, setName] = useState(\"\");"
+}
+```
+
+`files-open-in-target.json` (request)
+
+```json
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "target": "editor",
+    "path": "src/App.tsx"
+  }
+}
+```
+
+`hooks-set-hook-decision.json` (request)
+
+```json
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "hookId": "hook-lint-on-write",
+    "approvalStatus": "rejected"
+  }
+}
+```
+
+## 8. Adding a command
 
 1. Define the `camelCase` request/response DTO and its fixture in
    `docs/ipc/fixtures/`.
