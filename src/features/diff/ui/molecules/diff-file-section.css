@@ -1,0 +1,57 @@
+/* One collapsible changed file (`docs/wireframes/18-chat-with-diff.html`,
+   `.filesec` and `.filehead`). The section never carries an outer margin; the
+   `DiffView` list places it. */
+.diff-file-section {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.diff-file-section__header {
+  display: flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--color-bg);
+}
+
+/* The disclosure stretches across the header so the whole row is the target, and
+   the counts stay pinned to its end. */
+.diff-file-section__header > .button {
+  flex: 1;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.diff-file-section__path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diff-file-section__counts {
+  margin-left: auto;
+  display: inline-flex;
+  flex: none;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.diff-file-section__added {
+  color: var(--color-added);
+}
+
+.diff-file-section__removed {
+  color: var(--color-removed);
+}
+
+/* A collapsed section points its chevron at the text instead of down, and keeps
+   its header free of the body's separator. */
+.diff-file-section--collapsed .diff-file-section__header .icon {
+  transform: rotate(-90deg);
+}
+
+.diff-file-section__hunks {
+  padding-bottom: 4px;
+}
