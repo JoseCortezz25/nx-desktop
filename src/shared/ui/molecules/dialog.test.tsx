@@ -33,6 +33,30 @@ describe('dialog molecule', () => {
     expect(markup).toContain('>Body<');
   });
 
+  it('keeps the compact surface by default and widens only on request', () => {
+    const compact = renderToStaticMarkup(
+      <Dialog title="T" closeLabel="Cerrar" onClose={() => undefined}>
+        <p>Body</p>
+      </Dialog>
+    );
+    const wide = renderToStaticMarkup(
+      <Dialog
+        title="T"
+        closeLabel="Cerrar"
+        onClose={() => undefined}
+        size="wide"
+      >
+        <p>Body</p>
+      </Dialog>
+    );
+
+    // Screens 05/06 keep the 572px surface; the review dialogs of 14/15 ask for
+    // the wider one so the note and its three actions share a line.
+    expect(compact).toContain('class="dialog"');
+    expect(compact).not.toContain('dialog--wide');
+    expect(wide).toContain('class="dialog dialog--wide"');
+  });
+
   it('carries a labelled close control', () => {
     const markup = renderToStaticMarkup(
       <Dialog

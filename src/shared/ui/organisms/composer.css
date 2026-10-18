@@ -70,3 +70,20 @@
   right: auto;
   left: 0;
 }
+
+.composer__hooks {
+  position: relative;
+  display: inline-flex;
+}
+
+.composer__hooks-dot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  /* Screen 14's amber new-hooks marker is distinct from approval warning orange. */
+  background: #f5b82e;
+  pointer-events: none;
+}

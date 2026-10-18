@@ -13,10 +13,12 @@
  * the missing "clear the open conversation" path, and `revealFileInPanel` makes
  * region visibility respond to a request instead of leaving the panel hidden.
  */
+import { toggleHookId } from '@/features/hooks/model/hook-review';
 import { INITIAL_OPEN_FILE_REQUEST } from '@/features/files/model/open-file-request';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import type {
   ConversationId,
+  HookId,
   SubagentId
 } from '@/shared/domain/value-objects.types';
 import {
@@ -28,6 +30,10 @@ import {
 } from '@/shared/ui/layout/region-visibility';
 
 export interface ShellState {
+  readonly hookReview: {
+    readonly isOpen: boolean;
+    readonly selectedHookIds: ReadonlySet<HookId>;
+  };
   /** The conversation the main pane shows, or `null` for the home view. */
   readonly activeConversationId: ConversationId | null;
   /** The regions the rail's toggles open and close. */
@@ -55,9 +61,32 @@ export const INITIAL_SHELL_STATE: ShellState = {
   visibility: INITIAL_REGION_VISIBILITY,
   openFileRequest: INITIAL_OPEN_FILE_REQUEST,
   openChangesRequestCount: 0,
+  hookReview: { isOpen: false, selectedHookIds: new Set() },
   openSubagentsRequestCount: 0,
   openSubagentsRequestSubagentId: null
 };
+
+/** A fresh review never reuses an earlier ephemeral selection. */
+export function openHookReview(state: ShellState): ShellState {
+  return { ...state, hookReview: { isOpen: true, selectedHookIds: new Set() } };
+}
+
+export function closeHookReview(state: ShellState): ShellState {
+  return { ...state, hookReview: { ...state.hookReview, isOpen: false } };
+}
+
+export function toggleShellHookSelection(
+  state: ShellState,
+  hookId: HookId
+): ShellState {
+  return {
+    ...state,
+    hookReview: {
+      ...state.hookReview,
+      selectedHookIds: toggleHookId(state.hookReview.selectedHookIds, hookId)
+    }
+  };
+}
 
 /** Selects a conversation; the main pane switches from home to that thread. */
 export function openConversation(

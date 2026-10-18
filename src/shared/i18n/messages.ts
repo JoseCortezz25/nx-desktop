@@ -75,6 +75,12 @@ export const sharedMessages = {
   // `07-model-selector.html`, `08-effort-selector.html`); provider, model and
   // effort *names* are runtime data and are interpolated, never hardcoded.
   composer: {
+    hooks: {
+      triggerLabel: (newHookCount: number) =>
+        newHookCount > 0
+          ? `Revisar hooks: ${newHookCount} nuevos`
+          : 'Revisar hooks'
+    },
     promptLabel: 'Mensaje',
     addLabel: 'Añadir',
     sendLabel: 'Enviar',

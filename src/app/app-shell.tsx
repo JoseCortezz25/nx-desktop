@@ -1,4 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useHookReview } from '@/features/hooks/hooks/use-hook-review';
+import { countNewHooks } from '@/features/hooks/model/hook-review';
+import { HookReviewDialog } from '@/features/hooks/ui/organisms/hook-review-dialog';
+import type { HookApprovalStatus } from '@/shared/domain/hook.types';
+import type { HookId } from '@/shared/domain/value-objects.types';
 import { useConversationCatalog } from '@/features/conversations/hooks/use-conversation-catalog';
 import { useComposerSelection } from '@/features/providers/hooks/use-composer-selection';
 import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
@@ -32,6 +37,9 @@ import {
 } from '@/shared/ui/layout/region-visibility';
 import {
   INITIAL_SHELL_STATE,
+  openHookReview,
+  closeHookReview,
+  toggleShellHookSelection,
   navigateHome,
   openConversation,
   revealFileInPanel,
@@ -111,6 +119,7 @@ export function AppShell() {
    */
   const [createProjectDraft, setCreateProjectDraft] =
     useState<CreateProjectDraft | null>(null);
+  const { hooks } = useHookReview();
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
@@ -150,6 +159,8 @@ export function AppShell() {
   // the main pane re-slots it under the conversation.
   const composer = (
     <Composer
+      newHookCount={countNewHooks(hooks ?? [])}
+      onOpenHookReview={handleOpenHookReview}
       providers={providers}
       selection={resolved}
       onSelectProvider={selectProvider}
@@ -193,6 +204,29 @@ export function AppShell() {
 
   function handleRequestOpenChanges() {
     setShell(revealChangesInPanel(shell));
+  }
+
+  function handleOpenHookReview() {
+    setShell(openHookReview);
+  }
+
+  function handleCloseHookReview() {
+    setShell(closeHookReview);
+  }
+
+  function handleToggleHookSelection(hookId: HookId) {
+    setShell(current => toggleShellHookSelection(current, hookId));
+  }
+
+  function handleDecideHookReview(
+    status: HookApprovalStatus,
+    scope: 'selection' | 'all'
+  ) {
+    // Project-scoped HookDecision persistence belongs to #19/#23, not this UI, so
+    // the decision is reported and the dialog closes; nothing is written.
+    void status;
+    void scope;
+    setShell(closeHookReview);
   }
 
   function handleRequestOpenSubagent(subagentId: SubagentId) {
@@ -291,6 +325,15 @@ export function AppShell() {
         the modal must cover every region — rail, sidebar and panel included. It
         draws nothing while no draft is in progress.
       */}
+      {shell.hookReview.isOpen ? (
+        <HookReviewDialog
+          hooks={hooks ?? []}
+          selectedHookIds={shell.hookReview.selectedHookIds}
+          onToggleSelection={handleToggleHookSelection}
+          onDecide={handleDecideHookReview}
+          onClose={handleCloseHookReview}
+        />
+      ) : null}
       <CreateProjectDialog
         draft={createProjectDraft}
         onDraftChange={handleCreateProjectDraftChange}

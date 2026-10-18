@@ -39,6 +39,7 @@ const capture = vi.hoisted(() => ({
     visibility: { sidebar: true, rightPanel: false },
     openFileRequest: null as OpenFileRequest | null,
     openChangesRequestCount: 0,
+    hookReview: { isOpen: false, selectedHookIds: new Set<string>() },
     openSubagentsRequestCount: 0,
     openSubagentsRequestSubagentId: null as string | null
   }

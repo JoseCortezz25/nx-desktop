@@ -1,0 +1,40 @@
+.hook-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 14px;
+}
+
+.hook-row > .button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  text-align: start;
+}
+
+.hook-row__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.hook-row__badge {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-added-soft);
+  color: var(--color-added);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hook-row__chevron {
+  display: flex;
+  margin-inline-start: auto;
+  color: var(--color-muted);
+}
+
+.hook-row--expanded .hook-row__chevron {
+  transform: rotate(180deg);
+}
