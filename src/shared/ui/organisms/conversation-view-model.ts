@@ -35,6 +35,7 @@ export interface ToolActivityRowView {
   readonly id: ToolCallId;
   readonly icon: IconName;
   readonly summary: string;
+  readonly opensChanges: boolean;
 }
 
 /** The collapsible tool-activity group of one message, keyed by the message. */
@@ -67,7 +68,8 @@ export interface ConversationViewModel {
 const TOOL_CALL_ICONS: Readonly<Record<ToolCallKind, IconName>> = {
   search: 'search',
   command: 'terminal',
-  list_files: 'folder'
+  list_files: 'folder',
+  diff: 'git-branch'
 };
 
 /**
@@ -131,7 +133,8 @@ function toMessageView(message: ConversationMessage): ConversationMessageView {
             rows: message.toolCalls.map(call => ({
               id: call.id,
               icon: TOOL_CALL_ICONS[call.kind],
-              summary: call.summary
+              summary: call.summary,
+              opensChanges: call.kind === 'diff'
             }))
           }
         : null,

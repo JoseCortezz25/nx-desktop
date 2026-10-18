@@ -191,7 +191,8 @@ export const sharedMessages = {
       count: (total: number) =>
         `${total} ${total === 1 ? 'acción' : 'acciones'}`,
       expandLabel: 'Expandir actividad de herramientas',
-      collapseLabel: 'Contraer actividad de herramientas'
+      collapseLabel: 'Contraer actividad de herramientas',
+      openChangesLabel: 'Abrir los cambios en el panel derecho'
     },
     fileChip: {
       openLabel: (path: string) => `Abrir ${path}`
@@ -202,6 +203,33 @@ export const sharedMessages = {
       shareLabel: 'Compartir mensaje',
       timestampLabel: (time: string) => `Enviado a las ${time}`,
       editLabel: 'Editar mensaje'
+    }
+  },
+  // Right panel diff view (#13): the per-file sections, their hunk tables and the
+  // panel tab that opens them (`docs/wireframes/18-chat-with-diff.html`). File
+  // paths and the numbers themselves are runtime data; `+` / `-` are diff
+  // notation, not copy. The wireframe's `Vista dividida` / `Vista unificada`
+  // toggle has no copy here because `split` is deferred
+  // (`.claude/knowledge/business-logic.md` §3.5 item 1).
+  diff: {
+    panelTabLabel: 'Cambios',
+    listLabel: 'Cambios del espacio de trabajo',
+    loadingLabel: 'Cargando los cambios…',
+    emptyLabel: 'No hay cambios en este espacio de trabajo',
+    summary: {
+      fileCount: (total: number) =>
+        `${total} ${total === 1 ? 'archivo cambiado' : 'archivos cambiados'}`,
+      addedLabel: (total: number) => `${total} líneas añadidas`,
+      removedLabel: (total: number) => `${total} líneas eliminadas`
+    },
+    section: {
+      expandLabel: (path: string) => `Expandir ${path}`,
+      collapseLabel: (path: string) => `Contraer ${path}`,
+      countsLabel: (added: number, removed: number) =>
+        `${added} líneas añadidas, ${removed} líneas eliminadas`
+    },
+    hunk: {
+      tableLabel: (path: string) => `Diferencias de ${path}`
     }
   },
   // Right panel file viewer (#12): its tab strip, the breadcrumb toolbar and the

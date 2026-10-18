@@ -31,6 +31,12 @@ export interface ShellState {
   readonly visibility: RegionVisibility;
   /** The file the right panel was last asked to show, owned once by the shell. */
   readonly openFileRequest: OpenFileRequest | null;
+  /**
+   * How many times the change set has been asked for (#13). A counter rather than
+   * a value: the panel only needs to notice that a *new* request arrived, so two
+   * presses in a row still focus the same `Cambios` tab.
+   */
+  readonly openChangesRequestCount: number;
 }
 
 /**
@@ -41,7 +47,8 @@ export interface ShellState {
 export const INITIAL_SHELL_STATE: ShellState = {
   activeConversationId: null,
   visibility: INITIAL_REGION_VISIBILITY,
-  openFileRequest: INITIAL_OPEN_FILE_REQUEST
+  openFileRequest: INITIAL_OPEN_FILE_REQUEST,
+  openChangesRequestCount: 0
 };
 
 /** Selects a conversation; the main pane switches from home to that thread. */
@@ -87,5 +94,14 @@ export function revealFileInPanel(
     ...state,
     visibility: showRegion(state.visibility, 'rightPanel'),
     openFileRequest: request
+  };
+}
+
+/** A diff tool row's request: reveals the panel and records one more ask (#13). */
+export function revealChangesInPanel(state: ShellState): ShellState {
+  return {
+    ...state,
+    visibility: showRegion(state.visibility, 'rightPanel'),
+    openChangesRequestCount: state.openChangesRequestCount + 1
   };
 }

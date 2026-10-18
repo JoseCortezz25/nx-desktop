@@ -9,6 +9,8 @@ export interface ToolActivityRowItem {
   readonly id: string;
   readonly icon: IconName;
   readonly summary: string;
+  /** Whether pressing the row opens the workspace change set (#13). */
+  readonly opensChanges: boolean;
 }
 
 export interface ToolActivityGroupProps {
@@ -22,6 +24,8 @@ export interface ToolActivityGroupProps {
   readonly rows: readonly ToolActivityRowItem[];
   /** Reports the press up; the group's owner flips the expanded/collapsed state. */
   readonly onToggle: () => void;
+  /** Opens the change set in the right panel; only the `diff` rows use it (#13). */
+  readonly onOpenChanges?: () => void;
 }
 
 /**
@@ -38,7 +42,8 @@ export function ToolActivityGroup({
   collapseLabel,
   isExpanded,
   rows,
-  onToggle
+  onToggle,
+  onOpenChanges
 }: ToolActivityGroupProps) {
   return (
     <div className="tool-activity-group">
@@ -59,6 +64,7 @@ export function ToolActivityGroup({
               key={row.id}
               icon={row.icon}
               summary={row.summary}
+              onPress={row.opensChanges ? onOpenChanges : undefined}
             />
           ))}
         </div>
