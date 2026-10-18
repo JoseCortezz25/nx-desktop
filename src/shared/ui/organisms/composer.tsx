@@ -38,6 +38,7 @@ import { ContextBar } from '../molecules/context-bar';
 import { EffortSlider } from '../molecules/effort-slider';
 import { EnvironmentPanel } from '../molecules/environment-panel';
 import { Popover } from '../molecules/popover';
+import { IconButton } from '../molecules/icon-button';
 import { ProjectPicker } from '../molecules/project-picker';
 import { SelectList, type SelectOption } from '../molecules/select-list';
 import { SelectTrigger } from '../molecules/select-trigger';
@@ -53,6 +54,8 @@ type OpenSelector =
   'provider' | 'model' | 'effort' | 'approval' | 'project' | 'environment';
 
 export interface ComposerProps {
+  readonly newHookCount?: number;
+  readonly onOpenHookReview?: () => void;
   /**
    * The provider catalog the selectors read, resolved by the shell root through
    * the typed provider port. Empty while the catalog loads, which leaves the
@@ -124,6 +127,8 @@ export interface ComposerProps {
  * needing an effect.
  */
 export function Composer({
+  newHookCount = 0,
+  onOpenHookReview,
   providers,
   selection,
   onSelectProvider,
@@ -377,20 +382,36 @@ export function Composer({
         />
         <ComposerBar
           leadingControls={
-            approvalMode && approvalCopy ? (
-              <SelectTrigger
-                label={messages.composer.approval.triggerLabel(
-                  approvalCopy.label
-                )}
-                value={approvalCopy.label}
-                icon={getApprovalModeIcon(approvalMode)}
-                tone={
-                  isUnrestrictedApprovalMode(approvalMode) ? 'warn' : undefined
-                }
-                isExpanded={openSelector === 'approval'}
-                onPress={() => handleToggle('approval')}
-              />
-            ) : null
+            <>
+              {approvalMode && approvalCopy ? (
+                <SelectTrigger
+                  label={messages.composer.approval.triggerLabel(
+                    approvalCopy.label
+                  )}
+                  value={approvalCopy.label}
+                  icon={getApprovalModeIcon(approvalMode)}
+                  tone={
+                    isUnrestrictedApprovalMode(approvalMode)
+                      ? 'warn'
+                      : undefined
+                  }
+                  isExpanded={openSelector === 'approval'}
+                  onPress={() => handleToggle('approval')}
+                />
+              ) : null}
+              {onOpenHookReview ? (
+                <span className="composer__hooks">
+                  <IconButton
+                    icon="hook"
+                    label={messages.composer.hooks.triggerLabel(newHookCount)}
+                    onPress={onOpenHookReview}
+                  />
+                  {newHookCount > 0 ? (
+                    <span className="composer__hooks-dot" aria-hidden="true" />
+                  ) : null}
+                </span>
+              ) : null}
+            </>
           }
           controls={
             <>

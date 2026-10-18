@@ -35,7 +35,8 @@ const capture = vi.hoisted(() => ({
     activeConversationId: 'conv-composer-chain' as string | null,
     visibility: { sidebar: true, rightPanel: false },
     openFileRequest: null as OpenFileRequest | null,
-    openChangesRequestCount: 0
+    openChangesRequestCount: 0,
+    hookReview: { isOpen: false, selectedHookIds: new Set<string>() }
   }
 }));
 

@@ -19,6 +19,7 @@ export const ICON_NAMES = [
   'check',
   'provider',
   'bolt',
+  'hook',
   // Composer context surfaces (#8): the approval levels, the project picker and
   // the environment popover (`docs/wireframes/10-approval-mode.html`,
   // `04-project-picker.html`, `09-local-environment.html`).
@@ -74,6 +75,13 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
     <>
       <rect x="3" y="4" width="18" height="16" rx="2" />
       <path d="M15 4v16" />
+    </>
+  ),
+  hook: (
+    <>
+      <circle cx="12" cy="5" r="3" />
+      <path d="M12 22V8" />
+      <path d="M5 12H2a10 10 0 0 0 20 0h-3" />
     </>
   ),
   minus: <path d="M5 12h14" />,
