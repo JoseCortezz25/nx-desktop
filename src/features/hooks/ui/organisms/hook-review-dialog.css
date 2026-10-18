@@ -1,0 +1,46 @@
+.hook-review-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hook-review-dialog__list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  max-height: min(55vh, 460px);
+  overflow-y: auto;
+}
+
+.hook-review-dialog__item {
+  flex: none;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-panel);
+  overflow: hidden;
+}
+
+.hook-review-dialog__item:hover {
+  background: var(--color-bg);
+}
+
+.hook-review-dialog__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.hook-review-dialog__note {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.hook-review-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
