@@ -76,3 +76,11 @@ Known limitations (reported honestly): the folder source is a typed deterministi
 ## Delivery record
 
 Forecast was ~350–450 authored lines; the observed change is **1,688 insertions / 20 deletions across 27 files in 4 commits** (task record `d904f78`, T1 `82ab409` = 19 files, T2 `afad94f` = 7 files, browser-fix `9fb1e0d`), well above the repository's advisory ~400-line threshold. The envelope-approved single-PR strategy was kept (see the recorded risk above); the oversized diff is carried as a handoff risk rather than silently split. Next step: independent Verifier, then independent visual+functional QA.
+
+## Correction — 2026-10-17
+
+Independent Verifier Round 1 found that the shared `Dialog` had Escape handling but no Tab/Shift+Tab containment, and that its cleanup inverted the normal focus-restoration condition. The correction keeps the shared molecule controlled and mount-only: it captures the opening focus target during render (before React can detach a transient picker action), moves initial focus once into the modal, wraps Tab in its live focusable set, prevents Escape's browser default, and restores focus only when close did not deliberately move it elsewhere. When the transient picker action has unmounted, the still-mounted expanded composer trigger is used as the generic fallback. No focus effect reruns while the project name is typed.
+
+The Vitest environment is explicitly `node`, so it cannot mount React or exercise document focus. The focused static contract test remains runnable; mounted keyboard behavior is exercised through the Vite browser flow before handoff. The earlier detached Verifier worktree reported format failure because it lacked declared dependencies; this installed Builder worktree must re-run `pnpm run format:check` after the correction and use that local result.
+
+Browser evidence on the corrected branch (Vite at `127.0.0.1:1421`, 900×700): through the actual composer project chip → picker `Nuevo proyecto` → dialog route, forward Tab from `Crear proyecto` wrapped to `Cerrar`; Shift+Tab from `Cerrar` wrapped to `Crear proyecto`; typing `Keyboard project` left focus on `Nombre del proyecto`; Escape closed the dialog and restored focus to `Proyecto: Design system`. This is mounted browser evidence, not an assertion from the node-only test runner.

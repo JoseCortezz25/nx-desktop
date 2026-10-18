@@ -6,8 +6,9 @@ import { Dialog } from './dialog';
  * The shared modal surface (`docs/wireframes/README.md`, "Reusable components":
  * `Dialog` — "Title, close, body, footer actions"; screens 05/06/14/15).
  *
- * The behavioural half — Escape, backdrop press, initial focus — is a document
- * synchronization the node runner cannot exercise; the browser pass covers it.
+ * The behavioural half — Escape, Tab containment, backdrop press and focus
+ * restoration — is document synchronization the node runner cannot exercise;
+ * the browser pass covers it against the mounted composer flow.
  * What is asserted here is the contract every caller depends on: an accessible
  * modal named by its title with a labelled close control, drawing the body it is
  * handed and no copy of its own.
@@ -26,6 +27,7 @@ describe('dialog molecule', () => {
 
     expect(markup).toContain('role="dialog"');
     expect(markup).toContain('aria-modal="true"');
+    expect(markup).toContain('tabindex="-1"');
     expect(markup).toContain('aria-label="Crear proyecto"');
     expect(markup).toContain('>Crear proyecto<');
     expect(markup).toContain('>Body<');
