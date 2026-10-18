@@ -82,6 +82,13 @@ export interface ComposerProps {
   /** Hands the chosen project id up; the shell writes the selection. */
   readonly onSelectProject: (projectId: ProjectId) => void;
   /**
+   * Opens the create-project dialog (#9). The picker's `Nuevo proyecto` row
+   * reports it; the *shell* owns the dialog and the catalog it creates into, so
+   * the composer only forwards the intent (and closes its popover). Omitted when
+   * the surface has no dialog to open.
+   */
+  readonly onCreateProject?: () => void;
+  /**
    * Hands the chosen approval level up. The shell persists it through the
    * project port — the composer never keeps a copy of the policy.
    */
@@ -126,6 +133,7 @@ export function Composer({
   activeProject,
   branches,
   onSelectProject,
+  onCreateProject,
   onChangeApprovalMode,
   draft,
   onDraftChange,
@@ -289,6 +297,13 @@ export function Composer({
     setOpenSelector(null);
   }
 
+  function handleCreateProjectPress() {
+    // One dismissal path: opening the dialog closes the popover that opened it,
+    // so the modal never sits on top of its own trigger.
+    setOpenSelector(null);
+    onCreateProject?.();
+  }
+
   function handleWorktreeToggle() {
     setDesiredEnvironment(current =>
       changeWorktreeFlag(current, !current.useNewWorktree)
@@ -325,6 +340,9 @@ export function Composer({
                 projects={projects}
                 selectedId={activeProject?.id ?? null}
                 onSelect={handleProjectSelect}
+                onCreateProject={
+                  onCreateProject ? handleCreateProjectPress : undefined
+                }
               />
             </Popover>
           </div>

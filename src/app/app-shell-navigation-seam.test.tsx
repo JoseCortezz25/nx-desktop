@@ -138,7 +138,8 @@ vi.mock('@/features/projects/hooks/use-project-catalog', () => ({
     projects: harness.projects,
     activeProject: null,
     selectProject: () => undefined,
-    changeApprovalMode: () => undefined
+    changeApprovalMode: () => undefined,
+    createProject: () => undefined
   })
 }));
 
