@@ -1,0 +1,11 @@
+{
+  "request": {
+    "runId": "run-7f2a9c10"
+  },
+  "response": {
+    "runId": "run-7f2a9c10",
+    "conversationId": "conv-composer-chain",
+    "projectId": "proj-design-system",
+    "status": "cancelled"
+  }
+}

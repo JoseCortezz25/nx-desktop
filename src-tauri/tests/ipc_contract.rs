@@ -16,6 +16,13 @@ use nx_desktop_lib::features::projects::dto::{
     ListWorkspaceBranchesRequestDto, ProjectDto, SetProjectApprovalModeRequestDto,
 };
 use nx_desktop_lib::features::providers::dto::{ListModelsRequestDto, ModelDto, ProviderDto};
+use nx_desktop_lib::features::runs::dto::{
+    CancelRunRequestDto, GetRunRequestDto, RunDto, RunStatusDto, RunStreamEventDto,
+    StartRunRequestDto,
+};
+use nx_desktop_lib::features::subagents::dto::{
+    CancelSubagentRequestDto, ListSubagentsRequestDto, SubagentDto, SubagentStatusDto,
+};
 use nx_desktop_lib::ipc::error::{AppErrorCode, AppErrorDto};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -329,4 +336,244 @@ fn authority_bearing_requests_carry_the_project_id() {
         conversation["request"]["projectId"].is_string(),
         "create_conversation must carry projectId for the Authority tier"
     );
+}
+
+#[test]
+fn slice_three_requests_round_trip_through_their_dtos() {
+    assert_round_trip::<StartRunRequestDto>(
+        "runs-start-run.json",
+        fixture!("runs-start-run.json")["request"].clone(),
+    );
+    assert_round_trip::<CancelRunRequestDto>(
+        "runs-cancel-run.json",
+        fixture!("runs-cancel-run.json")["request"].clone(),
+    );
+    assert_round_trip::<GetRunRequestDto>(
+        "runs-get-run.json",
+        fixture!("runs-get-run.json")["request"].clone(),
+    );
+    assert_round_trip::<ListSubagentsRequestDto>(
+        "subagents-list-subagents.json",
+        fixture!("subagents-list-subagents.json")["request"].clone(),
+    );
+    assert_round_trip::<CancelSubagentRequestDto>(
+        "subagents-cancel-subagent.json",
+        fixture!("subagents-cancel-subagent.json")["request"].clone(),
+    );
+}
+
+#[test]
+fn slice_three_responses_round_trip_through_their_dtos() {
+    assert_round_trip::<RunDto>(
+        "runs-start-run.json",
+        fixture!("runs-start-run.json")["response"].clone(),
+    );
+    assert_round_trip::<RunDto>(
+        "runs-cancel-run.json",
+        fixture!("runs-cancel-run.json")["response"].clone(),
+    );
+    assert_round_trip::<RunDto>(
+        "runs-get-run.json",
+        fixture!("runs-get-run.json")["response"].clone(),
+    );
+    assert_round_trip::<Vec<SubagentDto>>(
+        "subagents-list-subagents.json",
+        fixture!("subagents-list-subagents.json")["response"].clone(),
+    );
+    assert_round_trip::<SubagentDto>(
+        "subagents-cancel-subagent.json",
+        fixture!("subagents-cancel-subagent.json")["response"].clone(),
+    );
+}
+
+/// The wire `kind` of a deserialized frame, for asserting the variant matches
+/// the fixture key it was read from.
+fn stream_kind(event: &RunStreamEventDto) -> &'static str {
+    match event {
+        RunStreamEventDto::Started { .. } => "started",
+        RunStreamEventDto::TextDelta { .. } => "textDelta",
+        RunStreamEventDto::ToolActivity { .. } => "toolActivity",
+        RunStreamEventDto::Completed { .. } => "completed",
+        RunStreamEventDto::Failed { .. } => "failed",
+        RunStreamEventDto::Cancelled { .. } => "cancelled",
+    }
+}
+
+#[test]
+fn run_stream_frames_round_trip_through_the_tagged_union() {
+    let events = fixture!("runs-stream-events.json")["events"].clone();
+    let object = events
+        .as_object()
+        .expect("the stream fixture is an object keyed by kind");
+    assert_eq!(object.len(), 6, "one canonical frame per stream kind");
+
+    for (kind, expected) in object {
+        let event: RunStreamEventDto = serde_json::from_value(expected.clone())
+            .unwrap_or_else(|error| panic!("{kind} must deserialize: {error}"));
+        assert_eq!(
+            serde_json::to_value(&event).expect("frame serializes"),
+            *expected,
+            "{kind} round-trips byte-for-byte"
+        );
+        assert_eq!(
+            stream_kind(&event),
+            kind.as_str(),
+            "{kind} deserializes to its own variant"
+        );
+    }
+}
+
+#[test]
+fn slice_three_wire_keys_are_camel_case_only() {
+    let start = fixture!("runs-start-run.json")["request"].clone();
+    for key in [
+        "conversationId",
+        "projectId",
+        "providerId",
+        "modelId",
+        "effortLevel",
+        "prompt",
+        "environment",
+    ] {
+        assert!(start.get(key).is_some(), "start_run must carry {key}");
+    }
+    assert!(
+        start.get("conversation_id").is_none(),
+        "no snake_case key may leak across the wire"
+    );
+
+    let text_delta = fixture!("runs-stream-events.json")["events"]["textDelta"].clone();
+    assert!(text_delta.get("runId").is_some());
+    assert!(
+        text_delta.get("run_id").is_none(),
+        "stream frames use camelCase on the wire"
+    );
+}
+
+#[test]
+fn strict_run_and_subagent_requests_reject_unknown_fields() {
+    assert_rejects_unknown_fields!(
+        StartRunRequestDto,
+        fixture!("runs-start-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        CancelRunRequestDto,
+        fixture!("runs-cancel-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        GetRunRequestDto,
+        fixture!("runs-get-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        ListSubagentsRequestDto,
+        fixture!("subagents-list-subagents.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        CancelSubagentRequestDto,
+        fixture!("subagents-cancel-subagent.json")["request"].clone()
+    );
+}
+
+#[test]
+fn start_run_rejects_an_approval_mode_field() {
+    let mut request = fixture!("runs-start-run.json")["request"].clone();
+    request["approvalMode"] = json!("full_access");
+    let result: Result<StartRunRequestDto, _> = serde_json::from_value(request);
+    assert!(
+        result.is_err(),
+        "start_run must reject approvalMode: the policy is project-scoped in Rust"
+    );
+}
+
+#[test]
+fn run_stream_rejects_an_unknown_kind() {
+    let mut frame = fixture!("runs-stream-events.json")["events"]["started"].clone();
+    frame["kind"] = json!("hookReviewRequired");
+    let result: Result<RunStreamEventDto, _> = serde_json::from_value(frame);
+    assert!(
+        result.is_err(),
+        "the six-kind union is closed; hookReviewRequired needs a #20 amendment"
+    );
+}
+
+#[test]
+fn every_run_stream_frame_carries_run_id_and_seq() {
+    let events = fixture!("runs-stream-events.json")["events"].clone();
+    let object = events
+        .as_object()
+        .expect("the stream fixture is an object keyed by kind");
+    for (kind, frame) in object {
+        assert!(
+            frame["runId"].is_string(),
+            "{kind} must carry a string runId"
+        );
+        assert!(frame["seq"].is_u64(), "{kind} must carry a numeric seq");
+    }
+}
+
+#[test]
+fn authority_bearing_slice_three_requests_carry_their_ids() {
+    let start = fixture!("runs-start-run.json");
+    assert!(
+        start["request"]["projectId"].is_string(),
+        "start_run must carry projectId for the Authority tier"
+    );
+    assert!(
+        start["request"]["conversationId"].is_string(),
+        "start_run must carry the parent conversationId"
+    );
+
+    for (name, request) in [
+        ("runs-cancel-run.json", fixture!("runs-cancel-run.json")),
+        ("runs-get-run.json", fixture!("runs-get-run.json")),
+    ] {
+        assert!(
+            request["request"]["runId"].is_string(),
+            "{name} must carry the authority-bearing runId"
+        );
+    }
+
+    let list = fixture!("subagents-list-subagents.json");
+    assert!(
+        list["request"]["runId"].is_string(),
+        "list_subagents must carry the parent runId"
+    );
+
+    let cancel = fixture!("subagents-cancel-subagent.json");
+    assert!(
+        cancel["request"]["runId"].is_string(),
+        "cancel_subagent must carry the parent runId"
+    );
+    assert!(
+        cancel["request"]["subagentId"].is_string(),
+        "cancel_subagent must carry the subagentId"
+    );
+}
+
+#[test]
+fn run_and_subagent_statuses_use_the_documented_wire_values() {
+    for (status, wire) in [
+        (RunStatusDto::Pending, "pending"),
+        (RunStatusDto::Streaming, "streaming"),
+        (RunStatusDto::Completed, "completed"),
+        (RunStatusDto::Failed, "failed"),
+        (RunStatusDto::Cancelled, "cancelled"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(status).expect("run status serializes"),
+            json!(wire)
+        );
+    }
+
+    for (status, wire) in [
+        (SubagentStatusDto::Processing, "processing"),
+        (SubagentStatusDto::Finished, "finished"),
+        (SubagentStatusDto::Failed, "failed"),
+        (SubagentStatusDto::Cancelled, "cancelled"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(status).expect("subagent status serializes"),
+            json!(wire)
+        );
+    }
 }

@@ -1,0 +1,35 @@
+{
+  "request": {
+    "runId": "run-7f2a9c10"
+  },
+  "response": [
+    {
+      "id": "subagent-inspect-repo",
+      "name": "Inspect repo",
+      "avatar": "globe",
+      "status": "finished",
+      "elapsedMs": 359000,
+      "modelId": "gpt-5-codex",
+      "effortLevel": "light",
+      "transcript": [
+        {
+          "id": "sa-13",
+          "role": "assistant",
+          "content": "Draft recommendations for the module boundaries.",
+          "createdAt": "2026-10-18T09:12:00.000Z",
+          "toolCalls": []
+        }
+      ]
+    },
+    {
+      "id": "subagent-verify-tests",
+      "name": "Verify tests",
+      "avatar": "flower",
+      "status": "processing",
+      "elapsedMs": 8000,
+      "modelId": "glm-4.6",
+      "effortLevel": "maximum",
+      "transcript": []
+    }
+  ]
+}

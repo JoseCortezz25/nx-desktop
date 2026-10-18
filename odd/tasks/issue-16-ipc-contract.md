@@ -50,7 +50,7 @@ Slice 1 is the only slice in scope here. Slices 2–4 are listed for the shared 
 | --------- | -------------------------------------------- | --------- |
 | `SLICE-1` | Shared kernel (error + invoke/channel)       | delivered |
 | `SLICE-2` | Providers / projects / conversations catalog | delivered |
-| `SLICE-3` | Runs / subagents (stream union)              | pending   |
+| `SLICE-3` | Runs / subagents (stream union)              | delivered |
 | `SLICE-4` | Workspace / files / diff / hooks             | pending   |
 
 ## Acceptance criteria and checks per slice
@@ -80,9 +80,18 @@ Providers (`list_providers`, `list_models`), projects (`list_projects`, `create_
 - **S2-A7** `docs/ipc/README.md` catalogs the eight commands, the DTO field tables, the authority/invariant notes, exact request examples and the fixture index.
 - **S2-A8** All slice-2 checks (install, typecheck, lint, focused and full tests, format:check, rust fmt/clippy/test, `git diff --check`) pass; the exact outputs are in the slice-2 delivery section.
 
-### SLICE-3 (pending)
+### SLICE-3 (implemented in round 3)
 
-Runs (`start_run`, `cancel_run`, `get_run`) and the six-kind `RunStreamEventDto` tagged union; subagents (`list_subagents`, `cancel_subagent`). Checks: exhaustive `assertNever` over the union; `seq`/`runId` on every frame; `StartRunRequest` carries no `approvalMode`.
+Runs (`start_run`, `cancel_run`, `get_run`) and the closed six-kind `RunStreamEventDto` union; subagents (`list_subagents`, `cancel_subagent`).
+
+- **S3-A1** `start_run` passes `{ request, onEvent: Channel<RunStreamEventDto> }`, and the caller binds `onEvent` before the command is invoked (`src/features/runs/api/run-client.ts`, README §2/§6).
+- **S3-A2** `cancel_run`/`get_run` send `{ runId }`; `list_subagents` sends `{ runId }`; `cancel_subagent` sends `{ runId, subagentId }`.
+- **S3-A3** `RunStreamEventDto` is a discriminated union of exactly `started`, `textDelta`, `toolActivity`, `completed`, `failed`, `cancelled`, with `runId` + monotonic `seq` on every frame; the TS test proves exhaustive handling with `assertNever`.
+- **S3-A4** Rust models the union as an internally tagged enum (`tag = "kind"`, camelCase variants and fields) and pins byte-for-byte round-trip, an unknown-kind rejection and the six wire values.
+- **S3-A5** `StartRunRequestDto` carries `conversationId`, `projectId`, `providerId`, `modelId`, `effortLevel`, `prompt`, `environment` and **no `approvalMode`**; the Rust negative test rejects an injected `approvalMode`.
+- **S3-A6** `RunStatus` is `pending | streaming | completed | failed | cancelled`; `started` is a frame kind, not a status.
+- **S3-A7** Rust DTOs use `#[serde(rename_all = "camelCase")]`, `snake_case` Rust fields, `deny_unknown_fields` on every request and closed `snake_case` enums; six shared fixtures are read by both suites.
+- **S3-A8** All slice-3 checks (install, typecheck, lint, focused and full tests, format:check, rust fmt/clippy/test, `git diff --check`) pass; exact outputs in the slice-3 delivery section below.
 
 ### SLICE-4 (pending)
 
@@ -111,18 +120,18 @@ T1–T3 are delivered by the frozen slice-1 implementation commit `33bcd2dc9674b
 
 - [x] **T7 — Chain accounting** (`SLICE-1`): record the `feature-branch-chain` boundaries, the tracker branch and the actual checks in this document without rewriting T1–T3.
 - [x] **T4 — SLICE-2** providers/projects/conversations: TS contracts + clients, Rust DTOs, shared command-envelope fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by `83e3cee` plus the docs-only continuation commit on `feat/issue-16-ipc-catalog`; see the slice-2 delivery section below for the exact count and checks.
-- [ ] **T5 — SLICE-3** runs/subagents. Pending.
+- [x] **T5 — SLICE-3** runs/subagents: TS contracts + clients, Rust DTO skeletons, six shared fixtures, cross-language contract tests and the `docs/ipc/README.md` catalog. Delivered by the slice-3 work-unit commit on `feat/issue-16-ipc-runs`; see the slice-3 delivery section below.
 - [ ] **T6 — SLICE-4** workspace/files/diff/hooks. Pending.
 
 ## Chain boundaries (actual)
 
-| Role                 | Branch                             | Commit                              | Base               | Diff vs base                         |
-| -------------------- | ---------------------------------- | ----------------------------------- | ------------------ | ------------------------------------ |
-| Tracker / final      | `feat/issue-16-ipc-kernel-tracker` | `3e3e907`                           | `main` @ `6af748f` | empty tracker commit (0 files)       |
-| Child PR 1 (slice 1) | `feat/issue-16-ipc-kernel`         | `33bcd2d` + chain-accounting commit | tracker branch     | 15 files, 978 additions, 0 deletions |
-| Child PR 2 (slice 2) | `feat/issue-16-ipc-catalog`        | `83e3cee` + continuation commit     | child PR 1 branch  | 31 files, 1577 +, 38 −               |
-| Child PR 3 (slice 3) | not created                        | —                                   | child PR 2 branch  | pending                              |
-| Child PR 4 (slice 4) | not created                        | —                                   | child PR 3 branch  | pending                              |
+| Role                 | Branch                             | Commit                              | Base                          | Diff vs base                         |
+| -------------------- | ---------------------------------- | ----------------------------------- | ----------------------------- | ------------------------------------ |
+| Tracker / final      | `feat/issue-16-ipc-kernel-tracker` | `3e3e907`                           | `main` @ `6af748f`            | empty tracker commit (0 files)       |
+| Child PR 1 (slice 1) | `feat/issue-16-ipc-kernel`         | `33bcd2d` + chain-accounting commit | tracker branch                | 15 files, 978 additions, 0 deletions |
+| Child PR 2 (slice 2) | `feat/issue-16-ipc-catalog`        | `83e3cee` + continuation commit     | child PR 1 branch             | 31 files, 1577 +, 38 −               |
+| Child PR 3 (slice 3) | `feat/issue-16-ipc-runs`           | work-unit commit                    | child PR 2 branch @ `8e64eef` | 20 files, 1451 +, 25 -               |
+| Child PR 4 (slice 4) | not created                        | —                                   | child PR 3 branch             | pending                              |
 
 ## Engram mirror
 
@@ -269,6 +278,81 @@ unchanged source files; they are attributed to the HEAD that measured them
 | `git diff --check` (base..HEAD)                 | clean (no whitespace/conflict errors)     |
 | `pnpm run check:pr` (live PR branch/title/body) | JUDGE OK                                  |
 
+## Slice-3 delivery (round 3, Builder round 1)
+
+**Branch / base.** `feat/issue-16-ipc-runs`, cut from the approved slice-2 child
+HEAD `8e64eefc961f17baa5e9e2a8145d2f26aaed3b98` (PR #64 head), not `main`. The
+child PR targets `feat/issue-16-ipc-catalog` (the immediate predecessor branch,
+PR #64's branch), never `main` or the tracker.
+
+**What landed (contract only).**
+
+- TS contracts + clients: `src/features/runs/api/{run.contracts,run-client}.ts`,
+  `src/features/subagents/api/{subagent.contracts,subagent-client}.ts`.
+- TS tests: `src/features/runs/api/run.test.ts`,
+  `src/features/subagents/api/subagent.test.ts`.
+- Rust DTO skeletons: `src-tauri/src/features/runs/{mod,dto}.rs`,
+  `src-tauri/src/features/subagents/{mod,dto}.rs`, wired in
+  `src-tauri/src/features/mod.rs`. No service, command, port, adapter,
+  supervisor or `generate_handler!` entry (all #19–#23).
+- Shared fixtures: six JSON files in `docs/ipc/fixtures/` (`runs-*`,
+  `subagents-*`, including one canonical frame per stream kind).
+- Rust contract tests: ten new tests in `src-tauri/tests/ipc_contract.rs`.
+- Docs: `docs/ipc/README.md` command catalog (5 new rows), `RunDto` /
+  `SubagentDto` / `RunStreamEventDto` tables, the `hookReviewRequired` amendment
+  question, the open subagent owner and exact wire examples.
+
+**Contract decisions.**
+
+- The stream union follows the normative six kinds; `hookReviewRequired` is
+  documented as a #20 amendment question, not invented as a seventh variant.
+- `StartRunRequest` carries no `approvalMode`; `projectId` is authority-bearing
+  and #19 enforces `conversation.projectId == projectId`.
+- `get_run` is the authoritative snapshot-on-reopen read; the richer snapshot
+  payload (accumulated text/tool activity) is left to #19.
+- `list_subagents`/`cancel_subagent` are defined as intent-driven commands, but
+  their implementation owner stays open between #19 and #23; no lifecycle
+  behavior is invented.
+- `toolActivity.toolCall` and `SubagentDto.transcript` reuse the conversation
+  wire shapes (`ToolCallDto`, `ConversationMessageDto`) instead of duplicating
+  them, so one product entity has one wire shape; the research doc sanctions
+  exposing a cross-module API from the module.
+
+**RED → GREEN.** A focused deterministic RED was observed for the Rust suite by
+temporarily removing the `pub mod runs;` / `pub mod subagents;` declarations:
+`cargo test --test ipc_contract` failed with
+`error[E0433]: cannot find runs in features` and `cannot find subagents in
+features`. The declarations were restored and the suite passed. The TS focused
+suite was authored and run in the same pass, so no destructive RED reproduction
+was performed there (the same honesty as the carried-over slice-1/2 notes).
+
+| Check                                                                            | Result                                               |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `pnpm install --frozen-lockfile`                                                 | lockfile up to date; no resolution change            |
+| `pnpm vitest run src/features/runs/api src/features/subagents/api`               | 3 files / 20 tests passed                            |
+| `pnpm test`                                                                      | 71 files / 442 tests passed                          |
+| `pnpm run typecheck`                                                             | clean (0 errors)                                     |
+| `pnpm run lint`                                                                  | clean (0 problems)                                   |
+| `pnpm run format:check`                                                          | all matched files use Prettier code style            |
+| `cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check`                | clean                                                |
+| `cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings` | finished with no warnings                            |
+| `cargo test --manifest-path src-tauri/Cargo.toml`                                | all targets green; `tests/ipc_contract.rs` 20 passed |
+| `git diff --check`                                                               | clean (no whitespace/conflict errors)                |
+
+**Review size.** The slice-3 work unit measures **20 files, 1451 additions, 25
+deletions = 1476 changed lines** against `8e64eef`. It is one cohesive unit: the
+six fixtures, both language contracts, the two contract suites and the catalog
+docs do not compile or gate independently (a fixture-only or test-only slice
+would not typecheck), and a runs/subagents split would still leave the run stream
+plus its tests and docs over budget. The maintainer's standing authorization for
+cohesive issue #16 overages applies (issue #16 comment `6254871354`): it is a
+delivery-size decision only — not a Verifier/QA pass and not merge
+authorization.
+
+**State.** Child PR 3 opened against `feat/issue-16-ipc-catalog`; issue #16 and
+the PR are set to `ready-for-review` for the Verifier. No self-approval, no
+merge, no remote-CI claim.
+
 ## Log
 
 - L1 (orchestrator handoff): implement `SLICE-1` only, four chained PRs, stacked-to-main, no PR/merge to `main`, no false pass.
@@ -280,3 +364,4 @@ unchanged source files; they are attributed to the HEAD that measured them
 - L7: `docs` is in `.prettierignore`, so slice-2 fixtures are not reformatted by `format:check`; they are still validated by both contract suites.
 - L8 (review-size gate): slice 2 measures 1615 changed lines (1577 additions, 38 deletions, 31 files). One cohesive per-feature split still leaves projects (~555) and conversations (~447) above 400, so no cohesive ≤400 slice preserves the accepted deliverable; the Builder stopped before opening an oversized PR and returned `blocked` for a maintainer `size:exception` or a re-slice. Implementation preserved locally; no PR, no push, no label change.
 - L9 (slice 2, Builder continuation): the maintainer accepted the cohesive 1615-line slice-2 overage and told the factory not to re-ask the review-size question for the remaining issue #16 slices (issue #16 comment `6254871354`). The branch was pushed and child PR 2 was opened against `feat/issue-16-ipc-kernel`; the implementation commit `83e3cee` was preserved byte-for-byte and only this ODD document changed in the round.
+- L10 (slice 3, round 3): implemented `SLICE-3` on `feat/issue-16-ipc-runs` from `8e64eef`. The run stream is the closed six-kind union; `hookReviewRequired` stays out as a #20 amendment. `start_run` omits `approvalMode` and carries `projectId` as the authority anchor; the subagent intents are defined with an open #19/#23 owner and no invented lifecycle. The run stream and subagent DTOs reuse the conversation `ToolCallDto`/`ConversationMessageDto` so one product entity has one wire shape.

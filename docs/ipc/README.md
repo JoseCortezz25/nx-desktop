@@ -10,20 +10,20 @@ Issue #16 ships as a **Feature Branch Chain**: a draft, no-merge tracker PR on
 `feat/issue-16-ipc-kernel-tracker` (targeting `main`) integrates the slices, and
 four child PRs carry one slice each. Child PR 1 targets the tracker branch and
 each later child targets the branch of the slice before it, so no slice merges
-directly into `main`. This document is filled in by each slice; **slices 1 and 2
-are implemented today.**
+directly into `main`. This document is filled in by each slice; **slices 1, 2 and
+3 are implemented today.**
 
 | Slice | Scope                                                       | Status      |
 | ----- | ----------------------------------------------------------- | ----------- |
 | 1     | Shared kernel: error contract, typed invoke, Channel factory | implemented |
 | 2     | Providers / projects / conversations contracts and clients   | implemented |
-| 3     | Runs / subagents contracts and the run-stream union          | pending     |
+| 3     | Runs / subagents contracts and the run-stream union          | implemented |
 | 4     | Workspace / files / diff / hooks contracts and clients       | pending     |
 
 Slices 2–4 append their rows to the command catalog at the end of this file.
-Slice 2 registers no commands yet: it defines the wire contract, the typed
+No slice registers commands yet: they define the wire contract, the typed
 clients and the Rust DTO skeletons. Command registration and the Rust services
-belong to #17–#21.
+belong to #17–#23.
 
 ## 1. Public error contract (`AppErrorDto`)
 
@@ -145,20 +145,26 @@ High-frequency run output uses a `Channel`, not global events
 invoking the command** so no frame is missed:
 
 ```ts
-import { createChannel, ipcInvoke } from '@/shared/ipc/client';
+import { createChannel } from '@/shared/ipc/client';
+import { startRun } from '@/features/runs/api/run-client';
+import type { RunStreamEventDto } from '@/features/runs/api/run.contracts';
 
+// Bind the receiver first: the command starts only after `onmessage` is set.
 const onEvent = createChannel<RunStreamEventDto>(event => handle(event));
-const run = await ipcInvoke<RunDto>('start_run', { request, onEvent });
+const run = await startRun(request, onEvent);
 ```
 
 Every stream frame carries `runId` and a monotonic `seq`; the six-kind union is
-owned by slice 3. Clean listeners up idempotently (`unlisten`) on unmount.
+defined in `src/features/runs/api/run.contracts.ts` and documented in §6. Clean
+listeners up idempotently (`unlisten`) on unmount.
 
 ## 3. Contract tests and fixtures
 
 Fixtures live in `docs/ipc/fixtures/` and are shared by both suites. Slice 1
 fixtures are error DTOs; slice 2 fixtures are command envelopes with `request`
-(where the command is parameterized) and `response` members.
+(where the command is parameterized) and `response` members; slice 3 adds the
+run and subagent envelopes plus `runs-stream-events.json`, which holds one
+canonical frame per stream kind rather than a timeline.
 
 | Fixture                                       | Pins                                                           |
 | --------------------------------------------- | -------------------------------------------------------------- |
@@ -175,6 +181,12 @@ fixtures are error DTOs; slice 2 fixtures are command envelopes with `request`
 | `projects-list-workspace-branches.json`       | `{ projectId }` → repository branch order                      |
 | `conversations-list-conversations.json`       | `ConversationDto[]` with messages, tools and file references   |
 | `conversations-create-conversation.json`      | `{ projectId, title? }` → `ConversationDto`                    |
+| `runs-start-run.json`                         | `StartRunRequestDto` → `RunDto` (no `approvalMode`)            |
+| `runs-cancel-run.json`                        | `{ runId }` → terminal `RunDto`                                |
+| `runs-get-run.json`                           | `{ runId }` → authoritative `RunDto` snapshot                  |
+| `runs-stream-events.json`                     | one canonical frame per each of the six `RunStreamEventDto` kinds |
+| `subagents-list-subagents.json`               | `{ runId }` → `SubagentDto[]`                                  |
+| `subagents-cancel-subagent.json`              | `{ runId, subagentId }` → stopped `SubagentDto`               |
 
 - TypeScript: `src/shared/ipc/contracts.test.ts` and `src/shared/ipc/client.test.ts`
   (`pnpm test`), plus one `src/features/<feature>/api/*.test.ts` per slice-2
@@ -202,11 +214,16 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 | `list_workspace_branches`   | `{ projectId }`                    | `string[]`           | `permission_denied`, `internal_error`                         | `projectId` + canonicalized workspace roots  | #18    |
 | `list_conversations`        | —                                  | `ConversationDto[]`  | `internal_error`                                              | —                                            | #18    |
 | `create_conversation`       | `{ projectId, title? }`            | `ConversationDto`    | `validation_failed`, `permission_denied`                      | `projectId` must be a known project          | #18    |
+| `start_run`                 | `{ request, onEvent: Channel<RunStreamEventDto> }` | `RunDto` | `validation_failed`, `permission_denied`, `provider_unavailable`, `internal_error` | `projectId` (policy + roots); `conversationId` parent | #19    |
+| `cancel_run`                | `{ runId }`                        | `RunDto`             | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the authority token               | #19    |
+| `get_run`                   | `{ runId }`                        | `RunDto`             | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the authority token               | #19    |
+| `list_subagents`            | `{ runId }`                        | `SubagentDto[]`      | `validation_failed`, `permission_denied`, `internal_error`    | `runId` is the parent run context            | #19/#23 (open) |
+| `cancel_subagent`           | `{ runId, subagentId }`            | `SubagentDto`        | `validation_failed`, `permission_denied`, `internal_error`    | `runId` + `subagentId` both authority-bearing | #19/#23 (open) |
 
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
-Slice 2 defines the contract only — the rows above register no command until
-#17/#18 implement the service and `generate_handler!`.
+Slices 2–3 define the contract only — the rows above register no command until
+#17–#23 implement the services and `generate_handler!`.
 
 ## 5. Feature catalogs (slice 2)
 
@@ -307,7 +324,153 @@ These are excerpts of the byte-exact fixtures; both suites consume the files.
 }
 ```
 
-### Adding a command (slices 3–4)
+## 6. Feature catalogs (slice 3)
+
+Runs and subagents are contract-only here. `RunSupervisor`, the services, the
+commands and the stream emission belong to #19; the subagent list and individual
+stop have an **open downstream owner (#19/#23)**, and this slice invents no
+lifecycle behavior for them.
+
+### `RunDto`, `RunEnvironmentDto` and `RunStatus`
+
+| Field             | Type        | Meaning                                                              |
+| ----------------- | ----------- | -------------------------------------------------------------------- |
+| `runId`           | `string`    | Run identity owned by the Rust supervisor.                           |
+| `conversationId`  | `string`    | Parent conversation; a failed/cancelled run never deletes it (§3.2). |
+| `projectId`       | `string`    | Authorizing project; authority-bearing.                              |
+| `status`          | `RunStatus` | Closed lifecycle state; #19 owns the transitions.                    |
+| `useNewWorktree`  | `boolean`   | `RunEnvironmentDto`: fresh worktree instead of the checkout.         |
+| `gitBranch`       | `string`    | Branch picked from `list_workspace_branches`.                        |
+| `environmentName` | `string`    | Named environment, if any.                                           |
+
+`RunStatus` is exactly `pending | streaming | completed | failed | cancelled`.
+`started` is a **frame kind**, not a status: a run that emitted `started` is
+`streaming`, and it is `pending` before the first frame.
+
+`start_run` sends `{ request, onEvent }`. The request carries `conversationId`,
+`projectId`, `providerId`, `modelId`, `effortLevel`, `prompt` and `environment`
+— and deliberately **no `approvalMode`**: the tool approval policy is
+project-scoped and resolved in the Rust core, never trusted from the UI
+(`.opencode/knowledge/critical-constraints.md` §7). `projectId` is the authority
+anchor for that policy and the workspace roots; #19 enforces the invariant
+`conversation.projectId == projectId`.
+
+`get_run(runId)` is the **authoritative snapshot on reopen**
+(`.opencode/knowledge/architecture-patterns.md` §4): a remounted panel queries it
+instead of trusting buffered deltas. The richer snapshot payload (accumulated
+text and tool activity) is a #19 decision, not invented here.
+
+`cancel_run` is idempotent in the core and resolves the authoritative terminal
+`RunDto`; `runId` is the authority token. A `completed`/`failed`/`cancelled`
+race must resolve to exactly one terminal state in the supervisor (§3.2).
+
+### `SubagentDto`
+
+| Field         | Type                                                    | Meaning                                        |
+| ------------- | ------------------------------------------------------- | ---------------------------------------------- |
+| `id`          | `string`                                                | `SubagentId`.                                  |
+| `name`        | `string`                                                | Display name.                                  |
+| `avatar`      | `string`                                                | Portable presentation key, not an asset path.   |
+| `status`      | `processing` \| `finished` \| `failed` \| `cancelled`   | Flat wire form of the four-state domain union. |
+| `elapsedMs`   | `number`                                                | Frozen when the subagent leaves `processing`.  |
+| `modelId`     | `string`                                                | Child selection-chain model.                   |
+| `effortLevel` | `string`                                                | Child effort stop from the provider catalog.   |
+| `transcript`  | `ConversationMessageDto[]`                              | The child run's own transcript, oldest first.  |
+
+`list_subagents` sends `{ runId }`; `cancel_subagent` sends
+`{ runId, subagentId }`. Both ids are authority-bearing: the core resolves the
+child run within its parent and rejects a subagent from another run.
+`cancel_subagent` resolves that subagent to `cancelled` **without** cancelling
+the parent run (§3.2). **Owner is open**: the Explorer flagged that #19's
+acceptance names only `start_run`/`cancel_run` and `use-subagent-catalog.ts`
+defers the stop to "`cancel_run`'s child scope"; this contract defines the
+intent-driven command the primary rules call for
+(`.opencode/knowledge/critical-constraints.md` §4) without choosing between #19
+and #23 as the implementer.
+
+### `RunStreamEventDto` — the closed six-kind union
+
+Internally tagged by `kind`; every frame carries `runId` and a monotonic `seq`
+so a consumer can order frames and drop stale ones.
+
+| `kind`         | Extra payload           | Meaning                                                           |
+| -------------- | ----------------------- | ----------------------------------------------------------------- |
+| `started`      | —                       | The run began; its status is now `streaming`.                     |
+| `textDelta`    | `text: string`          | A bounded chunk of assistant text.                                |
+| `toolActivity` | `toolCall: ToolCallDto` | Tool activity; the same wire shape a conversation message embeds. |
+| `completed`    | —                       | Terminal success.                                                 |
+| `failed`       | `error: AppErrorDto`    | Terminal failure with the public error contract.                  |
+| `cancelled`    | —                       | Terminal cancellation via `cancel_run`.                           |
+
+**`hookReviewRequired` amendment question.** `business-logic.md` §3.2 names a
+`hookReviewRequired` frame mid-stream, but the normative set is the six kinds in
+`.claude/rules/ipc-and-contracts.md` §5 and
+`.opencode/skills/tauri-ipc-command/SKILL.md`. This slice follows the normative
+six. If #20 needs a push frame for hook review it must amend this contract and
+its fixtures; #16 must not invent a seventh variant (Explorer finding, issue
+#16).
+
+### Shared shapes across features
+
+The `toolActivity` frame carries `ToolCallDto` and a subagent's `transcript`
+carries `ConversationMessageDto`, both from
+`src/features/conversations/api/conversation.contracts.ts` (Rust:
+`src-tauri/src/features/conversations/dto.rs`). They are **type-only** imports
+of one product entity's wire shape, so the run stream and the conversation
+history can never disagree; the alternative — a second copy in `runs` /
+`subagents` — would drift and the shared fixtures would not catch it
+(`docs/research-tecnico/arquitectura-tauri.md`, "Estructura de archivos").
+
+### Exact wire examples
+
+These are excerpts of the byte-exact fixtures; both suites consume the files.
+
+`runs-start-run.json` (request)
+
+```json
+{
+  "request": {
+    "conversationId": "conv-composer-chain",
+    "projectId": "proj-design-system",
+    "providerId": "opencode",
+    "modelId": "deepseek-v3.1",
+    "effortLevel": "high",
+    "prompt": "Reconcile the provider, model, and effort selectors.",
+    "environment": {
+      "useNewWorktree": false,
+      "gitBranch": "main",
+      "environmentName": "local"
+    }
+  }
+}
+```
+
+`runs-stream-events.json` (one frame per kind; `textDelta` and `failed` shown)
+
+```json
+{
+  "kind": "textDelta",
+  "runId": "run-7f2a9c10",
+  "seq": 2,
+  "text": "Reconciling the provider, model, and effort selectors."
+}
+```
+
+```json
+{
+  "kind": "failed",
+  "runId": "run-7f2a9c10",
+  "seq": 5,
+  "error": {
+    "code": "provider_unavailable",
+    "message": "provider adapter did not respond before the timeout",
+    "retryable": true,
+    "requestId": "req-6c02f7a1"
+  }
+}
+```
+
+## 7. Adding a command (slice 4)
 
 1. Define the `camelCase` request/response DTO and its fixture in
    `docs/ipc/fixtures/`.
