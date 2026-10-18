@@ -36,6 +36,13 @@
   box-shadow: var(--shadow-popover);
 }
 
+/* The review dialogs of screens 14/15 draw a wider surface than the
+   create-project dialog; the modifier sits after the base rule so it wins at
+   equal specificity. */
+.dialog--wide {
+  width: min(748px, 100%);
+}
+
 .dialog__header {
   display: flex;
   align-items: center;

@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* The dialog surface is 748px wide (screen 14); the body must be allowed to
+     shrink so a long action label wraps instead of overflowing its own box. */
+  min-width: 0;
 }
 
 .hook-review-dialog__list {
@@ -34,6 +37,8 @@
 
 .hook-review-dialog__note {
   margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--color-muted);
   font-size: 12px;
 }
@@ -43,4 +48,13 @@
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
+  /* The actions keep their intrinsic width and the note yields: a shrunken
+     action row would squeeze a label instead of moving it to the next line. */
+  flex: none;
+}
+
+/* A wrapping row may break the line, never squeeze a label: a shrunk button
+   would clip its own text instead of moving to the next line. */
+.hook-review-dialog__actions > .button {
+  flex: none;
 }

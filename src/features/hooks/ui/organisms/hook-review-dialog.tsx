@@ -46,6 +46,7 @@ export function HookReviewDialog({
     <Dialog
       title={messages.title}
       closeLabel={messages.closeLabel}
+      size="wide"
       onClose={onClose}
     >
       <div className="hook-review-dialog">
@@ -66,14 +67,14 @@ export function HookReviewDialog({
         <div className="hook-review-dialog__footer">
           <p className="hook-review-dialog__note">{messages.footerNote}</p>
           <div className="hook-review-dialog__actions">
-            <Button onPress={() => onDecide('rejected', 'all')}>
+            <Button variant="pill" onPress={() => onDecide('rejected', 'all')}>
               {messages.rejectLabel}
             </Button>
             <Button variant="pill" onPress={() => onDecide('approved', 'all')}>
               {messages.allowAllLabel}
             </Button>
             <Button
-              variant="solid"
+              variant="primary"
               isDisabled={selectedHookIds.size === 0}
               onPress={() => onDecide('approved', 'selection')}
             >

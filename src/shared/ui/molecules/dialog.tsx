@@ -36,6 +36,12 @@ export interface DialogProps {
   readonly closeLabel: string;
   /** Reports the dismissal the shell performs; the caller owns the open state. */
   readonly onClose: () => void;
+  /**
+   * Surface width. `default` is the 572px create-project dialog (screens 05/06);
+   * `wide` is the 748px review dialog screens 14/15 draw, which needs the room for
+   * a note plus three actions on one line.
+   */
+  readonly size?: 'default' | 'wide';
   readonly children: ReactNode;
 }
 
@@ -55,7 +61,13 @@ export interface DialogProps {
  * handed in. The dismissal paths (`Escape`, backdrop press, the close control)
  * only report; the caller decides.
  */
-export function Dialog({ title, closeLabel, onClose, children }: DialogProps) {
+export function Dialog({
+  title,
+  closeLabel,
+  onClose,
+  size = 'default',
+  children
+}: DialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   // Rendering happens before the composer removes the popover action that opened
   // the dialog. Capture it here, rather than in the mount effect, so a detached
@@ -158,7 +170,7 @@ export function Dialog({ title, closeLabel, onClose, children }: DialogProps) {
     <div className="dialog-overlay" onMouseDown={handleBackdropPress}>
       <div
         ref={dialogRef}
-        className="dialog"
+        className={size === 'wide' ? 'dialog dialog--wide' : 'dialog'}
         role="dialog"
         aria-modal="true"
         aria-label={title}
