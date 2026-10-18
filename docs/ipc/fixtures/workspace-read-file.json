@@ -1,0 +1,10 @@
+{
+  "request": {
+    "projectId": "proj-design-system",
+    "path": "docs/research-tecnico/arquitectura-tauri.md"
+  },
+  "response": {
+    "path": "docs/research-tecnico/arquitectura-tauri.md",
+    "content": "# Architecture\n\nEvery read crosses the workspace port; the panel never touches the disk.\n"
+  }
+}

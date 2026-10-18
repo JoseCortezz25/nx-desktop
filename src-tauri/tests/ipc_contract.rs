@@ -11,11 +11,28 @@ use nx_desktop_lib::features::conversations::dto::{
     ConversationDto, CreateConversationRequestDto, MessageRoleDto, ToolCallKindDto,
     ToolCallStatusDto,
 };
+use nx_desktop_lib::features::diff::dto::{
+    DiffFileDto, DiffLineDto, DiffLineKindDto, ReadWorkspaceDiffRequestDto,
+};
+use nx_desktop_lib::features::files::dto::{
+    OpenInTargetRequestDto, OpenTargetAvailabilityDto, OpenTargetDto,
+};
+use nx_desktop_lib::features::hooks::dto::{
+    HookDto, ListHooksRequestDto, SetHookDecisionRequestDto,
+};
 use nx_desktop_lib::features::projects::dto::{
     ApprovalModeDto, CreateProjectRequestDto, CreatedProjectDto, HookApprovalStatusDto,
     ListWorkspaceBranchesRequestDto, ProjectDto, SetProjectApprovalModeRequestDto,
 };
 use nx_desktop_lib::features::providers::dto::{ListModelsRequestDto, ModelDto, ProviderDto};
+use nx_desktop_lib::features::runs::dto::{
+    CancelRunRequestDto, GetRunRequestDto, RunDto, RunStatusDto, RunStreamEventDto,
+    StartRunRequestDto,
+};
+use nx_desktop_lib::features::subagents::dto::{
+    CancelSubagentRequestDto, ListSubagentsRequestDto, SubagentDto, SubagentStatusDto,
+};
+use nx_desktop_lib::features::workspace::dto::{FileDocumentDto, ReadFileRequestDto};
 use nx_desktop_lib::ipc::error::{AppErrorCode, AppErrorDto};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -328,5 +345,481 @@ fn authority_bearing_requests_carry_the_project_id() {
     assert!(
         conversation["request"]["projectId"].is_string(),
         "create_conversation must carry projectId for the Authority tier"
+    );
+}
+
+#[test]
+fn slice_three_requests_round_trip_through_their_dtos() {
+    assert_round_trip::<StartRunRequestDto>(
+        "runs-start-run.json",
+        fixture!("runs-start-run.json")["request"].clone(),
+    );
+    assert_round_trip::<CancelRunRequestDto>(
+        "runs-cancel-run.json",
+        fixture!("runs-cancel-run.json")["request"].clone(),
+    );
+    assert_round_trip::<GetRunRequestDto>(
+        "runs-get-run.json",
+        fixture!("runs-get-run.json")["request"].clone(),
+    );
+    assert_round_trip::<ListSubagentsRequestDto>(
+        "subagents-list-subagents.json",
+        fixture!("subagents-list-subagents.json")["request"].clone(),
+    );
+    assert_round_trip::<CancelSubagentRequestDto>(
+        "subagents-cancel-subagent.json",
+        fixture!("subagents-cancel-subagent.json")["request"].clone(),
+    );
+}
+
+#[test]
+fn slice_three_responses_round_trip_through_their_dtos() {
+    assert_round_trip::<RunDto>(
+        "runs-start-run.json",
+        fixture!("runs-start-run.json")["response"].clone(),
+    );
+    assert_round_trip::<RunDto>(
+        "runs-cancel-run.json",
+        fixture!("runs-cancel-run.json")["response"].clone(),
+    );
+    assert_round_trip::<RunDto>(
+        "runs-get-run.json",
+        fixture!("runs-get-run.json")["response"].clone(),
+    );
+    assert_round_trip::<Vec<SubagentDto>>(
+        "subagents-list-subagents.json",
+        fixture!("subagents-list-subagents.json")["response"].clone(),
+    );
+    assert_round_trip::<SubagentDto>(
+        "subagents-cancel-subagent.json",
+        fixture!("subagents-cancel-subagent.json")["response"].clone(),
+    );
+}
+
+/// The wire `kind` of a deserialized frame, for asserting the variant matches
+/// the fixture key it was read from.
+fn stream_kind(event: &RunStreamEventDto) -> &'static str {
+    match event {
+        RunStreamEventDto::Started { .. } => "started",
+        RunStreamEventDto::TextDelta { .. } => "textDelta",
+        RunStreamEventDto::ToolActivity { .. } => "toolActivity",
+        RunStreamEventDto::Completed { .. } => "completed",
+        RunStreamEventDto::Failed { .. } => "failed",
+        RunStreamEventDto::Cancelled { .. } => "cancelled",
+    }
+}
+
+#[test]
+fn run_stream_frames_round_trip_through_the_tagged_union() {
+    let events = fixture!("runs-stream-events.json")["events"].clone();
+    let object = events
+        .as_object()
+        .expect("the stream fixture is an object keyed by kind");
+    assert_eq!(object.len(), 6, "one canonical frame per stream kind");
+
+    for (kind, expected) in object {
+        let event: RunStreamEventDto = serde_json::from_value(expected.clone())
+            .unwrap_or_else(|error| panic!("{kind} must deserialize: {error}"));
+        assert_eq!(
+            serde_json::to_value(&event).expect("frame serializes"),
+            *expected,
+            "{kind} round-trips byte-for-byte"
+        );
+        assert_eq!(
+            stream_kind(&event),
+            kind.as_str(),
+            "{kind} deserializes to its own variant"
+        );
+    }
+}
+
+#[test]
+fn slice_three_wire_keys_are_camel_case_only() {
+    let start = fixture!("runs-start-run.json")["request"].clone();
+    for key in [
+        "conversationId",
+        "projectId",
+        "providerId",
+        "modelId",
+        "effortLevel",
+        "prompt",
+        "environment",
+    ] {
+        assert!(start.get(key).is_some(), "start_run must carry {key}");
+    }
+    assert!(
+        start.get("conversation_id").is_none(),
+        "no snake_case key may leak across the wire"
+    );
+
+    let text_delta = fixture!("runs-stream-events.json")["events"]["textDelta"].clone();
+    assert!(text_delta.get("runId").is_some());
+    assert!(
+        text_delta.get("run_id").is_none(),
+        "stream frames use camelCase on the wire"
+    );
+}
+
+#[test]
+fn strict_run_and_subagent_requests_reject_unknown_fields() {
+    assert_rejects_unknown_fields!(
+        StartRunRequestDto,
+        fixture!("runs-start-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        CancelRunRequestDto,
+        fixture!("runs-cancel-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        GetRunRequestDto,
+        fixture!("runs-get-run.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        ListSubagentsRequestDto,
+        fixture!("subagents-list-subagents.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        CancelSubagentRequestDto,
+        fixture!("subagents-cancel-subagent.json")["request"].clone()
+    );
+}
+
+#[test]
+fn start_run_rejects_an_approval_mode_field() {
+    let mut request = fixture!("runs-start-run.json")["request"].clone();
+    request["approvalMode"] = json!("full_access");
+    let result: Result<StartRunRequestDto, _> = serde_json::from_value(request);
+    assert!(
+        result.is_err(),
+        "start_run must reject approvalMode: the policy is project-scoped in Rust"
+    );
+}
+
+#[test]
+fn run_stream_rejects_an_unknown_kind() {
+    let mut frame = fixture!("runs-stream-events.json")["events"]["started"].clone();
+    frame["kind"] = json!("hookReviewRequired");
+    let result: Result<RunStreamEventDto, _> = serde_json::from_value(frame);
+    assert!(
+        result.is_err(),
+        "the six-kind union is closed; hookReviewRequired needs a #20 amendment"
+    );
+}
+
+#[test]
+fn every_run_stream_frame_carries_run_id_and_seq() {
+    let events = fixture!("runs-stream-events.json")["events"].clone();
+    let object = events
+        .as_object()
+        .expect("the stream fixture is an object keyed by kind");
+    for (kind, frame) in object {
+        assert!(
+            frame["runId"].is_string(),
+            "{kind} must carry a string runId"
+        );
+        assert!(frame["seq"].is_u64(), "{kind} must carry a numeric seq");
+    }
+}
+
+#[test]
+fn authority_bearing_slice_three_requests_carry_their_ids() {
+    let start = fixture!("runs-start-run.json");
+    assert!(
+        start["request"]["projectId"].is_string(),
+        "start_run must carry projectId for the Authority tier"
+    );
+    assert!(
+        start["request"]["conversationId"].is_string(),
+        "start_run must carry the parent conversationId"
+    );
+
+    for (name, request) in [
+        ("runs-cancel-run.json", fixture!("runs-cancel-run.json")),
+        ("runs-get-run.json", fixture!("runs-get-run.json")),
+    ] {
+        assert!(
+            request["request"]["runId"].is_string(),
+            "{name} must carry the authority-bearing runId"
+        );
+    }
+
+    let list = fixture!("subagents-list-subagents.json");
+    assert!(
+        list["request"]["runId"].is_string(),
+        "list_subagents must carry the parent runId"
+    );
+
+    let cancel = fixture!("subagents-cancel-subagent.json");
+    assert!(
+        cancel["request"]["runId"].is_string(),
+        "cancel_subagent must carry the parent runId"
+    );
+    assert!(
+        cancel["request"]["subagentId"].is_string(),
+        "cancel_subagent must carry the subagentId"
+    );
+}
+
+#[test]
+fn run_and_subagent_statuses_use_the_documented_wire_values() {
+    for (status, wire) in [
+        (RunStatusDto::Pending, "pending"),
+        (RunStatusDto::Streaming, "streaming"),
+        (RunStatusDto::Completed, "completed"),
+        (RunStatusDto::Failed, "failed"),
+        (RunStatusDto::Cancelled, "cancelled"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(status).expect("run status serializes"),
+            json!(wire)
+        );
+    }
+
+    for (status, wire) in [
+        (SubagentStatusDto::Processing, "processing"),
+        (SubagentStatusDto::Finished, "finished"),
+        (SubagentStatusDto::Failed, "failed"),
+        (SubagentStatusDto::Cancelled, "cancelled"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(status).expect("subagent status serializes"),
+            json!(wire)
+        );
+    }
+}
+
+#[test]
+fn slice_four_requests_round_trip_through_their_dtos() {
+    assert_round_trip::<ReadFileRequestDto>(
+        "workspace-read-file.json",
+        fixture!("workspace-read-file.json")["request"].clone(),
+    );
+    assert_round_trip::<ReadWorkspaceDiffRequestDto>(
+        "diff-read-workspace-diff.json",
+        fixture!("diff-read-workspace-diff.json")["request"].clone(),
+    );
+    assert_round_trip::<OpenInTargetRequestDto>(
+        "files-open-in-target.json",
+        fixture!("files-open-in-target.json")["request"].clone(),
+    );
+    assert_round_trip::<ListHooksRequestDto>(
+        "hooks-list-hooks.json",
+        fixture!("hooks-list-hooks.json")["request"].clone(),
+    );
+    assert_round_trip::<SetHookDecisionRequestDto>(
+        "hooks-set-hook-decision.json",
+        fixture!("hooks-set-hook-decision.json")["request"].clone(),
+    );
+}
+
+#[test]
+fn slice_four_responses_round_trip_through_their_dtos() {
+    assert_round_trip::<Option<FileDocumentDto>>(
+        "workspace-read-file.json",
+        fixture!("workspace-read-file.json")["response"].clone(),
+    );
+    assert_round_trip::<Vec<DiffFileDto>>(
+        "diff-read-workspace-diff.json",
+        fixture!("diff-read-workspace-diff.json")["response"].clone(),
+    );
+    assert_round_trip::<Vec<OpenTargetAvailabilityDto>>(
+        "files-list-open-targets.json",
+        fixture!("files-list-open-targets.json")["response"].clone(),
+    );
+    assert_round_trip::<Vec<HookDto>>(
+        "hooks-list-hooks.json",
+        fixture!("hooks-list-hooks.json")["response"].clone(),
+    );
+    assert_round_trip::<HookDto>(
+        "hooks-set-hook-decision.json",
+        fixture!("hooks-set-hook-decision.json")["response"].clone(),
+    );
+}
+
+#[test]
+fn read_file_and_open_in_target_keep_their_optional_and_void_shapes() {
+    let missing: Option<FileDocumentDto> =
+        serde_json::from_value(Value::Null).expect("null is a missing document");
+    assert_eq!(missing, None);
+    assert_eq!(
+        serde_json::to_value(missing).expect("missing document serializes"),
+        Value::Null,
+        "an absent document stays null on the wire"
+    );
+    assert_eq!(
+        fixture!("files-open-in-target.json")["response"],
+        Value::Null,
+        "open_in_target resolves null, matching Promise<void>"
+    );
+    assert!(
+        fixture!("files-list-open-targets.json")
+            .get("request")
+            .is_none(),
+        "list_open_targets is parameterless: the report is machine-scoped"
+    );
+}
+
+#[test]
+fn strict_slice_four_requests_reject_unknown_fields() {
+    assert_rejects_unknown_fields!(
+        ReadFileRequestDto,
+        fixture!("workspace-read-file.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        ReadWorkspaceDiffRequestDto,
+        fixture!("diff-read-workspace-diff.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        OpenInTargetRequestDto,
+        fixture!("files-open-in-target.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        ListHooksRequestDto,
+        fixture!("hooks-list-hooks.json")["request"].clone()
+    );
+    assert_rejects_unknown_fields!(
+        SetHookDecisionRequestDto,
+        fixture!("hooks-set-hook-decision.json")["request"].clone()
+    );
+}
+
+#[test]
+fn slice_four_closed_enums_use_the_documented_wire_values() {
+    for (kind, wire) in [
+        (DiffLineKindDto::Context, "context"),
+        (DiffLineKindDto::Added, "added"),
+        (DiffLineKindDto::Removed, "removed"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(kind).expect("diff line kind serializes"),
+            json!(wire)
+        );
+    }
+
+    for (target, wire) in [
+        (OpenTargetDto::Editor, "editor"),
+        (OpenTargetDto::ViewSource, "view_source"),
+        (OpenTargetDto::SearchInFile, "search_in_file"),
+        (OpenTargetDto::RevealInFileManager, "reveal_in_file_manager"),
+        (OpenTargetDto::CopyPath, "copy_path"),
+    ] {
+        assert_eq!(
+            serde_json::to_value(target).expect("open target serializes"),
+            json!(wire)
+        );
+    }
+}
+
+#[test]
+fn slice_four_closed_enums_reject_unknown_values() {
+    let mut target = fixture!("files-open-in-target.json")["request"].clone();
+    target["target"] = json!("terminal");
+    let result: Result<OpenInTargetRequestDto, _> = serde_json::from_value(target);
+    assert!(
+        result.is_err(),
+        "open_in_target accepts only the five documented targets"
+    );
+
+    let mut line =
+        fixture!("diff-read-workspace-diff.json")["response"][0]["hunks"][0]["lines"][0].clone();
+    line["kind"] = json!("moved");
+    let result: Result<DiffLineDto, _> = serde_json::from_value(line);
+    assert!(
+        result.is_err(),
+        "diff lines accept only context/added/removed"
+    );
+
+    let mut decision = fixture!("hooks-set-hook-decision.json")["request"].clone();
+    decision["approvalStatus"] = json!("maybe");
+    let result: Result<SetHookDecisionRequestDto, _> = serde_json::from_value(decision);
+    assert!(
+        result.is_err(),
+        "hook decisions accept only pending/approved/rejected"
+    );
+}
+
+#[test]
+fn authority_bearing_slice_four_requests_carry_the_project_id() {
+    for (name, value) in [
+        (
+            "workspace-read-file.json",
+            fixture!("workspace-read-file.json"),
+        ),
+        (
+            "diff-read-workspace-diff.json",
+            fixture!("diff-read-workspace-diff.json"),
+        ),
+        (
+            "files-open-in-target.json",
+            fixture!("files-open-in-target.json"),
+        ),
+        ("hooks-list-hooks.json", fixture!("hooks-list-hooks.json")),
+        (
+            "hooks-set-hook-decision.json",
+            fixture!("hooks-set-hook-decision.json"),
+        ),
+    ] {
+        assert!(
+            value["request"]["projectId"].is_string(),
+            "{name} must carry projectId for the Authority tier"
+        );
+    }
+
+    let read = fixture!("workspace-read-file.json");
+    assert!(
+        read["request"]["path"].is_string(),
+        "read_file must carry the workspace-relative path Rust validates"
+    );
+    let open = fixture!("files-open-in-target.json");
+    assert!(
+        open["request"]["path"].is_string(),
+        "open_in_target must carry the workspace-relative path Rust validates"
+    );
+}
+
+#[test]
+fn hook_requests_stay_project_scoped_and_carry_no_run_id() {
+    for (name, value) in [
+        ("hooks-list-hooks.json", fixture!("hooks-list-hooks.json")),
+        (
+            "hooks-set-hook-decision.json",
+            fixture!("hooks-set-hook-decision.json"),
+        ),
+    ] {
+        assert!(
+            value["request"]["projectId"].is_string(),
+            "{name} carries the project that remembers the decision"
+        );
+        assert!(
+            value["request"].get("runId").is_none(),
+            "{name} must not carry runId: the decision is project-scoped, not run-scoped"
+        );
+    }
+}
+
+#[test]
+fn slice_four_wire_keys_are_camel_case_only() {
+    let read = fixture!("workspace-read-file.json")["request"].clone();
+    assert!(read.get("projectId").is_some());
+    assert!(
+        read.get("project_id").is_none(),
+        "read_file uses camelCase on the wire"
+    );
+
+    let diff = fixture!("diff-read-workspace-diff.json")["response"][0].clone();
+    assert!(diff.get("addedCount").is_some());
+    assert!(diff.get("removedCount").is_some());
+    assert!(
+        diff.get("added_count").is_none(),
+        "diff counts use camelCase on the wire"
+    );
+
+    let hook = fixture!("hooks-list-hooks.json")["response"][0].clone();
+    assert!(hook.get("isNew").is_some());
+    assert!(hook.get("timeoutMs").is_some());
+    assert!(hook.get("approvalStatus").is_some());
+    assert!(
+        hook.get("is_new").is_none(),
+        "hook fields use camelCase on the wire"
     );
 }

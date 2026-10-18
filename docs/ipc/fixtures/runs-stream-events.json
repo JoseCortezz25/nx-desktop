@@ -1,0 +1,48 @@
+{
+  "events": {
+    "started": {
+      "kind": "started",
+      "runId": "run-7f2a9c10",
+      "seq": 1
+    },
+    "textDelta": {
+      "kind": "textDelta",
+      "runId": "run-7f2a9c10",
+      "seq": 2,
+      "text": "Reconciling the provider, model, and effort selectors."
+    },
+    "toolActivity": {
+      "kind": "toolActivity",
+      "runId": "run-7f2a9c10",
+      "seq": 3,
+      "toolCall": {
+        "id": "tool-run-1",
+        "kind": "search",
+        "summary": "Searched src for the selection chain",
+        "detail": "Matched selection-chain.ts and the composer organisms.",
+        "status": "completed"
+      }
+    },
+    "completed": {
+      "kind": "completed",
+      "runId": "run-7f2a9c10",
+      "seq": 4
+    },
+    "failed": {
+      "kind": "failed",
+      "runId": "run-7f2a9c10",
+      "seq": 5,
+      "error": {
+        "code": "provider_unavailable",
+        "message": "provider adapter did not respond before the timeout",
+        "retryable": true,
+        "requestId": "req-6c02f7a1"
+      }
+    },
+    "cancelled": {
+      "kind": "cancelled",
+      "runId": "run-7f2a9c10",
+      "seq": 5
+    }
+  }
+}
