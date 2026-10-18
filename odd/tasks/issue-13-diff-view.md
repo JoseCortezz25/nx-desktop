@@ -50,19 +50,19 @@ Base `9af62b0` was green before the first edit: 42 test files / 263 tests, `form
 
 | Check                   | Result                                             |
 | ----------------------- | -------------------------------------------------- |
-| `pnpm test`             | 306 passed (48 files); +43 tests over the base     |
+| `pnpm test`             | 307 passed (48 files); +44 tests over the base     |
 | `pnpm run typecheck`    | clean                                              |
 | `pnpm run lint`         | clean                                              |
 | `pnpm run format:check` | clean                                              |
 | `git diff --check`      | clean (no trailing whitespace or conflict markers) |
 
-Every rule has a test that observes its effect, in the repository's node-only style (`renderToStaticMarkup` plus pure-model tests; `@testing-library` is not installed and was not added):
+Every rule has a test that observes its effect at the rule or component level, in the repository's node-only style (`renderToStaticMarkup` plus pure-model tests; `@testing-library` is not installed and was not added). That runner renders a **static** tree: it cannot press a mounted control, wait for a re-render or follow a `setState`. The interaction flows below are therefore observed in the browser check, not in the suite, and the suite claims no more than that:
 
 - S1/S3 — `diff-view.test.ts` derives both gutters from the hunk header, keeps the two sides independent and leaves the numbers empty on an unreadable header; `mock-diff-repository.test.ts` proves every shipped file's declared counts equal the counts its own lines produce, and that the seed totals are the wireframe's `+14` / `-6`.
 - S2 — `toggleDiffSection` collapses and expands one path without mutating the input; `diff-file-section.test.tsx` renders the expanded and the collapsed state, with `aria-expanded` and the body absent when collapsed.
 - S3/S8 — `diff-hunk-table.test.tsx` asserts the per-kind row class, the printed marker and both gutters; no `split` control exists anywhere in the delivery.
 - S5 — every string the diff surface prints comes from `sharedMessages.diff`; the mock bodies are file content (data), not UI copy.
-- S9/S10 — `file-tabs.test.ts` pins the changes-tab rules next to the untouched file-tab rules; `file-panel.test.tsx` keeps every #12/#40/#43 expectation green and adds the `Cambios` focus; `shell-state.test.tsx`, `app-shell-panel-seam.test.tsx` and `app-shell-navigation-seam.test.tsx` prove the shell's real wiring (row press → `revealChangesInPanel` → counter → panel), and `tool-activity-row.test.tsx` proves a non-diff row is still inert.
+- S9/S10 — `file-tabs.test.ts` pins the changes-tab rules next to the untouched file-tab rules; `file-panel.test.tsx` keeps every #12/#40/#43 expectation green, adds the `Cambios` focus and pins the `changes`-path identity case; `shell-state.test.ts` proves `revealChangesInPanel` reveals the region and increments the counter; `app-shell-panel-seam.test.tsx` and `app-shell-navigation-seam.test.tsx` prove the panel is handed the shell's counter value, that the conversation's `onRequestOpenChanges` handler is the shell's, and that this handler delegates to the real transition; `tool-activity-row.test.tsx` proves a non-diff row is still inert. **Not** proven by the suite: the panel receiving the _incremented_ value on a later render, a second press on a mounted panel, focus restoration through real events, and close/reopen or overlay↔column persistence of the changes tab. The browser check exercised the press → reveal → tab → sections → collapse chain once, on the mock data.
 
 Browser check of the real surface (Vite dev server on the mock repositories, agent-browser, window 1280x577, conversation `Diff review panel`):
 
@@ -86,6 +86,17 @@ An independent verifier reviewed the three implementation commits and returned *
 
 After the fixes: `pnpm test` 306 passed (48 files), `typecheck`, `lint`, `format:check` and `git diff --check` clean.
 
+## Round 3 — second verification pass (2026-10-18)
+
+A second independent pass re-checked the round-2 fixes: the id collision (PASS), the recorded deviations (PASS), the test-honesty finding (PASS WITH FINDINGS) and the hunk numbering (FAIL).
+
+| Finding                                                                                                                                                                                    | Severity | Resolution                                                                                                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A validated start could still be advanced past the exactly representable range: with `@@ -9007199254740991,3 +1,3 @@` the third gutter printed `9007199254740992` twice instead of `...93` | High     | `advance` now returns no number when the next value is not a safe integer, so that gutter stops while the other keeps counting. RED observed first (the new test failed on the duplicate). Commit `0e7b5f1`. |
+| The record claimed more proof than the suite delivers (interaction flows the static runner cannot observe)                                                                                 | Medium   | The verification section now separates what the suite proves from what only the browser check observed, and names the four behaviours that stay unproven by automation. Same commit.                         |
+
+After the fixes: `pnpm test` 307 passed (48 files), `typecheck`, `lint`, `format:check` and `git diff --check` clean.
+
 ## Delivery and progress
 
 Three work-unit commits on `feat/issue-13-diff-view`, in reviewable slices:
@@ -96,7 +107,7 @@ Three work-unit commits on `feat/issue-13-diff-view`, in reviewable slices:
 | `5c4802c` | diff rendering (tokens, copy, two molecules, organism)    | ~700           |
 | `8e10fae` | reachability (domain kind, row control, tab model, shell) | ~440           |
 
-Total ≈2003 authored changed lines, past the ~400-line review slice. The recorded delivery strategy is **two chained PRs** so each slice is reviewable on its own: PR 1 = `5920760..5c4802c` plus the two verification fixes (the `DiffView` surface and its tab model, satisfying S1-S8 on its own), PR 2 = `8e10fae` (reachability, S9-S10, based on PR 1's branch). A single PR remains the maintainer's call; the commits are already split so either works. Push, PR creation and merge are the maintainer's decisions, not this record's.
+Total ≈2043 authored changed lines, past the ~400-line review slice. The recorded delivery strategy is **two chained PRs** so each slice is reviewable on its own: PR 1 = `5920760..5c4802c` plus the two verification fixes (the `DiffView` surface and its tab model, satisfying S1-S8 on its own), PR 2 = `8e10fae` (reachability, S9-S10, based on PR 1's branch). A single PR remains the maintainer's call; the commits are already split so either works. Push, PR creation and merge are the maintainer's decisions, not this record's.
 
 Next step after the builder round: independent verification (this diff changes an additive domain contract and shared component props, Risk item 3), then the independent visual/functional QA round against wireframe 18.
 
@@ -115,3 +126,5 @@ L5 (deviation, recorded not silent): the wireframe's diff summary bar also print
 L6 (verification round, 2026-10-18): an independent verifier returned FAIL on the first candidate. The high finding was a real identity collision between the change-set tab and a file named `changes`; the medium finding was test coverage that asserted the initial handoff instead of a repeated request; the low findings were unchecked hunk-header numbers and three unrecorded wireframe departures. All were fixed in `9642919` and `200a89e` with RED observed before each fix, and the round is recorded above.
 
 L7 (further deviations from the wireframe, recorded not silent): every section starts **expanded** (screen 18 draws the second file collapsed, which is a state, not a default); code lines are drawn as plain monospace text without the wireframe's keyword/string/comment colouring, because the domain carries `kind` and `content` only and no tokenizer is in scope; the tab strip draws no `+` tab-add control and no expand/layout controls, which belong to no ticket here and would be invented surfaces.
+
+L8 (verification round 3, 2026-10-18): the second pass accepted the id fix, the recorded deviations and the expanded coverage, but failed the hunk numbering on a boundary case the first fix left open (advancing past 2^53), and found the record overstating what the suite proves. Both were corrected in `0e7b5f1`, with RED observed before the fix. A third pass then re-checked only those two items.
