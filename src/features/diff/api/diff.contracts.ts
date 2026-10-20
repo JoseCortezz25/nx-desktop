@@ -6,7 +6,7 @@
  * `split` deferred. The request carries the authority-bearing `projectId`
  * because Rust resolves the project's workspace roots before inspecting the
  * change set (`business-logic.md` §3.3). These DTOs mirror
- * `src-tauri/src/features/diff/dto.rs`; enforcement belongs to #24, not here.
+ * `src-tauri/src/features/diff/dto.rs`; enforcement belongs to #21, not here.
  */
 import type { DiffLineKind } from '@/shared/domain/diff-file.types';
 import type { ProjectId } from '@/shared/domain/value-objects.types';

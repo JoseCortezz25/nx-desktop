@@ -1,7 +1,12 @@
-//! Diff feature contract module (issue #16, slice 4).
+//! Diff feature (issue #21).
 //!
-//! The wire DTOs only: the `read_workspace_diff` service, the git adapter,
-//! `commands.rs` and registration belong to #24 and are deliberately absent
-//! here.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this module adds
+//! the unified diff domain, the git source/parser, the service and the
+//! `read_workspace_diff` command.
 
+pub mod adapters;
+pub mod commands;
+pub mod domain;
 pub mod dto;
+pub mod ports;
+pub mod service;

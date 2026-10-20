@@ -1,11 +1,11 @@
 //! Workspace diff wire DTOs (issue #16, slice 4).
 //!
 //! Wire shapes only: the `read_workspace_diff` use case, the git adapter and
-//! command registration live in #24. Rust fields stay `snake_case`;
+//! command registration live in #21. Rust fields stay `snake_case`;
 //! `#[serde(rename_all = "camelCase")]` emits the JSON the TypeScript contract
 //! and the shared fixture pin.
 //!
-//! `project_id` is authority-bearing: #24 resolves it to the project's
+//! `project_id` is authority-bearing: #21 resolves it to the project's
 //! canonicalized workspace roots before inspecting the change set
 //! (`.claude/knowledge/business-logic.md` §3.3).
 
