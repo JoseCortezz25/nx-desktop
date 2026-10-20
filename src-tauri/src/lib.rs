@@ -1,9 +1,13 @@
-// Shared cross-language IPC contract primitives (issue #16). Slice 1 owns the
-// closed public error contract; slice 2 adds the provider, project and
-// conversation wire DTOs. Commands and their registration remain absent.
+// Shared cross-language IPC contract primitives (issue #16) plus the
+// implemented catalog backends: providers (#17) and projects/conversations
+// with the workspace path policy (#18). Remaining services (#19–#24) land
+// on their own tickets.
 pub mod features;
 pub mod ipc;
+pub mod security;
 
+use features::conversations::{commands as conversation_commands, service::ConversationStore};
+use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
     adapters::fake::FakeAgentProvider,
     commands::{list_models, list_providers},
@@ -33,10 +37,24 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let registry = ProviderRegistry::new(&FakeAgentProvider);
+    let projects = ProjectStore::seeded();
+    let conversations = ConversationStore::seeded();
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
-        .invoke_handler(tauri::generate_handler![greet, list_providers, list_models]);
+        .manage(projects)
+        .manage(conversations)
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            list_providers,
+            list_models,
+            project_commands::list_projects,
+            project_commands::create_project,
+            project_commands::set_project_approval_mode,
+            project_commands::list_workspace_branches,
+            conversation_commands::list_conversations,
+            conversation_commands::create_conversation
+        ]);
 
     // The native menu is declared explicitly on every desktop platform. macOS
     // would install `Menu::default` on its own, but Windows and Linux show no

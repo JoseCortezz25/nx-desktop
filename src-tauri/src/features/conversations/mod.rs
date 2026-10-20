@@ -1,6 +1,11 @@
-//! Conversation feature (issue #16, slice 2).
+//! Conversation feature (issue #18).
 //!
-//! Only the IPC DTO module exists in this slice; the service, command and
-//! persistence land in #18.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this module adds
+//! the domain invariants, the `ConversationStore` service and the conversation
+//! commands. No `ports.rs`: persistence is an in-memory managed store, not an
+//! external seam, so no trait has two plausible implementations here.
 
+pub mod commands;
+pub mod domain;
 pub mod dto;
+pub mod service;
