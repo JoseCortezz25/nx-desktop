@@ -1,7 +1,8 @@
 // Shared cross-language IPC contract primitives (issue #16) plus the
-// implemented catalog backends: providers (#17), projects/conversations with
-// the workspace path policy (#18) and the run supervisor with its Channel
-// stream (#19). Remaining services (#20–#24) land on their own tickets.
+// implemented backends: providers (#17), projects/conversations with the
+// workspace path policy (#18), the run supervisor with its Channel stream
+// (#19) and the approval policy plus hook review (#20). Remaining services
+// (#21–#24) land on their own tickets.
 pub mod features;
 pub mod ipc;
 pub mod security;
@@ -9,6 +10,11 @@ pub mod security;
 use std::sync::Arc;
 
 use features::conversations::{commands as conversation_commands, service::ConversationStore};
+use features::hooks::{
+    adapters::fake::FakeHookSource,
+    commands::{list_hooks, set_hook_decision},
+    service::HookService,
+};
 use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
     adapters::fake::FakeAgentProvider,
@@ -47,12 +53,14 @@ pub fn run() {
     let projects = ProjectStore::seeded();
     let conversations = ConversationStore::seeded();
     let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
+    let hooks = HookService::new(Arc::new(FakeHookSource));
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
         .manage(projects)
         .manage(conversations)
         .manage(runs)
+        .manage(hooks)
         .invoke_handler(tauri::generate_handler![
             greet,
             list_providers,
@@ -65,7 +73,9 @@ pub fn run() {
             conversation_commands::create_conversation,
             start_run,
             cancel_run,
-            get_run
+            get_run,
+            list_hooks,
+            set_hook_decision
         ]);
 
     // The native menu is declared explicitly on every desktop platform. macOS

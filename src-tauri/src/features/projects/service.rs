@@ -73,6 +73,58 @@ impl ProjectStore {
             .unwrap_or(false)
     }
 
+    /// One project snapshot, or `None` when the id is unknown.
+    ///
+    /// Short lock scope: the project is cloned under the guard and the guard is
+    /// dropped before the caller awaits anything.
+    pub fn project(&self, id: &ProjectId) -> Option<Project> {
+        self.inner
+            .lock()
+            .ok()?
+            .projects
+            .iter()
+            .find(|project| project.id == *id)
+            .cloned()
+    }
+
+    /// Records or updates one project-scoped hook decision (Invariants tier:
+    /// the project must be known; the caller validates the hook).
+    ///
+    /// Upsert by `hook_id`: a repeated decision never duplicates the row, which
+    /// keeps `ProjectDto.hookDecisions` stable across reviews.
+    pub fn set_hook_decision(
+        &self,
+        id: &ProjectId,
+        hook_id: &str,
+        approval_status: HookApprovalStatus,
+    ) -> Result<Project, ProjectError> {
+        let mut inner = self
+            .inner
+            .lock()
+            .map_err(|_| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?;
+        let project = inner
+            .projects
+            .iter_mut()
+            .find(|project| project.id == *id)
+            .ok_or_else(|| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?;
+        match project
+            .hook_decisions
+            .iter_mut()
+            .find(|decision| decision.hook_id == hook_id)
+        {
+            Some(decision) => decision.approval_status = approval_status,
+            None => project.hook_decisions.push(HookDecision {
+                hook_id: hook_id.to_owned(),
+                approval_status,
+            }),
+        }
+        Ok(project.clone())
+    }
+
     /// Persists one project: validates Limits (folder count and sizes),
     /// canonicalizes each folder through the path policy (Authority tier —
     /// folders become authorized workspace roots), assigns the next
@@ -407,6 +459,64 @@ mod tests {
             project
                 .conversation_ids
                 .contains(&"conv-created-1".to_owned())
+        );
+    }
+
+    #[test]
+    fn returns_a_project_snapshot_or_none() {
+        let store = store();
+        let id = ProjectId::new("proj-design-system").expect("id");
+        let project = store.project(&id).expect("known project");
+        assert_eq!(project.name, "Design system");
+        assert!(
+            store
+                .project(&ProjectId::new("proj-ghost").expect("id"))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn records_a_new_hook_decision() {
+        let store = store();
+        let id = ProjectId::new("proj-design-system").expect("id");
+        let project = store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Rejected)
+            .expect("known project");
+        assert_eq!(project.hook_decisions.len(), 1);
+        assert_eq!(
+            project.hook_decisions[0],
+            HookDecision {
+                hook_id: "hook-lint-on-write".to_owned(),
+                approval_status: HookApprovalStatus::Rejected,
+            }
+        );
+    }
+
+    #[test]
+    fn updates_an_existing_hook_decision_without_duplicating_it() {
+        let store = store();
+        let id = ProjectId::new("proj-api-client").expect("id");
+        let project = store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+            .expect("known project");
+        assert_eq!(project.hook_decisions.len(), 1);
+        assert_eq!(
+            project.hook_decisions[0].approval_status,
+            HookApprovalStatus::Approved
+        );
+    }
+
+    #[test]
+    fn rejects_a_hook_decision_for_an_unknown_project() {
+        let store = store();
+        let id = ProjectId::new("proj-ghost").expect("id");
+        assert_eq!(
+            store
+                .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+                .expect_err("unknown project"),
+            ProjectError::UnknownProject {
+                project_id: "proj-ghost".to_owned(),
+            }
         );
     }
 }

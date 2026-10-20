@@ -11,8 +11,9 @@ use tauri::State;
 
 use super::domain::{ApprovalMode, Project, ProjectError, ProjectId, ProjectName};
 use super::dto::{
-    ApprovalModeDto, CreateProjectRequestDto, CreatedProjectDto, HookApprovalStatusDto,
-    HookDecisionDto, ListWorkspaceBranchesRequestDto, ProjectDto, SetProjectApprovalModeRequestDto,
+    ApprovalModeDto, CreateProjectRequestDto, CreatedProjectDto, HookDecisionDto,
+    ListWorkspaceBranchesRequestDto, ProjectDto, SetProjectApprovalModeRequestDto,
+    to_hook_approval_status_dto,
 };
 use super::service::ProjectStore;
 use crate::ipc::error::{AppErrorCode, AppErrorDto};
@@ -79,11 +80,7 @@ fn authority_error(error: ProjectError) -> AppErrorDto {
 fn to_hook_decision_dto(decision: &super::domain::HookDecision) -> HookDecisionDto {
     HookDecisionDto {
         hook_id: decision.hook_id.clone(),
-        approval_status: match decision.approval_status {
-            super::domain::HookApprovalStatus::Pending => HookApprovalStatusDto::Pending,
-            super::domain::HookApprovalStatus::Approved => HookApprovalStatusDto::Approved,
-            super::domain::HookApprovalStatus::Rejected => HookApprovalStatusDto::Rejected,
-        },
+        approval_status: to_hook_approval_status_dto(decision.approval_status),
     }
 }
 
