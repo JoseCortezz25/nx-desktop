@@ -109,3 +109,25 @@ base a la 18".
 L2. Branch `feat/issue-19-run-supervisor` cut from `main` at `19b2126`, which
 already contains the #18 merge and therefore the project/conversation stores and
 the workspace path policy this ticket reuses.
+
+L3. Delivered in three commits:
+
+| Slice | Commit    | Files                                                                    | Authored lines |
+| ----- | --------- | ------------------------------------------------------------------------ | -------------- |
+| 1     | `04f1f12` | `runs/{mod,domain,ports,supervisor}.rs`, `runs/adapters/*`               | ~1,357         |
+| 2     | `f304033` | `runs/{mod,service,commands}.rs`, `conversations/*`, `lib.rs`, `Cargo.*` | ~820           |
+| 3     | `fce2098` | `odd/tasks/issue-19-*.md`, `docs/ipc/README.md`                          | ~119           |
+
+L4. Verification: `cargo test` (94 unit + 29 contract tests), `cargo clippy
+--all-targets -- -D warnings`, `cargo fmt --check`, `pnpm run check` (format,
+lint, typecheck, rust fmt, clippy) and `pnpm test` (461 frontend tests) all
+green. The run fixtures stay byte-for-byte in `src-tauri/tests/ipc_contract.rs`;
+the new stream-frame test pins the command projection against
+`runs-stream-events.json`.
+
+L5. Scope corrections made while implementing: start-run Authority is the
+project plus the conversation parent (no conversation mutation and no branch
+membership gate, matching the `docs/ipc/README.md` §4 authority column); an
+empty `environmentName` is accepted because the contract describes it as "if
+any". Real git branch discovery and worktree materialization remain outside
+this ticket.
