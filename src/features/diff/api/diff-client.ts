@@ -4,7 +4,7 @@
  * The panel never runs `git diff` itself: the change set arrives as domain
  * values through this client, already counted, and a clean workspace resolves
  * to an empty list (`diff-repository.ts`). `projectId` is authority-bearing;
- * #24 implements the read and its path/inspection validation.
+ * #21 implements the read and its path/inspection validation.
  */
 import type { ProjectId } from '@/shared/domain/value-objects.types';
 import { ipcInvoke } from '@/shared/ipc/client';

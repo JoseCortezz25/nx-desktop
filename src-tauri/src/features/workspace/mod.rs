@@ -1,6 +1,9 @@
-//! Workspace feature contract module (issue #16, slice 4).
+//! Workspace file feature (issue #21).
 //!
-//! The wire DTOs only: the `read_file` service, `commands.rs`, the path policy
-//! and the filesystem adapter belong to #21 and are deliberately absent here.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this module adds
+//! the read domain, the path-policy-backed service and the `read_file` command.
 
+pub mod commands;
+pub mod domain;
 pub mod dto;
+pub mod service;

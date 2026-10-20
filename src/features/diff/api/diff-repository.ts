@@ -3,7 +3,7 @@
  *
  * Backed by the mock repository today and by the future typed IPC client once
  * the Rust core exposes a workspace diff (`business-logic.md` §2, `DiffFile`;
- * ticket #24 connects it). The panel never runs `git diff` itself: the change
+ * ticket #21 connects it). The panel never runs `git diff` itself: the change
  * set arrives as domain values, already counted.
  */
 import type { DiffFile } from '@/shared/domain/diff-file.types';

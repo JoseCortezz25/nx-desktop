@@ -73,6 +73,25 @@ impl ProjectStore {
             .unwrap_or(false)
     }
 
+    /// The authorized workspace roots of one project, in project order.
+    ///
+    /// Short lock scope: the folder list is cloned under the guard. #21 resolves
+    /// every file path against these roots before reading or spawning anything.
+    pub fn workspace_roots(&self, id: &ProjectId) -> Result<Vec<String>, ProjectError> {
+        self.inner
+            .lock()
+            .map_err(|_| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?
+            .projects
+            .iter()
+            .find(|project| project.id == *id)
+            .map(|project| project.workspace_folders.clone())
+            .ok_or_else(|| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })
+    }
+
     /// Persists one project: validates Limits (folder count and sizes),
     /// canonicalizes each folder through the path policy (Authority tier —
     /// folders become authorized workspace roots), assigns the next
@@ -407,6 +426,31 @@ mod tests {
             project
                 .conversation_ids
                 .contains(&"conv-created-1".to_owned())
+        );
+    }
+
+    #[test]
+    fn returns_the_workspace_roots_of_a_known_project() {
+        let store = store();
+        let id = ProjectId::new("proj-api-client").expect("id");
+        assert_eq!(
+            store.workspace_roots(&id).expect("known project"),
+            vec![
+                "/workspace/api-client".to_owned(),
+                "/workspace/shared-contracts".to_owned()
+            ]
+        );
+    }
+
+    #[test]
+    fn rejects_workspace_roots_of_an_unknown_project() {
+        let store = store();
+        let id = ProjectId::new("proj-ghost").expect("id");
+        assert_eq!(
+            store.workspace_roots(&id).expect_err("unknown project"),
+            ProjectError::UnknownProject {
+                project_id: "proj-ghost".to_owned(),
+            }
         );
     }
 }
