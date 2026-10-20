@@ -100,11 +100,11 @@ green with `ipc_contract.rs` still byte-for-byte (S7).
 - **Delivery strategy:** single feature branch (`feat/issue-18-projects-conversations-path-policy`), cut from the #17 tip. No chained PRs: #18 is one backend ticket behind one issue.
 - **Commit slices (actual):**
 
-| Slice | Commit    | Files                                                              | Authored lines |
-| ----- | --------- | ------------------------------------------------------------------ | -------------- |
-| 1     | `5c02fa4` | `security/mod.rs`, `security/path_policy.rs`                        | ~345           |
-| 2     | `d0d3c76` | `projects/{mod,domain,service,commands}.rs`                         | ~875           |
-| 3     | `824b965` | `conversations/{mod,domain,service,commands}.rs`, `features/mod.rs`, `lib.rs` | ~785 |
+| Slice | Commit    | Files                                                                         | Authored lines |
+| ----- | --------- | ----------------------------------------------------------------------------- | -------------- |
+| 1     | `5c02fa4` | `security/mod.rs`, `security/path_policy.rs`                                  | ~345           |
+| 2     | `d0d3c76` | `projects/{mod,domain,service,commands}.rs`                                   | ~875           |
+| 3     | `824b965` | `conversations/{mod,domain,service,commands}.rs`, `features/mod.rs`, `lib.rs` | ~785           |
 
 - **Review-size note:** the ticket is ~2,000 authored lines across three slices, above the advisory 400-line work unit. One honest splitting pass found no smaller cohesive unit below these three: the path policy carries its own escape matrix, the project store carries the seed plus creation/authority rules, and the conversation store carries the clock plus the two-store creation rollback. Factoring these smaller would ship slices that cannot be verified on their own. Aggregate sits below the #16 slice-3 (1,451) and slice-4 (1,496) units the maintainer already accepted; if review prefers smaller, the honest cut is slice 2 → (domain+service) and (commands+wiring), not per-file.
 - **Route / trigger:** single backend unit of behavior (one ticket, one boundary) — implemented inline by the parent; the writer trigger did not fire because this is one cohesive unit, not two independent ones.
