@@ -302,6 +302,11 @@ a cross-provider model id is valid.
 is absent the core derives one, so the request stays valid without inventing UI
 copy. `ToolCallDto.subagentId` is present only for `kind: "subagent"`.
 
+The project and conversation catalogs are durable since #22: the Rust core
+writes versioned JSON under the Tauri app-data directory and reloads it on
+startup, with the fixture rows as the first-run seed. The wire shape does not
+change; persistence records are internal to the core.
+
 ### Exact wire examples
 
 These are excerpts of the byte-exact fixtures; both suites consume the files.
