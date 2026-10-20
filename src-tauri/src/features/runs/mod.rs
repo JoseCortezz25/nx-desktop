@@ -1,6 +1,11 @@
-//! Run feature contract module (issue #16, slice 3).
+//! Run feature foundation (issue #19).
 //!
-//! The wire DTOs only: `RunSupervisor`, the service, `commands.rs` and the
-//! provider adapters belong to #19 and are deliberately absent here.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this slice adds
+//! the lifecycle domain, the adapter/transport ports, the fake runner and the
+//! `RunSupervisor`. The commands that drive them land in the next slice.
 
+pub mod adapters;
+pub mod domain;
 pub mod dto;
+pub mod ports;
+pub mod supervisor;
