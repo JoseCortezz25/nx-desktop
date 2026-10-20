@@ -76,4 +76,6 @@ L2. Implemented T1–T5 on `feat/issue-17-provider-registry` (2026-10-20):
 (`ProviderRegistry`), `commands.rs` (`list_providers` / `list_models` with
 `AppErrorDto` mapping), `lib.rs` (`manage` + `generate_handler!`). Evidence:
 `cargo test` 15 unit + 29 contract green, `cargo clippy -- -D warnings` clean,
-`cargo fmt --check` clean. Commit: <pending>.
+`cargo fmt --check` clean. Commit: `4e06d7a` feat(providers): add registry,
+list_providers and list_models (795 insertions across 8 files — single
+cohesive unit, one commit).
