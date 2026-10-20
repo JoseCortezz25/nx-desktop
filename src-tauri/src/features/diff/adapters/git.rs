@@ -355,11 +355,10 @@ Binary files a/logo.png and b/logo.png differ
     }
 
     fn temp_repo() -> PathBuf {
-        let nanos = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|duration| duration.as_nanos())
-            .unwrap_or(0);
-        let root = std::env::temp_dir().join(format!("nx-git-diff-{}-{nanos}", std::process::id()));
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        let sequence = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let root =
+            std::env::temp_dir().join(format!("nx-git-diff-{}-{sequence}", std::process::id()));
         fs::create_dir_all(&root).expect("scratch repo exists");
         root
     }

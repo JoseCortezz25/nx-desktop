@@ -134,6 +134,9 @@ pub enum ProjectError {
     UnknownProject {
         project_id: String,
     },
+    /// The project changed in memory but its durable record could not be
+    /// written.
+    PersistenceFailed,
 }
 
 #[cfg(test)]

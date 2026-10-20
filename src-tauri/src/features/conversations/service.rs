@@ -11,12 +11,15 @@
 //! validated by the caller against the `ProjectStore` before creation — this
 //! service never invents a parent project.
 
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use super::domain::{
     Conversation, ConversationError, ConversationId, ConversationTitle, DEFAULT_TITLE,
     FileReference, MessageRole, ToolCall, ToolCallKind, ToolCallStatus,
 };
+use super::persistence as conversation_persistence;
+use crate::persistence::{JsonPersistence, PersistenceError};
 
 /// Source of creation timestamps, so tests pin time deterministically.
 pub trait Clock: Send + Sync {
@@ -99,6 +102,8 @@ struct ConversationStoreInner {
 pub struct ConversationStore {
     inner: Mutex<ConversationStoreInner>,
     clock: Box<dyn Clock>,
+    /// Durable catalog, or `None` for the in-memory test store.
+    persistence: Option<JsonPersistence>,
 }
 
 impl ConversationStore {
@@ -116,6 +121,39 @@ impl ConversationStore {
                 created_count: 0,
             }),
             clock,
+            persistence: None,
+        }
+    }
+
+    /// Builds a store backed by the durable catalog at `path`.
+    ///
+    /// A missing file starts from the fixture seed; every mutation is written
+    /// back. A corrupt file or an unsupported version fails startup instead of
+    /// silently replacing user data.
+    pub fn with_persistence(
+        path: PathBuf,
+        clock: Box<dyn Clock>,
+    ) -> Result<Self, PersistenceError> {
+        let persistence = JsonPersistence::new(path);
+        let conversations =
+            conversation_persistence::load(&persistence)?.unwrap_or_else(seed_conversations);
+        let created_count = next_created_count(&conversations);
+        Ok(Self {
+            inner: Mutex::new(ConversationStoreInner {
+                conversations,
+                created_count,
+            }),
+            clock,
+            persistence: Some(persistence),
+        })
+    }
+
+    /// Writes the catalog through the optional durable store.
+    fn persist(&self, conversations: &[Conversation]) -> Result<(), ConversationError> {
+        match &self.persistence {
+            Some(persistence) => conversation_persistence::save(persistence, conversations)
+                .map_err(|_| ConversationError::PersistenceFailed),
+            None => Ok(()),
         }
     }
 
@@ -172,16 +210,45 @@ impl ConversationStore {
             now,
         );
         inner.conversations.push(conversation.clone());
+        if let Err(error) = self.persist(&inner.conversations) {
+            inner.conversations.pop();
+            inner.created_count = inner.created_count.saturating_sub(1);
+            return Err(error);
+        }
         Ok(conversation)
     }
 
     /// Removes one conversation by id; the rollback companion for a failed
     /// post-creation attach to the `ProjectStore`.
-    pub fn remove_conversation(&self, id: &ConversationId) {
-        if let Ok(mut inner) = self.inner.lock() {
-            inner.conversations.retain(|c| c.id != *id);
+    pub fn remove_conversation(&self, id: &ConversationId) -> Result<(), ConversationError> {
+        let mut inner = self
+            .inner
+            .lock()
+            .map_err(|_| ConversationError::PersistenceFailed)?;
+        if let Some(index) = inner
+            .conversations
+            .iter()
+            .position(|conversation| conversation.id == *id)
+        {
+            let removed = inner.conversations.remove(index);
+            if let Err(error) = self.persist(&inner.conversations) {
+                inner.conversations.insert(index, removed);
+                return Err(error);
+            }
         }
+        Ok(())
     }
+}
+
+/// Derives the next creation counter from the loaded ids, so a restart cannot
+/// reissue an id that already exists.
+fn next_created_count(conversations: &[Conversation]) -> u32 {
+    conversations
+        .iter()
+        .filter_map(|conversation| conversation.id.as_str().strip_prefix("conv-created-"))
+        .filter_map(|suffix| suffix.parse::<u32>().ok())
+        .max()
+        .unwrap_or(0)
 }
 
 /// Fallback id when the deterministic counter format is rejected. The format
@@ -312,7 +379,9 @@ mod tests {
             .create_conversation("proj-design-system", None)
             .expect("creation succeeds");
         let id = ConversationId::new(conversation.id.as_str()).expect("id");
-        store.remove_conversation(&id);
+        store
+            .remove_conversation(&id)
+            .expect("rollback removal succeeds");
         assert_eq!(store.list_conversations().len(), 1);
     }
 
@@ -320,5 +389,74 @@ mod tests {
     fn system_clock_formats_a_known_instant() {
         let time = std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_760_000_000);
         assert_eq!(format_system_time(time), "2025-10-09T08:53:20.000Z");
+    }
+
+    fn temp_store_path(name: &str) -> std::path::PathBuf {
+        std::env::temp_dir().join(format!(
+            "nx-conversations-store-{name}-{}.json",
+            std::process::id()
+        ))
+    }
+
+    fn fixed_clock() -> Box<dyn Clock> {
+        Box::new(FixedClock::new("2026-10-18T12:00:00.000Z"))
+    }
+
+    #[test]
+    fn persisted_conversations_survive_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("reload");
+        let _ = fs::remove_file(&path);
+        let store =
+            ConversationStore::with_persistence(path.clone(), fixed_clock()).expect("store opens");
+        let created = store
+            .create_conversation("proj-design-system", None)
+            .expect("creation succeeds");
+        assert_eq!(created.id.as_str(), "conv-created-1");
+        drop(store);
+
+        let reloaded = ConversationStore::with_persistence(path.clone(), fixed_clock())
+            .expect("store reloads");
+        assert!(
+            reloaded
+                .list_conversations()
+                .iter()
+                .any(|conversation| conversation.id.as_str() == "conv-created-1")
+        );
+        let next = reloaded
+            .create_conversation("proj-design-system", None)
+            .expect("second creation succeeds");
+        assert_eq!(next.id.as_str(), "conv-created-2");
+
+        fs::remove_file(&path).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn a_persisted_removal_survives_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("remove");
+        let _ = fs::remove_file(&path);
+        let store =
+            ConversationStore::with_persistence(path.clone(), fixed_clock()).expect("store opens");
+        let created = store
+            .create_conversation("proj-design-system", None)
+            .expect("creation succeeds");
+        let id = ConversationId::new(created.id.as_str()).expect("id");
+        store.remove_conversation(&id).expect("removal succeeds");
+        drop(store);
+
+        let reloaded = ConversationStore::with_persistence(path.clone(), fixed_clock())
+            .expect("store reloads");
+        assert_eq!(reloaded.list_conversations().len(), 1);
+        assert!(
+            !reloaded
+                .list_conversations()
+                .iter()
+                .any(|conversation| conversation.id.as_str() == "conv-created-1")
+        );
+
+        fs::remove_file(&path).expect("scratch cleanup");
     }
 }

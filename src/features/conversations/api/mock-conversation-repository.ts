@@ -1,6 +1,6 @@
 /**
- * In-memory conversation list used until the Rust core exposes
- * `list_conversations`.
+ * In-memory conversation fixture behind the mock port and its tests. The
+ * running app reads the IPC-backed repository (#22).
  *
  * The seed mixes pinned and unpinned conversations with differing `updatedAt`
  * values so the sidebar's pinned/projects/recents groupings have something real

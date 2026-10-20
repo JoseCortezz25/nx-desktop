@@ -4,9 +4,9 @@
  * `RunEnvironment.gitBranch` is one of the repository's own branches
  * (`.claude/knowledge/business-logic.md` §2 `RunEnvironment`), so the
  * environment popover reads the list here instead of hardcoding branch names —
- * the wireframe's `main` is a placeholder (§3.4). Backed by the mock repository
- * today and by the future typed IPC client (`workspace-client.ts`) once the Rust
- * core exposes `list_workspace_branches`.
+ * The typed IPC-backed repository implements this port at runtime (#22); the
+ * mock factory remains as a test fixture. The Rust core resolves the project's
+ * authorized roots before listing branches.
  */
 import type { ProjectId } from '@/shared/domain/value-objects.types';
 

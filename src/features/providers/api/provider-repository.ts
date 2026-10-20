@@ -1,11 +1,10 @@
 /**
  * Port for the provider catalog.
  *
- * The mock repository backs it today; the future typed IPC client
- * (`provider-client.ts`) will implement this same interface against the
- * `list_providers` Tauri command, so consumers never change when the Rust core
- * lands. See `.opencode/rules/folder-structure.md` (IPC clients live in
- * `src/features/<feature>/api/`).
+ * The typed IPC-backed repository implements this port at runtime (#22); the
+ * mock factory remains as a test fixture. Consumers never change when the
+ * transport does. See `.opencode/rules/folder-structure.md` (IPC clients live
+ * in `src/features/<feature>/api/`).
  */
 import type { Provider } from '@/shared/domain/provider.types';
 

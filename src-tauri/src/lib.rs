@@ -5,11 +5,17 @@
 // services (#20 and #22–#24) land on their own tickets.
 pub mod features;
 pub mod ipc;
+pub mod persistence;
 pub mod security;
 
 use std::sync::Arc;
 
-use features::conversations::{commands as conversation_commands, service::ConversationStore};
+use tauri::Manager;
+
+use features::conversations::{
+    commands as conversation_commands,
+    service::{ConversationStore, SystemClock},
+};
 use features::diff::{adapters::git::GitDiffSource, commands::read_workspace_diff};
 use features::files::{
     adapters::system::SystemOpenTargetLauncher,
@@ -51,19 +57,26 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let registry = ProviderRegistry::new(&FakeAgentProvider);
-    let projects = ProjectStore::seeded();
-    let conversations = ConversationStore::seeded();
     let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
     let open_targets = SystemOpenTargetLauncher;
     let diff_source = GitDiffSource;
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
-        .manage(projects)
-        .manage(conversations)
         .manage(runs)
         .manage(open_targets)
         .manage(diff_source)
+        .setup(|app| {
+            let data_dir = app.path().app_data_dir()?;
+            let projects = ProjectStore::with_persistence(data_dir.join("projects.json"))?;
+            let conversations = ConversationStore::with_persistence(
+                data_dir.join("conversations.json"),
+                Box::new(SystemClock),
+            )?;
+            app.manage(projects);
+            app.manage(conversations);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             list_providers,

@@ -3,8 +3,8 @@
  *
  * Pinned and recent views are projections of this list
  * (`docs/wireframes/README.md`, screen 02) computed by later hooks, not extra
- * endpoints. Backed by the mock repository today and by the future typed IPC
- * client (`conversation-client.ts`) once `list_conversations` exists.
+ * endpoints. The typed IPC-backed repository implements this port at runtime
+ * (#22); the mock factory remains as a test fixture.
  */
 import type { Conversation } from '@/shared/domain/conversation.types';
 

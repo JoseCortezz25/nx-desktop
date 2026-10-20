@@ -10,14 +10,15 @@
  *
  * This hook is the **one** project catalog owner: the shell calls it once and
  * fans its state to the composer, the sidebar and the create-project dialog, so
- * there is no second repository instance that could desync them.
+ * there is no second repository instance that could desync them. The
+ * repository is the IPC-backed port; the core persists every write (#22).
  */
 import { useEffect, useState } from 'react';
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
 import type { Project } from '@/shared/domain/project.types';
 import { resolveProject } from '@/shared/domain/selection-chain';
 import type { ProjectId } from '@/shared/domain/value-objects.types';
-import { createMockProjectRepository } from '../api/mock-project-repository';
+import { createIpcProjectRepository } from '../api/ipc-project-repository';
 import type { CreateProjectInput } from '../model/create-project.types';
 
 export interface ProjectCatalogState {
@@ -35,7 +36,7 @@ export interface ProjectCatalogState {
 }
 
 export function useProjectCatalog(): ProjectCatalogState {
-  const [repository] = useState(createMockProjectRepository);
+  const [repository] = useState(createIpcProjectRepository);
   const [projects, setProjects] = useState<readonly Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<ProjectId | null>(
     null
@@ -44,12 +45,19 @@ export function useProjectCatalog(): ProjectCatalogState {
   useEffect(() => {
     let isCancelled = false;
 
-    void repository.listProjects().then(catalog => {
-      if (isCancelled) {
-        return;
-      }
-      setProjects(catalog);
-    });
+    void repository
+      .listProjects()
+      .then(catalog => {
+        if (isCancelled) {
+          return;
+        }
+        setProjects(catalog);
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setProjects([]);
+        }
+      });
 
     return () => {
       isCancelled = true;
@@ -71,17 +79,23 @@ export function useProjectCatalog(): ProjectCatalogState {
     }
     // The repository answers with the updated list, which becomes the state the
     // chip derives its level from.
-    void repository.setApprovalMode(project.id, approvalMode).then(setProjects);
+    void repository
+      .setApprovalMode(project.id, approvalMode)
+      .then(setProjects)
+      .catch(() => undefined);
   }
 
   function createProject(input: CreateProjectInput) {
     // The write lands on the same repository instance the shell already reads
     // through, and the created project is selected so the context bar reflects
     // what was just made.
-    void repository.createProject(input).then(created => {
-      setProjects(created.projects);
-      setSelectedProjectId(created.project.id);
-    });
+    void repository
+      .createProject(input)
+      .then(created => {
+        setProjects(created.projects);
+        setSelectedProjectId(created.project.id);
+      })
+      .catch(() => undefined);
   }
 
   return {

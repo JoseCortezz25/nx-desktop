@@ -10,7 +10,7 @@
  */
 import { useEffect, useState } from 'react';
 import type { ProjectId } from '@/shared/domain/value-objects.types';
-import { createMockWorkspaceRepository } from '../api/mock-workspace-repository';
+import { createIpcWorkspaceRepository } from '../api/ipc-workspace-repository';
 
 export function useWorkspaceBranches(
   projectId: ProjectId | null
@@ -19,16 +19,23 @@ export function useWorkspaceBranches(
 
   useEffect(() => {
     let isCancelled = false;
-    const repository = createMockWorkspaceRepository();
+    const repository = createIpcWorkspaceRepository();
 
     setBranches([]);
 
     if (projectId) {
-      void repository.listBranches(projectId).then(list => {
-        if (!isCancelled) {
-          setBranches(list);
-        }
-      });
+      void repository
+        .listBranches(projectId)
+        .then(list => {
+          if (!isCancelled) {
+            setBranches(list);
+          }
+        })
+        .catch(() => {
+          if (!isCancelled) {
+            setBranches([]);
+          }
+        });
     }
 
     return () => {
