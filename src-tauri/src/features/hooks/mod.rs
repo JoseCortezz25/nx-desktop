@@ -1,7 +1,11 @@
-//! Hooks feature contract module (issue #16, slice 4).
+//! Hook review and approval policy foundation (issue #20).
 //!
-//! The wire DTOs only: `list_hooks`, `set_hook_decision`, the hook policy, the
-//! command registration and the approval enforcement belong to #20 and are
-//! deliberately absent here.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this slice adds
+//! the hook domain, the approval matrix, the source/executor ports and their
+//! adapters. The review service and commands land in the next slice.
 
+pub mod adapters;
+pub mod approval_policy;
+pub mod domain;
 pub mod dto;
+pub mod ports;
