@@ -128,6 +128,17 @@ impl ConversationStore {
             .unwrap_or_default()
     }
 
+    /// One conversation by id, or `None` when the id is unknown.
+    pub fn find(&self, id: &ConversationId) -> Option<Conversation> {
+        self.inner
+            .lock()
+            .ok()?
+            .conversations
+            .iter()
+            .find(|conversation| conversation.id == *id)
+            .cloned()
+    }
+
     /// Persists one conversation under an already-authorized project: assigns
     /// the next deterministic counter id, derives the title from the request
     /// or falls back to the contract default, and stamps both timestamps from

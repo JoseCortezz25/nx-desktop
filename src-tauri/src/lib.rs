@@ -1,10 +1,12 @@
 // Shared cross-language IPC contract primitives (issue #16) plus the
-// implemented catalog backends: providers (#17) and projects/conversations
-// with the workspace path policy (#18). Remaining services (#19–#24) land
-// on their own tickets.
+// implemented catalog backends: providers (#17), projects/conversations with
+// the workspace path policy (#18) and the run supervisor with its Channel
+// stream (#19). Remaining services (#20–#24) land on their own tickets.
 pub mod features;
 pub mod ipc;
 pub mod security;
+
+use std::sync::Arc;
 
 use features::conversations::{commands as conversation_commands, service::ConversationStore};
 use features::projects::{commands as project_commands, service::ProjectStore};
@@ -12,6 +14,11 @@ use features::providers::{
     adapters::fake::FakeAgentProvider,
     commands::{list_models, list_providers},
     service::ProviderRegistry,
+};
+use features::runs::{
+    adapters::fake::FakeAgentRunner,
+    commands::{cancel_run, get_run, start_run},
+    supervisor::RunSupervisor,
 };
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -39,11 +46,13 @@ pub fn run() {
     let registry = ProviderRegistry::new(&FakeAgentProvider);
     let projects = ProjectStore::seeded();
     let conversations = ConversationStore::seeded();
+    let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
         .manage(projects)
         .manage(conversations)
+        .manage(runs)
         .invoke_handler(tauri::generate_handler![
             greet,
             list_providers,
@@ -53,7 +62,10 @@ pub fn run() {
             project_commands::set_project_approval_mode,
             project_commands::list_workspace_branches,
             conversation_commands::list_conversations,
-            conversation_commands::create_conversation
+            conversation_commands::create_conversation,
+            start_run,
+            cancel_run,
+            get_run
         ]);
 
     // The native menu is declared explicitly on every desktop platform. macOS
