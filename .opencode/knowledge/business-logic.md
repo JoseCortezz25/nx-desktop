@@ -98,6 +98,7 @@ The maintainer required the native window chrome (issue #42; decision comment `6
 
 ## 4. Open Product Questions (Ask Before Locking Behavior)
 
-Product questions 1–9 are answered and locked (see the header note and the sections above). Only this item remains genuinely open. **Do not silently invent product policy** for it—ask the user to confirm:
+Product questions 1–9 are answered and locked (see the header note and the sections above). Two items remain genuinely open. **Do not silently invent product policy** for them—ask the user to confirm:
 
 1. **Per-Provider/Per-Model Effort Mapping**: the _rule_ is locked—each provider supplies the effort stops its models expose, the count varies, and there is no universal ladder (§2 `EffortLevel`, §3.1 item 4). The _mapping_—the exact stops each provider and model exposes—is the deliverable of the effort-level research ticket (#31). Placeholder stops MUST NOT be presented as real data.
+2. **Rejected Hook Semantics**: it is locked that declining a hook (`Ahora no`) is a project-scoped decision that is remembered and not re-prompted (§2 `Hook`). It is **not** specified whether declining a hook must also block the tool call the hook guards, or only skip running the hook script. The Rust core records the decision and never executes a rejected hook; it does not infer blocking. Ask the product owner before implementing blocking behaviour.
