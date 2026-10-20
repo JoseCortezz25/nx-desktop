@@ -59,8 +59,17 @@ fn validation_error(error: ProjectError) -> AppErrorDto {
         // Unreachable from the validation-only paths below; kept so the match
         // stays exhaustive over the domain error.
         ProjectError::UnknownProject { project_id } => format!("unknown project: {project_id}"),
+        ProjectError::PersistenceFailed => "project could not be persisted".to_owned(),
     };
     AppErrorDto::new(AppErrorCode::ValidationFailed, message, request_id())
+}
+
+fn internal_error(message: &str) -> AppErrorDto {
+    AppErrorDto::new(
+        AppErrorCode::InternalError,
+        message.to_owned(),
+        request_id(),
+    )
 }
 
 fn authority_error(error: ProjectError) -> AppErrorDto {
@@ -124,6 +133,7 @@ pub fn create_project(
         .create_project(&name, &request.folders)
         .map_err(|error| match &error {
             ProjectError::FolderNotAuthorized { .. } => authority_error(error),
+            ProjectError::PersistenceFailed => internal_error("project could not be persisted"),
             _ => validation_error(error),
         })?;
     Ok(CreatedProjectDto {
@@ -146,7 +156,10 @@ pub fn set_project_approval_mode(
     };
     let projects = store
         .set_approval_mode(&id, mode)
-        .map_err(authority_error)?;
+        .map_err(|error| match &error {
+            ProjectError::PersistenceFailed => internal_error("project could not be persisted"),
+            _ => authority_error(error),
+        })?;
     Ok(projects.iter().map(to_project_dto).collect())
 }
 

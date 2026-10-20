@@ -157,11 +157,20 @@ impl Conversation {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ConversationError {
     EmptyConversationId,
-    IdTooLong { len: usize },
+    IdTooLong {
+        len: usize,
+    },
     EmptyTitle,
-    TitleTooLong { len: usize },
+    TitleTooLong {
+        len: usize,
+    },
     EmptyProjectId,
-    UnknownProject { project_id: String },
+    UnknownProject {
+        project_id: String,
+    },
+    /// The conversation changed in memory but its durable record could not be
+    /// written.
+    PersistenceFailed,
 }
 
 #[cfg(test)]

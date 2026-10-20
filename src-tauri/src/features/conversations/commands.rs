@@ -19,7 +19,7 @@ use super::dto::{
     MessageRoleDto, to_tool_call_dto,
 };
 use super::service::ConversationStore;
-use crate::features::projects::domain::ProjectId;
+use crate::features::projects::domain::{ProjectError, ProjectId};
 use crate::features::projects::service::ProjectStore;
 use crate::ipc::error::{AppErrorCode, AppErrorDto};
 
@@ -46,8 +46,17 @@ fn validation_error(error: ConversationError) -> AppErrorDto {
         ConversationError::UnknownProject { project_id } => {
             format!("unknown project: {project_id}")
         }
+        ConversationError::PersistenceFailed => "conversation could not be persisted".to_owned(),
     };
     AppErrorDto::new(AppErrorCode::ValidationFailed, message, request_id())
+}
+
+fn internal_error(message: &str) -> AppErrorDto {
+    AppErrorDto::new(
+        AppErrorCode::InternalError,
+        message.to_owned(),
+        request_id(),
+    )
 }
 
 fn authority_error(project_id: String) -> AppErrorDto {
@@ -125,13 +134,20 @@ pub fn create_conversation(
         .map_err(validation_error)?;
     let conversation = conversations
         .create_conversation(project_id.as_str(), title)
-        .map_err(validation_error)?;
+        .map_err(|error| match error {
+            ConversationError::PersistenceFailed => {
+                internal_error("conversation could not be persisted")
+            }
+            other => validation_error(other),
+        })?;
     if let Err(error) = projects.attach_conversation(&project_id, conversation.id.as_str()) {
         let rollback_id = super::domain::ConversationId::new(conversation.id.as_str())
             .map_err(validation_error)?;
-        conversations.remove_conversation(&rollback_id);
-        let _ = error;
-        return Err(authority_error(project_id.as_str().to_owned()));
+        let _ = conversations.remove_conversation(&rollback_id);
+        return Err(match error {
+            ProjectError::PersistenceFailed => internal_error("project could not be persisted"),
+            _ => authority_error(project_id.as_str().to_owned()),
+        });
     }
     Ok(to_conversation_dto(&conversation))
 }

@@ -1,6 +1,7 @@
 //! Conversation catalog DTOs (issue #16, slice 2).
 //!
-//! Wire shapes only: the service, command and persistence live in #18. Closed
+//! Wire shapes only: the service and commands live in #18 and the durable
+//! persistence in #22. Closed
 //! enums keep `snake_case` values aligned with the TypeScript domain unions; an
 //! absent optional field stays absent on the wire so fixtures round-trip.
 
