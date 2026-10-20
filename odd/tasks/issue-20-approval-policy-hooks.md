@@ -131,3 +131,30 @@ L1. User request verbatim: "continua con la sigueinte issue y basandote en main"
 L2. Branch `feat/issue-20-approval-policy-hooks` cut from `main` at `f978324`,
 which already contains the #19 merge and therefore the run supervisor the
 approval policy will guard.
+
+L3. Delivered in three commits:
+
+| Slice | Commit    | Files                                                                             | Authored lines |
+| ----- | --------- | --------------------------------------------------------------------------------- | -------------- |
+| 1     | `6e00785` | `hooks/{mod,domain,approval_policy,ports}.rs`, `hooks/adapters/*`, `Cargo.*`      | ~876           |
+| 2     | `8c18997` | `hooks/{mod,service,commands}.rs`, `projects/{service,dto,commands}.rs`, `lib.rs` | ~967           |
+| 3     | `c31432c` | `odd/tasks/issue-20-*.md`, both `business-logic.md` copies, `docs/ipc/README.md`  | ~145           |
+
+L4. Verification: `cargo test` (137 unit + 29 contract tests), `cargo clippy
+--all-targets -- -D warnings`, `cargo fmt --check`, `pnpm run check` and
+`pnpm test` (461 frontend tests) all green. The hook fixtures stay byte-for-byte
+in the command tests; the process adapter is covered by success, non-zero exit,
+timeout/kill and missing-binary tests on Unix.
+
+L5. Scope notes made while implementing:
+
+- `authorize_tool` is the core policy gate but has no IPC command: the frozen
+  #16 contract has no tool-approval request/response shape. #21 and the provider
+  adapters #25–#27 call it; this ticket does not invent a wire command.
+- The `auto_approve` read-only set (search, list files, diff) is the documented
+  conservative assumption of D1, not a claimed product answer.
+- The process adapter spawns executables directly, so Windows `.cmd`/`.bat`
+  hooks report `SpawnFailed` instead of being routed through a shell. A
+  dedicated reviewed Windows path would be a separate decision.
+- Declining a hook records the decision and prevents execution; blocking the
+  guarded tool call remains the open question in `business-logic.md` §4.
