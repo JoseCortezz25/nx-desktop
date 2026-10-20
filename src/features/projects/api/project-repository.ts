@@ -1,9 +1,9 @@
 /**
  * Port for the project list behind the composer's context bar.
  *
- * Backed by the mock repository today and by the future typed IPC client
- * (`project-client.ts`) once the Rust core exposes `list_projects`,
- * `create_project` and `set_project_approval_mode`.
+ * The typed IPC-backed repository implements this port at runtime (#22); the
+ * mock factory remains as a test fixture. The core decides ids, defaults and
+ * persistence, so the port shape stays the same.
  */
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
 import type { Project } from '@/shared/domain/project.types';

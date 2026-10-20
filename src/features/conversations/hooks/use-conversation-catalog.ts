@@ -4,12 +4,11 @@
  *
  * Pinned, project and recent views are projections of this one list
  * (`docs/wireframes/README.md`, screen 02) computed by the sidebar, so this hook
- * only resolves the list. The seed is never read directly: the mock factory
- * today, the typed IPC client once `list_conversations` exists.
+ * only resolves the list through the typed IPC-backed port.
  */
 import { useEffect, useState } from 'react';
 import type { Conversation } from '@/shared/domain/conversation.types';
-import { createMockConversationRepository } from '../api/mock-conversation-repository';
+import { createIpcConversationRepository } from '../api/ipc-conversation-repository';
 
 export interface ConversationCatalogState {
   readonly conversations: readonly Conversation[];
@@ -24,15 +23,22 @@ export function useConversationCatalog(): ConversationCatalogState {
 
   useEffect(() => {
     let isCancelled = false;
-    const repository = createMockConversationRepository();
+    const repository = createIpcConversationRepository();
 
-    void repository.listConversations().then(catalog => {
-      if (isCancelled) {
-        return;
-      }
-      setConversations(catalog);
-      setIsLoading(false);
-    });
+    void repository
+      .listConversations()
+      .then(catalog => {
+        if (isCancelled) {
+          return;
+        }
+        setConversations(catalog);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       isCancelled = true;

@@ -4,11 +4,11 @@
  * The catalog is the input the shell reconciles the composer's selection chain
  * against; the *active* provider is a projection of that chain, not "the first
  * catalog row", so this hook deliberately exposes only the list. Backed by the
- * mock factory today, by the typed IPC client once `list_providers` exists.
+ * typed IPC client through the `ProviderRepository` port.
  */
 import { useEffect, useState } from 'react';
 import type { Provider } from '@/shared/domain/provider.types';
-import { createMockProviderRepository } from '../api/mock-provider-repository';
+import { createIpcProviderRepository } from '../api/ipc-provider-repository';
 
 export interface ProviderCatalogState {
   readonly providers: readonly Provider[];
@@ -21,15 +21,22 @@ export function useProviderCatalog(): ProviderCatalogState {
 
   useEffect(() => {
     let isCancelled = false;
-    const repository = createMockProviderRepository();
+    const repository = createIpcProviderRepository();
 
-    void repository.listProviders().then(catalog => {
-      if (isCancelled) {
-        return;
-      }
-      setProviders(catalog);
-      setIsLoading(false);
-    });
+    void repository
+      .listProviders()
+      .then(catalog => {
+        if (isCancelled) {
+          return;
+        }
+        setProviders(catalog);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      });
 
     return () => {
       isCancelled = true;

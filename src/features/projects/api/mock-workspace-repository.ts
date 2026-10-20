@@ -1,6 +1,6 @@
 /**
- * In-memory branch lists used until the Rust core exposes
- * `list_workspace_branches`.
+ * In-memory branch fixture behind the mock port and its tests. The running app
+ * reads the IPC-backed repository (#22).
  *
  * Every project's workspace reports a **different** branch list, so the
  * environment popover cannot be built against a single shared list and the
