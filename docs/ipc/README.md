@@ -237,8 +237,8 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
 Slices 2–4 define the contract; a row is registered with `generate_handler!`
-when its owning ticket lands. #17, #18 and #19 are registered today; #20–#24
-remain.
+when its owning ticket lands. #17, #18, #19 and #21 are registered today; #20
+and #22–#24 remain.
 
 ## 5. Feature catalogs (slice 2)
 
