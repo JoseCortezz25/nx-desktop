@@ -4,6 +4,12 @@
 pub mod features;
 pub mod ipc;
 
+use features::providers::{
+    adapters::fake::FakeAgentProvider,
+    commands::{list_models, list_providers},
+    service::ProviderRegistry,
+};
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -26,9 +32,11 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let registry = ProviderRegistry::new(&FakeAgentProvider);
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet]);
+        .manage(registry)
+        .invoke_handler(tauri::generate_handler![greet, list_providers, list_models]);
 
     // The native menu is declared explicitly on every desktop platform. macOS
     // would install `Menu::default` on its own, but Windows and Linux show no
