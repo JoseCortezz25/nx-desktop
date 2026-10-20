@@ -236,8 +236,9 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
-Slices 2–4 define the contract only — the rows above register no command until
-#17–#24 implement the services and `generate_handler!`.
+Slices 2–4 define the contract; a row is registered with `generate_handler!`
+when its owning ticket lands. #17, #18 and #19 are registered today; #20–#24
+remain.
 
 ## 5. Feature catalogs (slice 2)
 
@@ -340,10 +341,11 @@ These are excerpts of the byte-exact fixtures; both suites consume the files.
 
 ## 6. Feature catalogs (slice 3)
 
-Runs and subagents are contract-only here. `RunSupervisor`, the services, the
-commands and the stream emission belong to #19; the subagent list and individual
-stop have an **open downstream owner (#19/#23)**, and this slice invents no
-lifecycle behavior for them.
+Runs and subagents share this contract slice. Issue #19 implements
+`RunSupervisor`, the start/cancel/snapshot services, the three run commands and
+the six-kind stream emission. The subagent list and individual stop remain
+contract-only with an **open downstream owner (#19/#23)**, and this slice
+invents no lifecycle behavior for them.
 
 ### `RunDto`, `RunEnvironmentDto` and `RunStatus`
 

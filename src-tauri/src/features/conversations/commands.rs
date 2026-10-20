@@ -13,12 +13,10 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use tauri::State;
 
-use super::domain::{
-    Conversation, ConversationError, ConversationTitle, MessageRole, ToolCallKind, ToolCallStatus,
-};
+use super::domain::{Conversation, ConversationError, ConversationTitle, MessageRole};
 use super::dto::{
     ConversationDto, ConversationMessageDto, CreateConversationRequestDto, FileReferenceDto,
-    MessageRoleDto, ToolCallDto, ToolCallKindDto, ToolCallStatusDto,
+    MessageRoleDto, to_tool_call_dto,
 };
 use super::service::ConversationStore;
 use crate::features::projects::domain::ProjectId;
@@ -58,28 +56,6 @@ fn authority_error(project_id: String) -> AppErrorDto {
         format!("unknown project: {project_id}"),
         request_id(),
     )
-}
-
-fn to_tool_call_dto(tool_call: &super::domain::ToolCall) -> ToolCallDto {
-    ToolCallDto {
-        id: tool_call.id.clone(),
-        kind: match tool_call.kind {
-            ToolCallKind::Search => ToolCallKindDto::Search,
-            ToolCallKind::Command => ToolCallKindDto::Command,
-            ToolCallKind::ListFiles => ToolCallKindDto::ListFiles,
-            ToolCallKind::Diff => ToolCallKindDto::Diff,
-            ToolCallKind::Subagent => ToolCallKindDto::Subagent,
-        },
-        summary: tool_call.summary.clone(),
-        detail: tool_call.detail.clone(),
-        status: match tool_call.status {
-            ToolCallStatus::Pending => ToolCallStatusDto::Pending,
-            ToolCallStatus::Running => ToolCallStatusDto::Running,
-            ToolCallStatus::Completed => ToolCallStatusDto::Completed,
-            ToolCallStatus::Failed => ToolCallStatusDto::Failed,
-        },
-        subagent_id: tool_call.subagent_id.clone(),
-    }
 }
 
 fn to_conversation_dto(conversation: &Conversation) -> ConversationDto {

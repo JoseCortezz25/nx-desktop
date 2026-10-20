@@ -6,6 +6,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use super::domain::{ToolCall, ToolCallKind, ToolCallStatus};
+
 /// Who authored a conversation message.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -90,4 +92,34 @@ pub struct CreateConversationRequestDto {
     pub project_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+}
+
+/// Projects the conversation domain entity onto the one wire shape every
+/// feature shares for tool activity.
+///
+/// The run stream's `toolActivity` frame reuses this same DTO, so the mapping
+/// lives here — with the shape it produces — instead of being copied in
+/// `runs/commands.rs` where the two copies could drift
+/// (`docs/research-tecnico/arquitectura-tauri.md`, "Estructura de archivos":
+/// expose what crosses a module from the module itself).
+pub fn to_tool_call_dto(tool_call: &ToolCall) -> ToolCallDto {
+    ToolCallDto {
+        id: tool_call.id.clone(),
+        kind: match tool_call.kind {
+            ToolCallKind::Search => ToolCallKindDto::Search,
+            ToolCallKind::Command => ToolCallKindDto::Command,
+            ToolCallKind::ListFiles => ToolCallKindDto::ListFiles,
+            ToolCallKind::Diff => ToolCallKindDto::Diff,
+            ToolCallKind::Subagent => ToolCallKindDto::Subagent,
+        },
+        summary: tool_call.summary.clone(),
+        detail: tool_call.detail.clone(),
+        status: match tool_call.status {
+            ToolCallStatus::Pending => ToolCallStatusDto::Pending,
+            ToolCallStatus::Running => ToolCallStatusDto::Running,
+            ToolCallStatus::Completed => ToolCallStatusDto::Completed,
+            ToolCallStatus::Failed => ToolCallStatusDto::Failed,
+        },
+        subagent_id: tool_call.subagent_id.clone(),
+    }
 }
