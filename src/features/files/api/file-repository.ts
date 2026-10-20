@@ -1,9 +1,9 @@
 /**
  * Port for reading one workspace file into the right panel.
  *
- * Backed by the mock repository today and by the future typed IPC client
- * (`file-client.ts`) once the Rust core exposes a workspace-relative read
- * (`.claude/knowledge/business-logic.md` §3.3). The panel never reads the disk
+ * Backed by the mock repository today and by the typed IPC client once the UI
+ * wiring lands in #24 (the Rust read exists in #21;
+ * `.claude/knowledge/business-logic.md` §3.3). The panel never reads the disk
  * itself.
  */
 import type { FileDocument } from '@/shared/domain/file-document.types';

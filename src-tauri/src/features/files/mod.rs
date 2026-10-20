@@ -1,7 +1,12 @@
-//! Files feature contract module (issue #16, slice 4).
+//! File open-target feature (issue #21).
 //!
-//! The wire DTOs only: the installed-target probe, the external launch, the
-//! process adapter and `commands.rs` belong to #21/#12 and are deliberately
-//! absent here.
+//! The wire DTOs (`dto.rs`) are frozen by the #16 contract; this module adds
+//! the target domain, the launcher port, the OS-specific adapter, the use cases
+//! and the `list_open_targets` / `open_in_target` commands.
 
+pub mod adapters;
+pub mod commands;
+pub mod domain;
 pub mod dto;
+pub mod ports;
+pub mod service;

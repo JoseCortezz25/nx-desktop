@@ -8,7 +8,7 @@
  * (`.claude/knowledge/business-logic.md` §3.3). The locked `Abrir` decision
  * offers only VS Code when installed (`.claude/knowledge/business-logic.md`
  * §3.5 item 3); Rust enforces the destination and the allowed target, never the
- * menu that drew it (#12/#24).
+ * menu that drew it (#12/#21).
  */
 import type { OpenTarget } from '@/shared/domain/open-target.types';
 import type {

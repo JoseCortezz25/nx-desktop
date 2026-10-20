@@ -4,8 +4,8 @@
  * The menu asks which targets exist and then reports the intent to open one
  * file. It never spawns an editor itself: the launch belongs to the Rust core,
  * which validates the project roots, the workspace-relative path and the
- * allowed target (#12/#24). The current port is a stub; this client is the
- * seam its replacement will use.
+ * allowed target (#12/#21). The Rust commands land in #21; #24 wires this
+ * client into the UI.
  */
 import type { OpenTarget } from '@/shared/domain/open-target.types';
 import type {
