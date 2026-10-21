@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent
+} from 'react';
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
 import { isUnrestrictedApprovalMode } from '@/shared/domain/approval-mode.types';
 import type { EffortLevel } from '@/shared/domain/effort-level.types';
@@ -43,6 +49,7 @@ import { ProjectPicker } from '../molecules/project-picker';
 import { SelectList, type SelectOption } from '../molecules/select-list';
 import { SelectTrigger } from '../molecules/select-trigger';
 import {
+  resolveComposerKeyIntent,
   submitDraftWithSelection,
   typeInDraft,
   type ComposerDraft
@@ -298,6 +305,25 @@ export function Composer({
     );
   }
 
+  function handlePromptKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
+    const intent = resolveComposerKeyIntent({
+      key: event.key,
+      shiftKey: event.shiftKey,
+      metaKey: event.metaKey,
+      ctrlKey: event.ctrlKey,
+      altKey: event.altKey,
+      isComposing: event.nativeEvent.isComposing,
+      keyCode: event.keyCode
+    });
+    if (intent !== 'submit') {
+      return;
+    }
+    // Enter never inserts a newline, even when the send is blocked: the guarded
+    // send path keeps the draft and the selection hint stays visible.
+    event.preventDefault();
+    handleSend();
+  }
+
   function handleToggle(selector: OpenSelector) {
     setOpenSelector(current => (current === selector ? null : selector));
   }
@@ -407,6 +433,7 @@ export function Composer({
           value={draft.text}
           placeholder={placeholder}
           onChange={handlePromptChange}
+          onKeyDown={handlePromptKeyDown}
         />
         <ComposerBar
           leadingControls={

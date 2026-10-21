@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import './text-area.css';
 
 export interface TextAreaProps {
@@ -9,6 +9,11 @@ export interface TextAreaProps {
   readonly placeholder?: string;
   readonly rows?: number;
   readonly onChange?: (value: string) => void;
+  /**
+   * Forwards key presses up untouched. The atom applies no key rule; the owner
+   * decides what a key means (the composer's Enter-to-send rule).
+   */
+  readonly onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
 /**
@@ -21,7 +26,8 @@ export function TextArea({
   value,
   placeholder,
   rows = 1,
-  onChange
+  onChange,
+  onKeyDown
 }: TextAreaProps) {
   function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
     onChange?.(event.target.value);
@@ -35,6 +41,7 @@ export function TextArea({
       placeholder={placeholder}
       rows={rows}
       onChange={handleChange}
+      onKeyDown={onKeyDown}
     />
   );
 }
