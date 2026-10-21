@@ -1,5 +1,6 @@
 /**
- * In-memory provider catalog used until the Rust core exposes `list_providers`.
+ * In-memory provider catalog fixture behind the mock port and its tests. The
+ * running app reads the IPC-backed repository (#22).
  *
  * The names, subtitles, icons, and model ids below are mock seed data standing
  * in for values the provider engines supply at runtime. They are data delivered

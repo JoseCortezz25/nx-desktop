@@ -9,13 +9,15 @@
 //! construction — there is no async I/O in this issue.
 
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 use super::domain::{
     ApprovalMode, HookApprovalStatus, HookDecision, MAX_FOLDERS, Project, ProjectError, ProjectId,
     ProjectName,
 };
+use super::persistence as project_persistence;
+use crate::persistence::{JsonPersistence, PersistenceError};
 use crate::security::path_policy::{MAX_PATH_LEN, canonicalize_or_normalize_root};
 
 struct ProjectStoreInner {
@@ -29,6 +31,8 @@ struct ProjectStoreInner {
 /// Long-lived owner of the project catalog.
 pub struct ProjectStore {
     inner: Mutex<ProjectStoreInner>,
+    /// Durable catalog, or `None` for the in-memory test store.
+    persistence: Option<JsonPersistence>,
 }
 
 impl ProjectStore {
@@ -41,6 +45,7 @@ impl ProjectStore {
                 created_count: 0,
                 branches: seed_branches(),
             }),
+            persistence: None,
         }
     }
 
@@ -53,6 +58,35 @@ impl ProjectStore {
                 created_count: 0,
                 branches: seed_branches(),
             }),
+            persistence: None,
+        }
+    }
+
+    /// Builds a store backed by the durable catalog at `path`.
+    ///
+    /// A missing file starts from the fixture seed; every mutation is written
+    /// back. A corrupt file or an unsupported version fails startup instead of
+    /// silently replacing user data.
+    pub fn with_persistence(path: PathBuf) -> Result<Self, PersistenceError> {
+        let persistence = JsonPersistence::new(path);
+        let projects = project_persistence::load(&persistence)?.unwrap_or_else(seed_projects);
+        let created_count = next_created_count(&projects);
+        Ok(Self {
+            inner: Mutex::new(ProjectStoreInner {
+                projects,
+                created_count,
+                branches: seed_branches(),
+            }),
+            persistence: Some(persistence),
+        })
+    }
+
+    /// Writes the catalog through the optional durable store.
+    fn persist(&self, projects: &[Project]) -> Result<(), ProjectError> {
+        match &self.persistence {
+            Some(persistence) => project_persistence::save(persistence, projects)
+                .map_err(|_| ProjectError::PersistenceFailed),
+            None => Ok(()),
         }
     }
 
@@ -111,6 +145,7 @@ impl ProjectStore {
             .ok_or_else(|| ProjectError::UnknownProject {
                 project_id: id.as_str().to_owned(),
             })?;
+        let previous = project.hook_decisions.clone();
         match project
             .hook_decisions
             .iter_mut()
@@ -122,7 +157,34 @@ impl ProjectStore {
                 approval_status,
             }),
         }
-        Ok(project.clone())
+        let updated = project.clone();
+        if let Err(error) = self.persist(&inner.projects) {
+            // Roll back to the pre-call snapshot so memory never diverges from disk.
+            if let Some(project) = inner.projects.iter_mut().find(|project| project.id == *id) {
+                project.hook_decisions = previous;
+            }
+            return Err(error);
+        }
+        Ok(updated)
+    }
+
+    /// The authorized workspace roots of one project, in project order.
+    ///
+    /// Short lock scope: the folder list is cloned under the guard. #21 resolves
+    /// every file path against these roots before reading or spawning anything.
+    pub fn workspace_roots(&self, id: &ProjectId) -> Result<Vec<String>, ProjectError> {
+        self.inner
+            .lock()
+            .map_err(|_| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?
+            .projects
+            .iter()
+            .find(|project| project.id == *id)
+            .map(|project| project.workspace_folders.clone())
+            .ok_or_else(|| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })
     }
 
     /// Persists one project: validates Limits (folder count and sizes),
@@ -168,6 +230,11 @@ impl ProjectStore {
             conversation_ids: Vec::new(),
         };
         inner.projects.push(project.clone());
+        if let Err(error) = self.persist(&inner.projects) {
+            inner.projects.pop();
+            inner.created_count = inner.created_count.saturating_sub(1);
+            return Err(error);
+        }
         Ok((project, inner.projects.clone()))
     }
 
@@ -184,14 +251,24 @@ impl ProjectStore {
             .map_err(|_| ProjectError::UnknownProject {
                 project_id: id.as_str().to_owned(),
             })?;
-        let project = inner
-            .projects
-            .iter_mut()
-            .find(|project| project.id == *id)
-            .ok_or_else(|| ProjectError::UnknownProject {
-                project_id: id.as_str().to_owned(),
-            })?;
-        project.approval_mode = mode;
+        let previous = {
+            let project = inner
+                .projects
+                .iter_mut()
+                .find(|project| project.id == *id)
+                .ok_or_else(|| ProjectError::UnknownProject {
+                    project_id: id.as_str().to_owned(),
+                })?;
+            let previous = project.approval_mode;
+            project.approval_mode = mode;
+            previous
+        };
+        if let Err(error) = self.persist(&inner.projects) {
+            if let Some(project) = inner.projects.iter_mut().find(|project| project.id == *id) {
+                project.approval_mode = previous;
+            }
+            return Err(error);
+        }
         Ok(inner.projects.clone())
     }
 
@@ -224,26 +301,49 @@ impl ProjectStore {
             .map_err(|_| ProjectError::UnknownProject {
                 project_id: id.as_str().to_owned(),
             })?;
-        let project = inner
-            .projects
-            .iter_mut()
-            .find(|project| project.id == *id)
-            .ok_or_else(|| ProjectError::UnknownProject {
-                project_id: id.as_str().to_owned(),
-            })?;
-        project.conversation_ids.push(conversation_id.to_owned());
+        {
+            let project = inner
+                .projects
+                .iter_mut()
+                .find(|project| project.id == *id)
+                .ok_or_else(|| ProjectError::UnknownProject {
+                    project_id: id.as_str().to_owned(),
+                })?;
+            project.conversation_ids.push(conversation_id.to_owned());
+        }
+        if let Err(error) = self.persist(&inner.projects) {
+            if let Some(project) = inner.projects.iter_mut().find(|project| project.id == *id) {
+                project.conversation_ids.pop();
+            }
+            return Err(error);
+        }
         Ok(())
     }
 
     /// Removes one conversation id from its project; the rollback companion
     /// for a failed post-creation attach.
+    ///
+    /// The durable write is best-effort here: the caller is already unwinding a
+    /// failed creation, so a second persistence failure must not mask the first.
     pub fn detach_conversation(&self, id: &ProjectId, conversation_id: &str) {
-        if let Ok(mut inner) = self.inner.lock()
-            && let Some(project) = inner.projects.iter_mut().find(|p| p.id == *id)
-        {
-            project.conversation_ids.retain(|c| c != conversation_id);
+        if let Ok(mut inner) = self.inner.lock() {
+            if let Some(project) = inner.projects.iter_mut().find(|p| p.id == *id) {
+                project.conversation_ids.retain(|c| c != conversation_id);
+            }
+            let _ = self.persist(&inner.projects);
         }
     }
+}
+
+/// Derives the next creation counter from the loaded ids, so a restart cannot
+/// reissue an id that already exists.
+fn next_created_count(projects: &[Project]) -> u32 {
+    projects
+        .iter()
+        .filter_map(|project| project.id.as_str().strip_prefix("proj-created-"))
+        .filter_map(|suffix| suffix.parse::<u32>().ok())
+        .max()
+        .unwrap_or(0)
 }
 
 /// Fallback id when the deterministic counter format is rejected. The format
@@ -507,6 +607,19 @@ mod tests {
     }
 
     #[test]
+    fn returns_the_workspace_roots_of_a_known_project() {
+        let store = store();
+        let id = ProjectId::new("proj-api-client").expect("id");
+        assert_eq!(
+            store.workspace_roots(&id).expect("known project"),
+            vec![
+                "/workspace/api-client".to_owned(),
+                "/workspace/shared-contracts".to_owned()
+            ]
+        );
+    }
+
+    #[test]
     fn rejects_a_hook_decision_for_an_unknown_project() {
         let store = store();
         let id = ProjectId::new("proj-ghost").expect("id");
@@ -518,5 +631,131 @@ mod tests {
                 project_id: "proj-ghost".to_owned(),
             }
         );
+    }
+
+    #[test]
+    fn rejects_workspace_roots_of_an_unknown_project() {
+        let store = store();
+        let id = ProjectId::new("proj-ghost").expect("id");
+        assert_eq!(
+            store.workspace_roots(&id).expect_err("unknown project"),
+            ProjectError::UnknownProject {
+                project_id: "proj-ghost".to_owned(),
+            }
+        );
+    }
+
+    fn temp_store_path(name: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "nx-projects-store-{name}-{}.json",
+            std::process::id()
+        ))
+    }
+
+    #[test]
+    fn persisted_projects_survive_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("reload");
+        let _ = fs::remove_file(&path);
+        let name = ProjectName::new("Docs site").expect("name");
+        let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
+        let (created, _) = store
+            .create_project(&name, &["/workspace/docs-site".to_owned()])
+            .expect("creation succeeds");
+        assert_eq!(created.id.as_str(), "proj-created-1");
+        drop(store);
+
+        let reloaded = ProjectStore::with_persistence(path.clone()).expect("store reloads");
+        assert!(
+            reloaded
+                .list_projects()
+                .iter()
+                .any(|project| project.id.as_str() == "proj-created-1")
+        );
+        let (next, _) = reloaded
+            .create_project(&name, &["/workspace/docs-two".to_owned()])
+            .expect("second creation succeeds");
+        assert_eq!(next.id.as_str(), "proj-created-2");
+
+        fs::remove_file(&path).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn persisted_approval_mode_survives_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("approval");
+        let _ = fs::remove_file(&path);
+        let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
+        let id = ProjectId::new("proj-design-system").expect("id");
+        store
+            .set_approval_mode(&id, ApprovalMode::FullAccess)
+            .expect("policy changes");
+        drop(store);
+
+        let reloaded = ProjectStore::with_persistence(path.clone()).expect("store reloads");
+        let project = reloaded
+            .list_projects()
+            .into_iter()
+            .find(|project| project.id == id)
+            .expect("project persists");
+        assert_eq!(project.approval_mode, ApprovalMode::FullAccess);
+
+        fs::remove_file(&path).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn persisted_hook_decision_survives_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("hook-decision");
+        let _ = fs::remove_file(&path);
+        let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
+        let id = ProjectId::new("proj-design-system").expect("id");
+        store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+            .expect("decision records");
+        drop(store);
+
+        let reloaded = ProjectStore::with_persistence(path.clone()).expect("store reloads");
+        let project = reloaded.project(&id).expect("project persists");
+        assert_eq!(
+            project.hook_decisions,
+            vec![HookDecision {
+                hook_id: "hook-lint-on-write".to_owned(),
+                approval_status: HookApprovalStatus::Approved,
+            }]
+        );
+
+        fs::remove_file(&path).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn persisted_conversation_attachment_survives_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("attach");
+        let _ = fs::remove_file(&path);
+        let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
+        let id = ProjectId::new("proj-design-system").expect("id");
+        store
+            .attach_conversation(&id, "conv-created-1")
+            .expect("attach succeeds");
+        drop(store);
+
+        let reloaded = ProjectStore::with_persistence(path.clone()).expect("store reloads");
+        let project = reloaded
+            .list_projects()
+            .into_iter()
+            .find(|project| project.id == id)
+            .expect("project persists");
+        assert!(
+            project
+                .conversation_ids
+                .contains(&"conv-created-1".to_owned())
+        );
+
+        fs::remove_file(&path).expect("scratch cleanup");
     }
 }

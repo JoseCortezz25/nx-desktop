@@ -237,8 +237,8 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
 Slices 2–4 define the contract; a row is registered with `generate_handler!`
-when its owning ticket lands. #17, #18, #19 and #20 are registered today;
-#21–#24 remain.
+when its owning ticket lands. #17, #18, #19, #20, #21 and #22 are registered
+today; #23 and #24 remain.
 
 ## 5. Feature catalogs (slice 2)
 
@@ -301,6 +301,11 @@ a cross-provider model id is valid.
 `create_conversation` sends `{ request: { projectId, title? } }`; when `title`
 is absent the core derives one, so the request stays valid without inventing UI
 copy. `ToolCallDto.subagentId` is present only for `kind: "subagent"`.
+
+The project and conversation catalogs are durable since #22: the Rust core
+writes versioned JSON under the Tauri app-data directory and reloads it on
+startup, with the fixture rows as the first-run seed. The wire shape does not
+change; persistence records are internal to the core.
 
 ### Exact wire examples
 

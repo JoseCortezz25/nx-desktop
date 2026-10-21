@@ -1,15 +1,27 @@
 // Shared cross-language IPC contract primitives (issue #16) plus the
 // implemented backends: providers (#17), projects/conversations with the
 // workspace path policy (#18), the run supervisor with its Channel stream
-// (#19) and the approval policy plus hook review (#20). Remaining services
-// (#21–#24) land on their own tickets.
+// (#19), the approval policy plus hook review (#20), the workspace
+// file/open-target/diff services (#21) and persisted catalogs (#22). Remaining
+// services (#23–#24) land on their own tickets.
 pub mod features;
 pub mod ipc;
+pub mod persistence;
 pub mod security;
 
 use std::sync::Arc;
 
-use features::conversations::{commands as conversation_commands, service::ConversationStore};
+use tauri::Manager;
+
+use features::conversations::{
+    commands as conversation_commands,
+    service::{ConversationStore, SystemClock},
+};
+use features::diff::{adapters::git::GitDiffSource, commands::read_workspace_diff};
+use features::files::{
+    adapters::system::SystemOpenTargetLauncher,
+    commands::{list_open_targets, open_in_target},
+};
 use features::hooks::{
     adapters::fake::FakeHookSource,
     commands::{list_hooks, set_hook_decision},
@@ -26,6 +38,7 @@ use features::runs::{
     commands::{cancel_run, get_run, start_run},
     supervisor::RunSupervisor,
 };
+use features::workspace::commands::read_file;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -50,17 +63,28 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let registry = ProviderRegistry::new(&FakeAgentProvider);
-    let projects = ProjectStore::seeded();
-    let conversations = ConversationStore::seeded();
     let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
     let hooks = HookService::new(Arc::new(FakeHookSource));
+    let open_targets = SystemOpenTargetLauncher;
+    let diff_source = GitDiffSource;
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
-        .manage(projects)
-        .manage(conversations)
         .manage(runs)
         .manage(hooks)
+        .manage(open_targets)
+        .manage(diff_source)
+        .setup(|app| {
+            let data_dir = app.path().app_data_dir()?;
+            let projects = ProjectStore::with_persistence(data_dir.join("projects.json"))?;
+            let conversations = ConversationStore::with_persistence(
+                data_dir.join("conversations.json"),
+                Box::new(SystemClock),
+            )?;
+            app.manage(projects);
+            app.manage(conversations);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             list_providers,
@@ -75,7 +99,11 @@ pub fn run() {
             cancel_run,
             get_run,
             list_hooks,
-            set_hook_decision
+            set_hook_decision,
+            read_file,
+            list_open_targets,
+            open_in_target,
+            read_workspace_diff
         ]);
 
     // The native menu is declared explicitly on every desktop platform. macOS

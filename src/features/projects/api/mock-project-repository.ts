@@ -1,5 +1,6 @@
 /**
- * In-memory project list used until the Rust core exposes `list_projects`.
+ * In-memory project fixture behind the mock port and its tests. The running app
+ * reads the IPC-backed repository (#22).
  *
  * Each project carries the two settings locked as project-scoped on 2026-10-16
  * (issue #30): the tool approval policy (`approvalMode`) and the remembered

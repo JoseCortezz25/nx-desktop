@@ -2,9 +2,9 @@
  * Port behind the `Abrir` menu: which targets exist on this machine, and the
  * action that opens a file into one.
  *
- * There is no IPC yet (#12), so the installed check is modelled against mock
- * data. `openInTarget` is a **stub**: launching an editor belongs to a later
- * ticket, and this one must not perform a real launch. Modelling the check
+ * There is no IPC wiring yet (#24), so the installed check is modelled against
+ * mock data. The Rust commands land in #21; `openInTarget` here is a **stub**
+ * until #24 connects this port, and this ticket must not perform a real launch. Modelling the check
  * behind the port is what makes "VS Code is not installed" testable without a
  * machine that lacks it (`.claude/knowledge/business-logic.md` §3.5 item 3).
  */
