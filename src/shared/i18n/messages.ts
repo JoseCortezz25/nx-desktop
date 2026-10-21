@@ -11,6 +11,7 @@
  * `getSharedErrorMessage`) so lookup stays behind one seam.
  */
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
+import type { DiffFileNotice } from '@/shared/domain/diff-file.types';
 import type { OpenTarget } from '@/shared/domain/open-target.types';
 import type { SubagentStatusKind } from '@/shared/domain/subagent.types';
 
@@ -246,7 +247,18 @@ export const sharedMessages = {
       expandLabel: (path: string) => `Expandir ${path}`,
       collapseLabel: (path: string) => `Contraer ${path}`,
       countsLabel: (added: number, removed: number) =>
-        `${added} líneas añadidas, ${removed} líneas eliminadas`
+        `${added} líneas añadidas, ${removed} líneas eliminadas`,
+      // A file listed without hunks (#196) prints why instead of a table.
+      // Keyed by the closed wire vocabulary, so a new notice cannot compile
+      // without its copy.
+      noticeLabel: (notice: DiffFileNotice): string => {
+        switch (notice) {
+          case 'binary':
+            return 'Archivo binario';
+          case 'too_large':
+            return 'Archivo demasiado grande';
+        }
+      }
     },
     hunk: {
       tableLabel: (path: string) => `Diferencias de ${path}`

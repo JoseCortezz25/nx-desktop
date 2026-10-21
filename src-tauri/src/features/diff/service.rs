@@ -171,6 +171,7 @@ mod tests {
                     content: "added".to_owned(),
                 }],
             }],
+            notice: None,
         }
     }
 
@@ -294,6 +295,7 @@ mod tests {
                 header: "@@ -1 +1 @@".to_owned(),
                 lines,
             }],
+            notice: None,
         }]);
         assert_eq!(
             read_workspace_diff(&store, &source, &project_id())

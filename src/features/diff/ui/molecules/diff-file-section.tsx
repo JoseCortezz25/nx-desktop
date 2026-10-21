@@ -65,7 +65,11 @@ export function DiffFileSection({
         </Button>
       </div>
 
-      {isCollapsed ? null : (
+      {isCollapsed ? null : file.notice ? (
+        <p className="diff-file-section__notice">
+          {messages.diff.section.noticeLabel(file.notice)}
+        </p>
+      ) : (
         <div className="diff-file-section__hunks">
           {file.hunks.map((hunk, index) => (
             <DiffHunkTable key={index} path={file.path} hunk={hunk} />

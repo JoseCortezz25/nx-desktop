@@ -7,6 +7,13 @@
 //! `git diff HEAD` covers staged and unstaged changes. A repository without a
 //! `HEAD` (no commits yet) falls back to `git diff --cached` plus `git diff`,
 //! merging files by path.
+//!
+//! Untracked, non-ignored files (issue #196) come from
+//! `git ls-files --others --exclude-standard -z` and are listed as added files
+//! whose single hunk is their whole content. Each path is resolved through the
+//! workspace path policy before it is read; a binary file, a file over
+//! [`MAX_UNTRACKED_FILE_BYTES`] or one that would exceed the remaining diff
+//! budget is listed with a notice and no hunks.
 
 use std::path::Path;
 use std::process::Stdio;
@@ -15,10 +22,14 @@ use std::time::Duration;
 use tokio::process::Command;
 
 use super::super::domain::{
-    DiffFile, DiffHunk, DiffLine, DiffLineKind, MAX_DIFF_BYTES, MAX_DIFF_FILES, MAX_HUNKS_PER_FILE,
-    MAX_LINES_PER_FILE,
+    DiffFile, DiffFileNotice, DiffHunk, DiffLine, DiffLineKind, MAX_DIFF_BYTES, MAX_DIFF_FILES,
+    MAX_HUNKS_PER_FILE, MAX_LINES_PER_FILE, MAX_UNTRACKED_FILE_BYTES,
 };
 use super::super::ports::{BoxFuture, DiffSourceError, WorkspaceDiffSource};
+use crate::security::path_policy::resolve_in_workspaces;
+
+/// Bytes git inspects for a NUL when it decides a blob is binary.
+const BINARY_PROBE_BYTES: usize = 8000;
 
 const GIT_TIMEOUT: Duration = Duration::from_secs(10);
 
@@ -61,9 +72,149 @@ impl WorkspaceDiffSource for GitDiffSource {
                 }
                 files
             };
+            let files = append_untracked(&cwd, files).await?;
             ensure_bounds(&files)?;
             Ok(files)
         })
+    }
+}
+
+/// Lists untracked, non-ignored files and appends them as added files.
+async fn append_untracked(
+    cwd: &Path,
+    mut files: Vec<DiffFile>,
+) -> Result<Vec<DiffFile>, DiffSourceError> {
+    let listing = run_git(
+        cwd,
+        &[
+            "--no-pager",
+            "-c",
+            "core.quotePath=false",
+            "ls-files",
+            "--others",
+            "--exclude-standard",
+            "-z",
+        ],
+    )
+    .await?;
+    let paths = parse_untracked_listing(&listing);
+    let roots = [cwd.to_path_buf()];
+    let mut budget = MAX_DIFF_BYTES.saturating_sub(diff_content_bytes(&files));
+
+    for path in paths {
+        if files.iter().any(|file| file.path == path) {
+            continue;
+        }
+        // Authority: a path the policy rejects (traversal or symlink escape)
+        // is never read nor listed.
+        let Ok(resolved) = resolve_in_workspaces(&roots, &path) else {
+            continue;
+        };
+        let Some(file) = read_untracked(&resolved, path, &mut budget).await else {
+            continue;
+        };
+        if files.len() >= MAX_DIFF_FILES {
+            return Err(DiffSourceError::TooLarge);
+        }
+        files.push(file);
+    }
+    Ok(files)
+}
+
+/// Splits the NUL-separated `ls-files -z` output into workspace paths.
+///
+/// A path that is not UTF-8 cannot cross the wire as a `String` and is skipped;
+/// a trailing `/` marks a nested repository, which is not a file.
+fn parse_untracked_listing(bytes: &[u8]) -> Vec<String> {
+    bytes
+        .split(|byte| *byte == 0)
+        .filter_map(|entry| std::str::from_utf8(entry).ok())
+        .filter(|path| !path.is_empty() && !path.ends_with('/'))
+        .map(str::to_owned)
+        .collect()
+}
+
+/// Content bytes already committed to the change set.
+fn diff_content_bytes(files: &[DiffFile]) -> usize {
+    files
+        .iter()
+        .flat_map(|file| file.hunks.iter())
+        .flat_map(|hunk| hunk.lines.iter())
+        .map(|line| line.content.len())
+        .sum()
+}
+
+/// Reads one untracked entry. Returns `None` for entries that are not files
+/// (nested repositories, sockets) or that vanished since the listing.
+async fn read_untracked(resolved: &Path, path: String, budget: &mut usize) -> Option<DiffFile> {
+    let metadata = tokio::fs::symlink_metadata(resolved).await.ok()?;
+    let content = if metadata.file_type().is_symlink() {
+        // Like git, a symlink's content is its target; it is never followed.
+        let target = tokio::fs::read_link(resolved).await.ok()?;
+        target.to_string_lossy().into_owned().into_bytes()
+    } else if metadata.is_file() {
+        if metadata.len() > MAX_UNTRACKED_FILE_BYTES {
+            return Some(untracked_with_notice(path, DiffFileNotice::TooLarge));
+        }
+        tokio::fs::read(resolved).await.ok()?
+    } else {
+        return None;
+    };
+    Some(untracked_file(path, &content, budget))
+}
+
+fn untracked_with_notice(path: String, notice: DiffFileNotice) -> DiffFile {
+    DiffFile {
+        path,
+        added_count: 0,
+        removed_count: 0,
+        hunks: Vec::new(),
+        notice: Some(notice),
+    }
+}
+
+/// Builds the added file for one untracked entry's bytes.
+///
+/// Binary content (a NUL in git's probe window, or invalid UTF-8) gets the
+/// binary notice; content over the per-file line bound or the remaining diff
+/// byte budget gets the too-large notice. An empty file has no hunks.
+pub(crate) fn untracked_file(path: String, content: &[u8], budget: &mut usize) -> DiffFile {
+    let probe = &content[..content.len().min(BINARY_PROBE_BYTES)];
+    if probe.contains(&0) {
+        return untracked_with_notice(path, DiffFileNotice::Binary);
+    }
+    let Ok(text) = std::str::from_utf8(content) else {
+        return untracked_with_notice(path, DiffFileNotice::Binary);
+    };
+    if content.len() > *budget {
+        return untracked_with_notice(path, DiffFileNotice::TooLarge);
+    }
+    let lines: Vec<DiffLine> = text
+        .lines()
+        .map(|line| DiffLine {
+            kind: DiffLineKind::Added,
+            content: line.to_owned(),
+        })
+        .collect();
+    if lines.len() > MAX_LINES_PER_FILE {
+        return untracked_with_notice(path, DiffFileNotice::TooLarge);
+    }
+    *budget -= content.len();
+    let added_count = lines.len().min(u32::MAX as usize) as u32;
+    let hunks = if lines.is_empty() {
+        Vec::new()
+    } else {
+        vec![DiffHunk {
+            header: format!("@@ -0,0 +1,{} @@", lines.len()),
+            lines,
+        }]
+    };
+    DiffFile {
+        path,
+        added_count,
+        removed_count: 0,
+        hunks,
+        notice: None,
     }
 }
 
@@ -214,6 +365,7 @@ fn flush(files: &mut Vec<DiffFile>, builder: Option<FileBuilder>) -> Result<(), 
         added_count,
         removed_count,
         hunks: file.hunks,
+        notice: None,
     });
     Ok(())
 }
@@ -441,6 +593,194 @@ Binary files a/logo.png and b/logo.png differ
         assert_eq!(files[0].removed_count, 0);
 
         fs::remove_dir_all(&repo).expect("scratch cleanup");
+    }
+
+    fn commit_all(repo: &Path) {
+        run_git(repo, &["add", "."]);
+        run_git(
+            repo,
+            &[
+                "-c",
+                "user.email=test@example.com",
+                "-c",
+                "user.name=Test",
+                "commit",
+                "-qm",
+                "init",
+            ],
+        );
+    }
+
+    #[test]
+    fn untracked_text_becomes_one_all_added_hunk() {
+        let mut budget = MAX_DIFF_BYTES;
+        let file = untracked_file("new.ts".to_owned(), b"one\r\ntwo\nthree", &mut budget);
+        assert_eq!(file.added_count, 3);
+        assert_eq!(file.removed_count, 0);
+        assert_eq!(file.notice, None);
+        assert_eq!(file.hunks.len(), 1);
+        assert_eq!(file.hunks[0].header, "@@ -0,0 +1,3 @@");
+        assert!(
+            file.hunks[0]
+                .lines
+                .iter()
+                .all(|line| line.kind == DiffLineKind::Added)
+        );
+        assert_eq!(file.hunks[0].lines[0].content, "one");
+        assert_eq!(budget, MAX_DIFF_BYTES - 14);
+    }
+
+    #[test]
+    fn an_empty_untracked_file_has_no_hunks() {
+        let mut budget = MAX_DIFF_BYTES;
+        let file = untracked_file("empty.txt".to_owned(), b"", &mut budget);
+        assert_eq!(file.added_count, 0);
+        assert!(file.hunks.is_empty());
+        assert_eq!(file.notice, None);
+    }
+
+    #[test]
+    fn binary_and_non_utf8_content_get_the_binary_notice() {
+        let mut budget = MAX_DIFF_BYTES;
+        for content in [&b"PNG\0\x01"[..], &b"caf\xe9"[..]] {
+            let file = untracked_file("logo.png".to_owned(), content, &mut budget);
+            assert_eq!(file.notice, Some(DiffFileNotice::Binary));
+            assert!(file.hunks.is_empty());
+            assert_eq!(file.added_count, 0);
+        }
+        assert_eq!(budget, MAX_DIFF_BYTES);
+    }
+
+    #[test]
+    fn content_over_the_line_bound_or_budget_gets_the_too_large_notice() {
+        let mut budget = MAX_DIFF_BYTES;
+        let many_lines = "x\n".repeat(MAX_LINES_PER_FILE + 1);
+        let file = untracked_file("long.txt".to_owned(), many_lines.as_bytes(), &mut budget);
+        assert_eq!(file.notice, Some(DiffFileNotice::TooLarge));
+        assert!(file.hunks.is_empty());
+
+        let mut tiny_budget = 2;
+        let file = untracked_file("a.txt".to_owned(), b"abc", &mut tiny_budget);
+        assert_eq!(file.notice, Some(DiffFileNotice::TooLarge));
+        assert_eq!(tiny_budget, 2);
+    }
+
+    #[test]
+    fn the_listing_skips_nested_repositories_and_empty_entries() {
+        let paths = parse_untracked_listing(b"a.ts\0nested/\0dir/b.ts\0");
+        assert_eq!(paths, vec!["a.ts".to_owned(), "dir/b.ts".to_owned()]);
+    }
+
+    #[tokio::test]
+    async fn lists_untracked_files_as_added_and_never_ignored_ones() {
+        let repo = temp_repo();
+        run_git(&repo, &["init", "-q"]);
+        fs::write(repo.join(".gitignore"), "secret.env\nbuild/\n").expect("ignore file");
+        fs::write(repo.join("app.ts"), "one\n").expect("fixture file");
+        commit_all(&repo);
+
+        fs::write(
+            repo.join("new.ts"),
+            "export const a = 1;\nexport const b = 2;\n",
+        )
+        .expect("untracked file");
+        fs::create_dir_all(repo.join("src/nested")).expect("untracked dir");
+        fs::write(repo.join("src/nested/deep.ts"), "deep\n").expect("nested untracked");
+        fs::write(repo.join("secret.env"), "TOKEN=1\n").expect("ignored file");
+        fs::create_dir_all(repo.join("build")).expect("ignored dir");
+        fs::write(repo.join("build/out.js"), "out\n").expect("ignored build file");
+
+        let files = GitDiffSource.read(&repo).await.expect("diff succeeds");
+        let paths: Vec<&str> = files.iter().map(|file| file.path.as_str()).collect();
+        assert_eq!(paths, vec!["new.ts", "src/nested/deep.ts"]);
+        assert_eq!(files[0].added_count, 2);
+        assert_eq!(files[0].removed_count, 0);
+        assert_eq!(files[0].hunks[0].header, "@@ -0,0 +1,2 @@");
+        assert_eq!(files[0].hunks[0].lines[1].content, "export const b = 2;");
+
+        fs::remove_dir_all(&repo).expect("scratch cleanup");
+    }
+
+    #[tokio::test]
+    async fn keeps_tracked_changes_before_untracked_files() {
+        let repo = temp_repo();
+        run_git(&repo, &["init", "-q"]);
+        fs::write(repo.join("app.ts"), "one\n").expect("fixture file");
+        commit_all(&repo);
+        fs::write(repo.join("app.ts"), "two\n").expect("modified file");
+        fs::write(repo.join("added.ts"), "new\n").expect("untracked file");
+
+        let files = GitDiffSource.read(&repo).await.expect("diff succeeds");
+        let paths: Vec<&str> = files.iter().map(|file| file.path.as_str()).collect();
+        assert_eq!(paths, vec!["app.ts", "added.ts"]);
+
+        fs::remove_dir_all(&repo).expect("scratch cleanup");
+    }
+
+    #[tokio::test]
+    async fn lists_untracked_files_in_a_repository_without_commits() {
+        let repo = temp_repo();
+        run_git(&repo, &["init", "-q"]);
+        fs::write(repo.join("first.ts"), "a\nb\nc\n").expect("untracked file");
+
+        let files = GitDiffSource.read(&repo).await.expect("diff succeeds");
+        assert_eq!(files.len(), 1);
+        assert_eq!(files[0].path, "first.ts");
+        assert_eq!(files[0].added_count, 3);
+
+        fs::remove_dir_all(&repo).expect("scratch cleanup");
+    }
+
+    #[tokio::test]
+    async fn lists_binary_and_oversized_untracked_files_without_hunks() {
+        let repo = temp_repo();
+        run_git(&repo, &["init", "-q"]);
+        fs::write(repo.join("logo.png"), [0x89, b'P', b'N', b'G', 0, 1, 2]).expect("binary file");
+        let oversized = vec![b'a'; (MAX_UNTRACKED_FILE_BYTES + 1) as usize];
+        fs::write(repo.join("huge.txt"), oversized).expect("oversized file");
+
+        let files = GitDiffSource.read(&repo).await.expect("diff succeeds");
+        let huge = files
+            .iter()
+            .find(|file| file.path == "huge.txt")
+            .expect("oversized file listed");
+        assert_eq!(huge.notice, Some(DiffFileNotice::TooLarge));
+        assert!(huge.hunks.is_empty());
+        let logo = files
+            .iter()
+            .find(|file| file.path == "logo.png")
+            .expect("binary file listed");
+        assert_eq!(logo.notice, Some(DiffFileNotice::Binary));
+        assert!(logo.hunks.is_empty());
+        assert_eq!(logo.added_count, 0);
+
+        fs::remove_dir_all(&repo).expect("scratch cleanup");
+    }
+
+    #[cfg(unix)]
+    #[tokio::test]
+    async fn never_reads_an_untracked_symlink_that_escapes_the_workspace() {
+        let repo = temp_repo();
+        let outside = temp_repo();
+        fs::write(outside.join("secret.txt"), "outside\n").expect("outside file");
+        run_git(&repo, &["init", "-q"]);
+        std::os::unix::fs::symlink(outside.join("secret.txt"), repo.join("link.txt"))
+            .expect("symlink");
+        fs::write(repo.join("ok.txt"), "ok\n").expect("untracked file");
+
+        let files = GitDiffSource.read(&repo).await.expect("diff succeeds");
+        let paths: Vec<&str> = files.iter().map(|file| file.path.as_str()).collect();
+        assert_eq!(paths, vec!["ok.txt"]);
+        assert!(
+            files
+                .iter()
+                .flat_map(|file| file.hunks.iter())
+                .flat_map(|hunk| hunk.lines.iter())
+                .all(|line| line.content != "outside")
+        );
+
+        fs::remove_dir_all(&repo).expect("scratch cleanup");
+        fs::remove_dir_all(&outside).expect("scratch cleanup");
     }
 
     #[tokio::test]
