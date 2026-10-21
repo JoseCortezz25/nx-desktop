@@ -5,7 +5,10 @@ import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
 import type { CreateProjectInput } from '@/features/projects/model/create-project.types';
-import { resolveSelection } from '@/shared/domain/selection-chain';
+import {
+  changeProvider,
+  resolveSelection
+} from '@/shared/domain/selection-chain';
 
 /**
  * The create-project seam #9 closes, exercised through the shell's **real
@@ -208,9 +211,10 @@ describe('shell create-project seam', () => {
 
     renderToStaticMarkup(<AppShell />);
 
-    expect(resolveSelection(catalog, null)?.provider.displayName).toBe(
-      'OpenCode'
-    );
+    expect(
+      resolveSelection(catalog, changeProvider(catalog, 'opencode'))?.provider
+        .displayName
+    ).toBe('OpenCode');
     expect(captured.dialog?.draft).toBeNull();
   });
 });

@@ -3,6 +3,7 @@ import {
   EMPTY_COMPOSER_DRAFT,
   isSubmittable,
   submitDraft,
+  submitDraftWithSelection,
   typeInDraft
 } from './composer-draft';
 
@@ -42,6 +43,33 @@ describe('composer draft', () => {
     });
 
     expect(calls).toBe(0);
+    expect(afterSubmit).toBe(EMPTY_COMPOSER_DRAFT);
+  });
+});
+
+describe('submitDraftWithSelection', () => {
+  it('blocks the send and keeps the draft while no provider is selected', () => {
+    const draft = typeInDraft('Keep me');
+    let calls = 0;
+
+    const afterSubmit = submitDraftWithSelection(draft, false, () => {
+      calls += 1;
+    });
+
+    expect(calls).toBe(0);
+    expect(afterSubmit).toBe(draft);
+  });
+
+  it('submits and empties the draft once a selection exists', () => {
+    const submitted: string[] = [];
+
+    const afterSubmit = submitDraftWithSelection(
+      typeInDraft('Ship it'),
+      true,
+      text => submitted.push(text)
+    );
+
+    expect(submitted).toEqual(['Ship it']);
     expect(afterSubmit).toBe(EMPTY_COMPOSER_DRAFT);
   });
 });

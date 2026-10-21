@@ -18,6 +18,11 @@ export interface SelectTriggerProps {
   readonly tone?: ButtonTone;
   /** Whether the chip's popover is open. */
   readonly isExpanded?: boolean;
+  /**
+   * Renders the chip inert. The model chip is disabled until a provider is
+   * chosen, because the model catalog belongs to the provider.
+   */
+  readonly isDisabled?: boolean;
   readonly onPress?: () => void;
 }
 
@@ -33,6 +38,7 @@ export function SelectTrigger({
   icon,
   tone,
   isExpanded,
+  isDisabled = false,
   onPress
 }: SelectTriggerProps) {
   return (
@@ -41,6 +47,7 @@ export function SelectTrigger({
       label={label}
       tone={tone}
       isExpanded={isExpanded}
+      isDisabled={isDisabled}
       onPress={onPress}
     >
       {icon ? <Icon name={icon} size="sm" /> : null}

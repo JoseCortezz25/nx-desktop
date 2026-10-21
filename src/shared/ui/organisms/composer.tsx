@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { ApprovalMode } from '@/shared/domain/approval-mode.types';
 import { isUnrestrictedApprovalMode } from '@/shared/domain/approval-mode.types';
 import type { EffortLevel } from '@/shared/domain/effort-level.types';
@@ -42,7 +42,11 @@ import { IconButton } from '../molecules/icon-button';
 import { ProjectPicker } from '../molecules/project-picker';
 import { SelectList, type SelectOption } from '../molecules/select-list';
 import { SelectTrigger } from '../molecules/select-trigger';
-import { submitDraft, typeInDraft, type ComposerDraft } from './composer-draft';
+import {
+  submitDraftWithSelection,
+  typeInDraft,
+  type ComposerDraft
+} from './composer-draft';
 import './composer.css';
 
 /**
@@ -66,7 +70,9 @@ export interface ComposerProps {
    * The reconciled `provider -> model -> effort` chain the shell root owns. The
    * composer renders it and reports changes upward, so the sidebar brand and the
    * selectors read one selection — never a second copy (#10 defect carried over
-   * from #7).
+   * from #7). `null` is the "no provider selected yet" state: no provider is
+   * ever preselected (decision 2026-10-20), the model chip stays disabled, the
+   * effort chip is not drawn and sending is blocked with the draft kept.
    */
   readonly selection: ResolvedSelection | null;
   /** Hands the chosen provider up; the shell reconciles model and effort. */
@@ -162,6 +168,7 @@ export function Composer({
   );
   const [openSelector, setOpenSelector] = useState<OpenSelector | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const selectionHintId = useId();
 
   // The reconciled chain is owned by the shell root and handed down, so the
   // sidebar brand and these selectors read one selection.
@@ -280,10 +287,15 @@ export function Composer({
     if (isRunActive) {
       return;
     }
-    // Reads the draft it is handed rather than a state updater: `submitDraft`
-    // calls `onSubmit`, and an updater must stay side-effect free (React may
-    // invoke it twice in StrictMode).
-    onDraftChange(submitDraft(draft, text => onSubmit(text, environment)));
+    // Reads the draft it is handed rather than a state updater: the submit
+    // rule calls `onSubmit`, and an updater must stay side-effect free (React
+    // may invoke it twice in StrictMode). With no provider selected the rule
+    // keeps the draft and starts nothing (decision 2026-10-20).
+    onDraftChange(
+      submitDraftWithSelection(draft, resolved !== null, text =>
+        onSubmit(text, environment)
+      )
+    );
   }
 
   function handleToggle(selector: OpenSelector) {
@@ -437,9 +449,12 @@ export function Composer({
                     ? messages.composer.provider.triggerLabel(
                         resolved.provider.displayName
                       )
-                    : messages.composer.provider.listLabel
+                    : messages.composer.provider.emptyTriggerLabel
                 }
-                value={resolved?.provider.displayName ?? ''}
+                value={
+                  resolved?.provider.displayName ??
+                  messages.composer.provider.emptyValue
+                }
                 icon="provider"
                 isExpanded={openSelector === 'provider'}
                 onPress={() => handleToggle('provider')}
@@ -453,7 +468,13 @@ export function Composer({
                   isExpanded={openSelector === 'model'}
                   onPress={() => handleToggle('model')}
                 />
-              ) : null}
+              ) : (
+                <SelectTrigger
+                  label={messages.composer.model.emptyTriggerLabel}
+                  value={messages.composer.model.emptyValue}
+                  isDisabled
+                />
+              )}
               {resolved && effortLabel ? (
                 <SelectTrigger
                   label={messages.composer.effort.triggerLabel(effortLabel)}
@@ -465,6 +486,8 @@ export function Composer({
             </>
           }
           onSendPress={handleSend}
+          isSendDisabled={!resolved}
+          sendDescriptionId={resolved ? undefined : selectionHintId}
           isRunActive={isRunActive}
           onCancelPress={onCancelRun}
         />
@@ -548,6 +571,12 @@ export function Composer({
           </div>
         ) : null}
       </div>
+
+      {resolved ? null : (
+        <p className="composer-dock__hint" id={selectionHintId}>
+          {messages.composer.selectionRequiredHint}
+        </p>
+      )}
     </div>
   );
 }

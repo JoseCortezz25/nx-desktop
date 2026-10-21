@@ -87,3 +87,16 @@
   background: #f5b82e;
   pointer-events: none;
 }
+
+/* "No provider selected yet" hint (decision 2026-10-20): one quiet line under
+   the box that names what blocks sending. It is the send control's accessible
+   description, so it uses the higher-contrast secondary ink rather than the
+   placeholder grey. */
+.composer-dock__hint {
+  margin: 0;
+  padding-top: 8px;
+  color: var(--color-line-strong);
+  font-size: 12.5px;
+  line-height: 16px;
+  text-align: center;
+}

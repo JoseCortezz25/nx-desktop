@@ -36,6 +36,11 @@ export interface ButtonProps {
   /** Sets `aria-selected` for `role="option"` rows. */
   readonly isSelected?: boolean;
   readonly isDisabled?: boolean;
+  /**
+   * Sets `aria-describedby`: the id of visible text that explains the control,
+   * e.g. why it is disabled.
+   */
+  readonly describedBy?: string;
   readonly onPress?: () => void;
   readonly children: ReactNode;
 }
@@ -52,6 +57,7 @@ export function Button({
   role,
   isSelected,
   isDisabled = false,
+  describedBy,
   onPress,
   children
 }: ButtonProps) {
@@ -71,6 +77,7 @@ export function Button({
       aria-selected={
         role === 'option' || role === 'tab' ? isSelected : undefined
       }
+      aria-describedby={describedBy}
       disabled={isDisabled}
       onClick={onPress}
     >

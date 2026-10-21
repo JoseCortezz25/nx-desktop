@@ -46,3 +46,18 @@ export function submitDraft(
   onSubmit(draft.text);
   return EMPTY_COMPOSER_DRAFT;
 }
+
+/**
+ * Submits the draft only while a `provider -> model -> effort` chain is
+ * selected. No provider is preselected (decision 2026-10-20), so a send with no
+ * selection is blocked: `onSubmit` is never called and the draft is returned
+ * untouched, which keeps the user's prompt in the field until they choose a
+ * provider and a model.
+ */
+export function submitDraftWithSelection(
+  draft: ComposerDraft,
+  hasSelection: boolean,
+  onSubmit: (text: string) => void
+): ComposerDraft {
+  return hasSelection ? submitDraft(draft, onSubmit) : draft;
+}

@@ -86,7 +86,7 @@ function renderComposer(overrides: Partial<ComposerProps> = {}) {
   return renderToStaticMarkup(
     <Composer
       providers={catalog}
-      selection={resolveSelection(catalog, null)}
+      selection={resolveSelection(catalog, changeProvider(catalog, 'alpha'))}
       onSelectProvider={() => undefined}
       onSelectModel={() => undefined}
       onSelectEffort={() => undefined}
@@ -161,7 +161,7 @@ describe('composer', () => {
     );
   });
 
-  it('renders the provider, model and effort chips for the default selection', () => {
+  it('renders the provider, model and effort chips for the chosen selection', () => {
     const markup = renderComposer();
 
     expect(markup).toContain('class="button button--pill"');
@@ -282,6 +282,65 @@ describe('composer', () => {
       const markup = renderComposer({ activeProject: null });
 
       expect(markup).not.toContain('Aprobación:');
+    });
+  });
+
+  describe('while no provider is selected', () => {
+    const messages = getSharedMessages();
+
+    function renderUnselected(overrides: Partial<ComposerProps> = {}) {
+      return renderComposer({ selection: null, ...overrides });
+    }
+
+    it('shows the "not defined yet" provider chip, not the catalog first row', () => {
+      const markup = renderUnselected();
+
+      expect(markup).toContain(
+        `aria-label="${messages.composer.provider.emptyTriggerLabel}"`
+      );
+      expect(markup).toContain(messages.composer.provider.emptyValue);
+      expect(markup).not.toContain('Proveedor: Alpha');
+      expect(markup).not.toContain('placeholder=');
+    });
+
+    it('keeps the model chip disabled and draws no effort chip', () => {
+      const markup = renderUnselected();
+
+      expect(markup).toMatch(
+        new RegExp(
+          `aria-label="${messages.composer.model.emptyTriggerLabel}"[^>]*\\sdisabled`
+        )
+      );
+      expect(markup).not.toContain('Modelo: Alpha One');
+      expect(markup).not.toContain('Esfuerzo:');
+    });
+
+    it('disables send and describes why with the visible hint', () => {
+      const markup = renderUnselected({ draft: { text: 'Keep this draft' } });
+      const hint =
+        /<p class="composer-dock__hint" id="([^"]+)">([^<]+)<\/p>/.exec(markup);
+
+      expect(hint?.[2]).toBe(messages.composer.selectionRequiredHint);
+      expect(markup).toMatch(
+        new RegExp(
+          `aria-label="Enviar" aria-describedby="${hint?.[1] ?? 'missing'}" disabled`
+        )
+      );
+      // The draft survives: the field still renders what the shell owns.
+      expect(markup).toContain('>Keep this draft</textarea>');
+    });
+
+    it('draws the hint for an empty catalog too', () => {
+      expect(renderUnselected({ providers: [] })).toContain(
+        messages.composer.selectionRequiredHint
+      );
+    });
+
+    it('drops the hint and the description once a provider is chosen', () => {
+      const markup = renderComposer();
+
+      expect(markup).not.toContain('composer-dock__hint');
+      expect(markup).not.toContain('aria-describedby');
     });
   });
 });

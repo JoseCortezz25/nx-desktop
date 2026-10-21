@@ -126,16 +126,37 @@ describe('reconcileSelection', () => {
 });
 
 describe('resolveSelection', () => {
-  it('starts from the catalog default when nothing is chosen yet', () => {
-    const resolved = resolveSelection(catalog, null);
+  it('selects no provider while nothing is chosen yet', () => {
+    // No default provider (decision 2026-10-20): the catalog's first row is
+    // never picked on the user's behalf.
+    expect(resolveSelection(catalog, null)).toBeNull();
+  });
+
+  it('enables the chain once a provider is chosen explicitly', () => {
+    const resolved = resolveSelection(catalog, changeProvider(catalog, 'beta'));
+
+    expect(resolved?.selection).toEqual({
+      providerId: 'beta',
+      modelId: 'beta-one',
+      effortLevel: 'maximum'
+    });
+    expect(resolved?.provider.id).toBe('beta');
+    expect(resolved?.model.id).toBe('beta-one');
+    expect(resolved?.effortLevels).toEqual(['maximum']);
+  });
+
+  it('reconciles a chosen provider whose model left the catalog', () => {
+    const resolved = resolveSelection(catalog, {
+      providerId: 'alpha',
+      modelId: 'retired-model',
+      effortLevel: 'light'
+    });
 
     expect(resolved?.selection).toEqual({
       providerId: 'alpha',
       modelId: 'alpha-one',
       effortLevel: 'light'
     });
-    expect(resolved?.provider.id).toBe('alpha');
-    expect(resolved?.model.id).toBe('alpha-one');
   });
 
   it('reports the stops of the selected model, not a shared set', () => {
@@ -151,18 +172,19 @@ describe('resolveSelection', () => {
     );
   });
 
-  it('falls back to the catalog default when the chosen provider is gone', () => {
+  it('falls back to the unselected state when the chosen provider is gone', () => {
     const resolved = resolveSelection(catalog, {
       providerId: 'missing',
       modelId: 'alpha-one',
       effortLevel: 'light'
     });
 
-    expect(resolved?.selection.providerId).toBe('alpha');
+    expect(resolved).toBeNull();
   });
 
   it('returns null while the catalog is empty', () => {
     expect(resolveSelection([], null)).toBeNull();
+    expect(resolveSelection([], changeProvider(catalog, 'alpha'))).toBeNull();
   });
 });
 
