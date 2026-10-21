@@ -126,7 +126,7 @@ const catalog: readonly Provider[] = [
 
 const createdInput: CreateProjectInput = {
   name: 'Gamma app',
-  folders: ['/mock/workspace/gamma-site']
+  folders: ['/workspace/gamma-site']
 };
 
 describe('shell create-project seam', () => {

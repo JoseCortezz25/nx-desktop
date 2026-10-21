@@ -13,12 +13,12 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 use super::domain::{
-    ApprovalMode, HookApprovalStatus, HookDecision, MAX_FOLDERS, Project, ProjectError, ProjectId,
-    ProjectName,
+    ApprovalMode, HookApprovalStatus, HookDecision, MAX_FOLDERS, PickedWorkspaceFolder, Project,
+    ProjectError, ProjectId, ProjectName,
 };
 use super::persistence as project_persistence;
 use crate::persistence::{JsonPersistence, PersistenceError};
-use crate::security::path_policy::{MAX_PATH_LEN, canonicalize_or_normalize_root};
+use crate::security::path_policy::{MAX_PATH_LEN, WorkspaceRootError, canonicalize_existing_root};
 
 struct ProjectStoreInner {
     projects: Vec<Project>,
@@ -189,26 +189,16 @@ impl ProjectStore {
 
     /// Persists one project: validates Limits (folder count and sizes),
     /// canonicalizes each folder through the path policy (Authority tier —
-    /// folders become authorized workspace roots), assigns the next
-    /// deterministic counter id and project-scoped defaults.
+    /// folders become authorized workspace roots; missing, non-directory and
+    /// duplicate folders are refused), assigns the next deterministic counter
+    /// id and project-scoped defaults. The canonical paths are what is stored.
     pub fn create_project(
         &self,
         name: &ProjectName,
         folders: &[String],
     ) -> Result<(Project, Vec<Project>), ProjectError> {
         validate_folders(folders)?;
-        let mut roots = Vec::with_capacity(folders.len());
-        for folder in folders {
-            let path = Path::new(folder);
-            // A relative folder is never authority: reject it instead of
-            // resolving it against the process working directory.
-            canonicalize_or_normalize_root(path).map_err(|_| {
-                ProjectError::FolderNotAuthorized {
-                    folder: folder.clone(),
-                }
-            })?;
-            roots.push(folder.clone());
-        }
+        let roots = canonicalize_new_roots(folders)?;
 
         let mut inner = self
             .inner
@@ -358,6 +348,52 @@ fn unreachable_project_id(count: u32) -> ProjectId {
     })
 }
 
+/// Maps a path-policy refusal onto the project error for that folder.
+fn root_error(error: WorkspaceRootError, folder: String) -> ProjectError {
+    match error {
+        WorkspaceRootError::Relative => ProjectError::FolderNotAuthorized { folder },
+        WorkspaceRootError::Missing => ProjectError::FolderNotFound { folder },
+        WorkspaceRootError::NotADirectory => ProjectError::FolderNotDirectory { folder },
+    }
+}
+
+/// Canonicalizes every folder of a new project, in order, refusing relative,
+/// missing, non-directory and duplicate folders.
+///
+/// A relative folder is never authority, so it stays a denied-authority error
+/// instead of being resolved against the process working directory.
+fn canonicalize_new_roots(folders: &[String]) -> Result<Vec<String>, ProjectError> {
+    let mut roots: Vec<String> = Vec::with_capacity(folders.len());
+    for folder in folders {
+        let canonical = canonicalize_existing_root(Path::new(folder))
+            .map_err(|error| root_error(error, folder.clone()))?;
+        let root = canonical.to_string_lossy().into_owned();
+        if roots.contains(&root) {
+            return Err(ProjectError::DuplicateFolder {
+                folder: folder.clone(),
+            });
+        }
+        roots.push(root);
+    }
+    Ok(roots)
+}
+
+/// Turns the folder the native dialog returned into a draft row (issue #147).
+///
+/// The dialog only hands back what the user chose, so the folder is checked
+/// with the same rule `create_project` applies; the label is the folder's own
+/// name, or the whole path for a filesystem root that has none.
+pub fn describe_picked_folder(path: &Path) -> Result<PickedWorkspaceFolder, ProjectError> {
+    let folder = path.to_string_lossy().into_owned();
+    let canonical = canonicalize_existing_root(path).map_err(|error| root_error(error, folder))?;
+    let path = canonical.to_string_lossy().into_owned();
+    let label = canonical
+        .file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_else(|| path.clone());
+    Ok(PickedWorkspaceFolder { path, label })
+}
+
 /// Validates the folder list at the Limits tier (count, emptiness, sizes).
 /// Authority (canonicalization) happens in `create_project` itself.
 fn validate_folders(folders: &[String]) -> Result<(), ProjectError> {
@@ -438,6 +474,21 @@ mod tests {
         ProjectStore::seeded()
     }
 
+    /// A fresh scratch folder under the OS temp dir, returned as its
+    /// canonical path string (macOS resolves `/var` to `/private/var`).
+    fn scratch_folder(name: &str) -> String {
+        let root =
+            std::env::temp_dir().join(format!("nx-projects-folder-{name}-{}", std::process::id()));
+        if root.exists() {
+            std::fs::remove_dir_all(&root).expect("scratch folder resets");
+        }
+        std::fs::create_dir_all(&root).expect("scratch folder exists");
+        std::fs::canonicalize(&root)
+            .expect("scratch folder canonicalizes")
+            .to_string_lossy()
+            .into_owned()
+    }
+
     #[test]
     fn lists_both_fixture_projects() {
         let ids: Vec<String> = store()
@@ -457,11 +508,13 @@ mod tests {
     #[test]
     fn creates_a_project_with_counter_id_and_defaults() {
         let store = store();
+        let folder = scratch_folder("defaults");
         let name = ProjectName::new("Docs site").expect("name");
         let (project, projects) = store
-            .create_project(&name, &["/workspace/docs-site".to_owned()])
+            .create_project(&name, std::slice::from_ref(&folder))
             .expect("creation succeeds");
         assert_eq!(project.id.as_str(), "proj-created-1");
+        assert_eq!(project.workspace_folders, vec![folder.clone()]);
         assert_eq!(project.approval_mode, ApprovalMode::AskAlways);
         assert!(project.hook_decisions.is_empty());
         assert!(project.conversation_ids.is_empty());
@@ -489,6 +542,89 @@ mod tests {
             ProjectError::FolderNotAuthorized {
                 folder: "workspace/docs-site".to_owned(),
             }
+        );
+    }
+
+    #[test]
+    fn rejects_a_missing_folder() {
+        let store = store();
+        let name = ProjectName::new("Docs site").expect("name");
+        let missing = format!("{}/does-not-exist", scratch_folder("missing"));
+        assert_eq!(
+            store
+                .create_project(&name, std::slice::from_ref(&missing))
+                .expect_err("missing folder"),
+            ProjectError::FolderNotFound { folder: missing }
+        );
+        assert_eq!(store.list_projects().len(), 2);
+    }
+
+    #[test]
+    fn rejects_a_folder_that_is_a_file() {
+        let store = store();
+        let name = ProjectName::new("Docs site").expect("name");
+        let file = format!("{}/notes.txt", scratch_folder("file"));
+        std::fs::write(&file, "x").expect("scratch file");
+        assert_eq!(
+            store
+                .create_project(&name, std::slice::from_ref(&file))
+                .expect_err("file, not folder"),
+            ProjectError::FolderNotDirectory { folder: file }
+        );
+    }
+
+    #[test]
+    fn rejects_two_spellings_of_the_same_folder() {
+        let store = store();
+        let name = ProjectName::new("Docs site").expect("name");
+        let folder = scratch_folder("duplicate");
+        let respelled = format!("{folder}/.");
+        assert_eq!(
+            store
+                .create_project(&name, &[folder.clone(), respelled.clone()])
+                .expect_err("duplicate folder"),
+            ProjectError::DuplicateFolder { folder: respelled }
+        );
+        assert_eq!(store.list_projects().len(), 2);
+    }
+
+    #[test]
+    fn stores_the_canonical_form_of_each_folder() {
+        let store = store();
+        let name = ProjectName::new("Docs site").expect("name");
+        let folder = scratch_folder("canonical");
+        std::fs::create_dir_all(format!("{folder}/nested")).expect("nested folder");
+        let (project, _) = store
+            .create_project(&name, &[format!("{folder}/nested/..")])
+            .expect("creation succeeds");
+        assert_eq!(project.workspace_folders, vec![folder]);
+    }
+
+    #[test]
+    fn describes_a_picked_folder_with_its_name_as_label() {
+        let folder = scratch_folder("picked");
+        let picked = describe_picked_folder(Path::new(&folder)).expect("existing folder");
+        assert_eq!(picked.path, folder);
+        let expected_label = Path::new(&folder)
+            .file_name()
+            .expect("named folder")
+            .to_string_lossy()
+            .into_owned();
+        assert_eq!(picked.label, expected_label);
+    }
+
+    #[test]
+    fn labels_a_filesystem_root_with_its_whole_path() {
+        let picked = describe_picked_folder(Path::new("/")).expect("root exists");
+        assert_eq!(picked.label, picked.path);
+    }
+
+    #[test]
+    fn refuses_a_picked_folder_that_vanished() {
+        let missing = format!("{}/gone", scratch_folder("vanished"));
+        assert_eq!(
+            describe_picked_folder(Path::new(&missing)).expect_err("missing folder"),
+            ProjectError::FolderNotFound { folder: missing }
         );
     }
 
@@ -659,9 +795,11 @@ mod tests {
         let path = temp_store_path("reload");
         let _ = fs::remove_file(&path);
         let name = ProjectName::new("Docs site").expect("name");
+        let first = scratch_folder("reload-one");
+        let second = scratch_folder("reload-two");
         let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
         let (created, _) = store
-            .create_project(&name, &["/workspace/docs-site".to_owned()])
+            .create_project(&name, &[first])
             .expect("creation succeeds");
         assert_eq!(created.id.as_str(), "proj-created-1");
         drop(store);
@@ -674,7 +812,7 @@ mod tests {
                 .any(|project| project.id.as_str() == "proj-created-1")
         );
         let (next, _) = reloaded
-            .create_project(&name, &["/workspace/docs-two".to_owned()])
+            .create_project(&name, &[second])
             .expect("second creation succeeds");
         assert_eq!(next.id.as_str(), "proj-created-2");
 

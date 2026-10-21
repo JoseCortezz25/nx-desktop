@@ -9,11 +9,10 @@
 import type { WorkspacePath } from '@/shared/domain/value-objects.types';
 
 /**
- * One source folder the mocked picker can attach to a new project.
+ * One source folder attached to a new project.
  *
- * The folder picker is mocked in this ticket, so the catalog behind it is typed
- * fixture data rather than a filesystem/IPC read; `id` is the stable key the
- * draft and the row list use.
+ * It comes from the native folder dialog (#147); `id` is the stable key the
+ * draft and the row list use (the canonical path).
  */
 export interface SourceFolder {
   readonly id: string;
@@ -45,8 +44,3 @@ export interface CreateProjectInput {
 export type ProjectNameValidation =
   | { readonly status: 'valid'; readonly name: string }
   | { readonly status: 'empty' };
-
-/** Outcome of asking the mocked source-folder catalog for the next folder. */
-export type SourceFolderAvailability =
-  | { readonly status: 'available'; readonly folder: SourceFolder }
-  | { readonly status: 'exhausted' };

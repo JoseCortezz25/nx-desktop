@@ -12,6 +12,7 @@ import type { CreateProjectInput } from '../model/create-project.types';
 import type {
   CreateProjectRequestDto,
   CreatedProjectDto,
+  PickedWorkspaceFolderDto,
   ProjectDto,
   SetProjectApprovalModeRequestDto
 } from './project.contracts';
@@ -42,4 +43,12 @@ export function setProjectApprovalMode(
     approvalMode
   };
   return ipcInvoke<ProjectDto[]>('set_project_approval_mode', { request });
+}
+
+/**
+ * Opens the native folder dialog (owned by Rust) and resolves the chosen
+ * folder, or `null` when the user cancels it.
+ */
+export function pickWorkspaceFolder(): Promise<PickedWorkspaceFolderDto | null> {
+  return ipcInvoke<PickedWorkspaceFolderDto | null>('pick_workspace_folder');
 }

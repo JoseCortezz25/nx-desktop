@@ -10,43 +10,16 @@
  *
  * - the name rule is the minimal trimmed non-empty one — no uniqueness, charset
  *   or length policy is invented, because the issue specifies none;
- * - the folder picker is mocked, so its catalog is typed, deterministic fixture
- *   data (`MOCK_SOURCE_FOLDERS`) rather than the wireframe's `nx-desktop`
- *   placeholder path (`docs/wireframes/README.md`, ground rules).
+ * - folders come from the native folder dialog the Rust core opens (#147), so
+ *   these rules only append what the picker returned; existence and
+ *   uniqueness are enforced again by `create_project` in Rust.
  */
 import type {
   CreateProjectDraft,
   CreateProjectInput,
   ProjectNameValidation,
-  SourceFolder,
-  SourceFolderAvailability
+  SourceFolder
 } from './create-project.types';
-
-/**
- * The folder picker's mocked catalog.
- *
- * The real source is a filesystem dialog owned by a later ticket; until it
- * exists the dialog needs a typed, deterministic stand-in that is obviously
- * fixture data. Adding therefore walks this list in order, which is what makes
- * the empty and folder-added states reproducible in tests and in the browser.
- */
-export const MOCK_SOURCE_FOLDERS: readonly SourceFolder[] = [
-  {
-    id: 'folder-alpha',
-    label: 'alpha-app',
-    path: '/mock/workspace/alpha-app'
-  },
-  {
-    id: 'folder-beta',
-    label: 'beta-service',
-    path: '/mock/workspace/beta-service'
-  },
-  {
-    id: 'folder-gamma',
-    label: 'gamma-site',
-    path: '/mock/workspace/gamma-site'
-  }
-];
 
 /** The state the dialog opens in: no name, no folders. */
 export const EMPTY_CREATE_PROJECT_DRAFT: CreateProjectDraft = {
@@ -63,29 +36,21 @@ export function changeProjectName(
 }
 
 /**
- * The next folder the mocked catalog can offer this draft.
+ * The draft with the picked folder appended.
  *
- * It is a pure lookup so the dialog can both add the folder and disable its add
- * control on the same fact — one source of truth for "is there another folder?".
+ * A cancelled pick (`null`) and a folder whose path the draft already holds
+ * both leave the draft unchanged, so cancelling adds nothing and the same
+ * folder is never listed twice.
  */
-export function nextSourceFolder(
-  draft: CreateProjectDraft
-): SourceFolderAvailability {
-  const taken = new Set(draft.folders.map(folder => folder.id));
-  const folder = MOCK_SOURCE_FOLDERS.find(
-    candidate => !taken.has(candidate.id)
-  );
+export function addSourceFolder(
+  draft: CreateProjectDraft,
+  folder: SourceFolder | null
+): CreateProjectDraft {
+  if (!folder || draft.folders.some(taken => taken.path === folder.path)) {
+    return draft;
+  }
 
-  return folder ? { status: 'available', folder } : { status: 'exhausted' };
-}
-
-/** The draft with the next unused mock folder appended, or unchanged when exhausted. */
-export function addSourceFolder(draft: CreateProjectDraft): CreateProjectDraft {
-  const next = nextSourceFolder(draft);
-
-  return next.status === 'available'
-    ? { ...draft, folders: [...draft.folders, next.folder] }
-    : draft;
+  return { ...draft, folders: [...draft.folders, folder] };
 }
 
 /** The draft without the folder carrying `folderId`; the others are kept. */

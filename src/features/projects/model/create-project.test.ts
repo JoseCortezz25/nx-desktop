@@ -1,20 +1,31 @@
 import { describe, expect, it } from 'vitest';
 import {
   EMPTY_CREATE_PROJECT_DRAFT,
-  MOCK_SOURCE_FOLDERS,
   addSourceFolder,
   changeProjectName,
-  nextSourceFolder,
   removeSourceFolder,
   toCreateProjectInput,
   validateProjectName
 } from './create-project';
+import type { SourceFolder } from './create-project.types';
 
 /**
  * The create-project rules are pure transitions outside the component so this
  * node-environment runner (no DOM) can observe them: issue #9 requires the name
- * rule and the mocked folder source to be typed, deterministic and explicit.
+ * rule to be explicit, and #147 feeds the folders from the native dialog, so
+ * these tests hand in the folders a picker would return.
  */
+const docsSite: SourceFolder = {
+  id: '/workspace/docs-site',
+  label: 'docs-site',
+  path: '/workspace/docs-site'
+};
+
+const sharedContracts: SourceFolder = {
+  id: '/workspace/shared-contracts',
+  label: 'shared-contracts',
+  path: '/workspace/shared-contracts'
+};
 describe('project name validation', () => {
   it('accepts a non-empty name and reports it trimmed', () => {
     expect(validateProjectName('  Gamma app  ')).toEqual({
@@ -56,61 +67,46 @@ describe('create-project draft', () => {
   });
 
   it('keeps the folders when the name changes', () => {
-    const draft = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT);
+    const draft = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, docsSite);
     const renamed = changeProjectName(draft, 'Gamma app');
 
     expect(renamed.name).toBe('Gamma app');
     expect(renamed.folders).toBe(draft.folders);
   });
 
-  it('adds the next unused mock folder deterministically', () => {
-    const once = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT);
-    const twice = addSourceFolder(once);
+  it('appends each picked folder in pick order', () => {
+    const once = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, docsSite);
+    const twice = addSourceFolder(once, sharedContracts);
 
-    expect(once.folders).toEqual([MOCK_SOURCE_FOLDERS[0]]);
-    expect(twice.folders).toEqual([
-      MOCK_SOURCE_FOLDERS[0],
-      MOCK_SOURCE_FOLDERS[1]
-    ]);
+    expect(once.folders).toEqual([docsSite]);
+    expect(twice.folders).toEqual([docsSite, sharedContracts]);
   });
 
-  it('never offers the same folder twice', () => {
-    let draft = EMPTY_CREATE_PROJECT_DRAFT;
-    for (const _folder of MOCK_SOURCE_FOLDERS) {
-      draft = addSourceFolder(draft);
-    }
+  it('adds nothing when the pick is cancelled', () => {
+    const draft = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, docsSite);
 
-    const ids = draft.folders.map(folder => folder.id);
-    expect(new Set(ids).size).toBe(MOCK_SOURCE_FOLDERS.length);
+    expect(addSourceFolder(draft, null)).toBe(draft);
+    expect(addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, null)).toBe(
+      EMPTY_CREATE_PROJECT_DRAFT
+    );
+  });
+
+  it('never lists the same folder path twice', () => {
+    const draft = addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, docsSite);
+
+    expect(addSourceFolder(draft, { ...docsSite, id: 'other-id' })).toBe(draft);
   });
 
   it('removes one folder by id and keeps the others', () => {
-    const draft = addSourceFolder(addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT));
-    const withoutFirst = removeSourceFolder(draft, MOCK_SOURCE_FOLDERS[0].id);
+    const draft = addSourceFolder(
+      addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, docsSite),
+      sharedContracts
+    );
+    const withoutFirst = removeSourceFolder(draft, docsSite.id);
 
-    expect(withoutFirst.folders).toEqual([MOCK_SOURCE_FOLDERS[1]]);
+    expect(withoutFirst.folders).toEqual([sharedContracts]);
     // Untouched for an id the draft does not carry.
     expect(removeSourceFolder(draft, 'missing').folders).toEqual(draft.folders);
-  });
-
-  it('hardcodes no wireframe placeholder folder', () => {
-    for (const folder of MOCK_SOURCE_FOLDERS) {
-      expect(folder.label).not.toBe('nx-desktop');
-      expect(folder.path).not.toContain('nx-desktop');
-      expect(folder.path).not.toContain('fabrica-skills');
-    }
-    expect(MOCK_SOURCE_FOLDERS.length).toBeGreaterThan(0);
-  });
-
-  it('stops offering folders once the typed mock source is exhausted', () => {
-    let draft = EMPTY_CREATE_PROJECT_DRAFT;
-    for (const _folder of MOCK_SOURCE_FOLDERS) {
-      draft = addSourceFolder(draft);
-    }
-
-    expect(nextSourceFolder(draft)).toEqual({ status: 'exhausted' });
-    // An exhausted source is a no-op, not a rule violation.
-    expect(addSourceFolder(draft)).toBe(draft);
   });
 });
 
@@ -124,12 +120,13 @@ describe('create-project input', () => {
 
   it('builds the port input from the trimmed name and the folder paths', () => {
     const draft = addSourceFolder(
-      changeProjectName(EMPTY_CREATE_PROJECT_DRAFT, '  Gamma app  ')
+      changeProjectName(EMPTY_CREATE_PROJECT_DRAFT, '  Gamma app  '),
+      docsSite
     );
 
     expect(toCreateProjectInput(draft)).toEqual({
       name: 'Gamma app',
-      folders: [MOCK_SOURCE_FOLDERS[0].path]
+      folders: [docsSite.path]
     });
   });
 

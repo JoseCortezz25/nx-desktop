@@ -179,6 +179,7 @@ commands (`list_open_targets`) have a `response` only.
 | `providers-list-models.json`                  | `{ providerId }` → `ModelDto[]`                                |
 | `projects-list-projects.json`                 | `ProjectDto[]` with approval mode and hook decisions           |
 | `projects-create-project.json`                | `{ name, folders }` → `CreatedProjectDto`                      |
+| `projects-pick-workspace-folder.json`         | no request → `PickedWorkspaceFolderDto \| null` (cancelled)   |
 | `projects-set-project-approval-mode.json`     | `{ projectId, approvalMode }` → updated `ProjectDto[]`         |
 | `projects-list-workspace-branches.json`       | `{ projectId }` → repository branch order                      |
 | `conversations-list-conversations.json`       | `ConversationDto[]` with messages, tools and file references   |
@@ -217,7 +218,8 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 | `list_providers`            | —                                  | `ProviderDto[]`      | `provider_unavailable`, `internal_error`                      | —                                            | #17    |
 | `list_models`               | `{ providerId }`                   | `ModelDto[]`         | `validation_failed`, `provider_unavailable`                   | provider belongs to the configured registry  | #17    |
 | `list_projects`             | —                                  | `ProjectDto[]`       | `internal_error`                                              | —                                            | #18    |
-| `create_project`            | `{ name, folders }`                | `CreatedProjectDto`  | `validation_failed`, `permission_denied`                      | folders become authorized workspace roots    | #18    |
+| `create_project`            | `{ name, folders }`                | `CreatedProjectDto`  | `validation_failed`, `permission_denied`                      | folders become authorized workspace roots; missing, non-directory or duplicate folders are `validation_failed` (#147) | #18    |
+| `pick_workspace_folder`     | —                                  | `PickedWorkspaceFolderDto \| null` | `validation_failed`, `internal_error`               | native dialog opened from Rust only; no webview dialog permission | #147   |
 | `set_project_approval_mode` | `{ projectId, approvalMode }`      | `ProjectDto[]`       | `validation_failed`, `permission_denied`                      | `projectId` must be a known project          | #18    |
 | `list_workspace_branches`   | `{ projectId }`                    | `string[]`           | `permission_denied`, `internal_error`                         | `projectId` + canonicalized workspace roots  | #18    |
 | `list_conversations`        | —                                  | `ConversationDto[]`  | `internal_error`                                              | —                                            | #18    |

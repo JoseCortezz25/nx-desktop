@@ -8,14 +8,17 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use tauri::State;
+use tauri_plugin_dialog::DialogExt;
 
-use super::domain::{ApprovalMode, Project, ProjectError, ProjectId, ProjectName};
+use super::domain::{
+    ApprovalMode, PickedWorkspaceFolder, Project, ProjectError, ProjectId, ProjectName,
+};
 use super::dto::{
     ApprovalModeDto, CreateProjectRequestDto, CreatedProjectDto, HookDecisionDto,
-    ListWorkspaceBranchesRequestDto, ProjectDto, SetProjectApprovalModeRequestDto,
-    to_hook_approval_status_dto,
+    ListWorkspaceBranchesRequestDto, PickedWorkspaceFolderDto, ProjectDto,
+    SetProjectApprovalModeRequestDto, to_hook_approval_status_dto,
 };
-use super::service::ProjectStore;
+use super::service::{ProjectStore, describe_picked_folder};
 use crate::ipc::error::{AppErrorCode, AppErrorDto};
 
 /// Monotonic suffix for command correlation ids (`req-<n>`).
@@ -56,6 +59,13 @@ fn validation_error(error: ProjectError) -> AppErrorDto {
         }
         ProjectError::FolderNotAuthorized { folder } => {
             format!("folder is not an authorized workspace root: {folder}")
+        }
+        ProjectError::FolderNotFound { folder } => format!("folder does not exist: {folder}"),
+        ProjectError::FolderNotDirectory { folder } => {
+            format!("folder is not a directory: {folder}")
+        }
+        ProjectError::DuplicateFolder { folder } => {
+            format!("folder is already part of the project: {folder}")
         }
         // Unreachable from the validation-only paths below; kept so the match
         // stays exhaustive over the domain error.
@@ -112,6 +122,57 @@ fn to_project_dto(project: &Project) -> ProjectDto {
     }
 }
 
+fn to_picked_workspace_folder_dto(folder: PickedWorkspaceFolder) -> PickedWorkspaceFolderDto {
+    PickedWorkspaceFolderDto {
+        path: folder.path,
+        label: folder.label,
+    }
+}
+
+/// Maps a folder refusal: a relative folder is denied authority, every other
+/// folder problem is a malformed request (`validation_failed`).
+fn folder_error(error: ProjectError) -> AppErrorDto {
+    match &error {
+        ProjectError::FolderNotAuthorized { .. } => authority_error(error),
+        ProjectError::PersistenceFailed => internal_error("project could not be persisted"),
+        _ => validation_error(error),
+    }
+}
+
+/// Opens the native folder dialog from Rust and returns the chosen folder, or
+/// `None` when the user cancels (issue #147).
+///
+/// The dialog plugin is driven only from here: the webview holds no dialog
+/// permission, so it can ask for a folder but never open arbitrary dialogs or
+/// choose what the result means. The returned folder is canonical, and
+/// `create_project` re-validates it anyway because the webview echoes it back.
+#[tauri::command]
+pub async fn pick_workspace_folder(
+    window: tauri::WebviewWindow,
+) -> Result<Option<PickedWorkspaceFolderDto>, AppErrorDto> {
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+    let builder = window.dialog().file();
+    #[cfg(desktop)]
+    let builder = builder.set_parent(&window);
+    builder.pick_folder(move |picked| {
+        // The receiver only disappears if the command future was dropped, in
+        // which case nobody is waiting for the answer.
+        let _ = sender.send(picked);
+    });
+    let picked = receiver
+        .await
+        .map_err(|_| internal_error("folder dialog ended without an answer"))?;
+    let Some(picked) = picked else {
+        return Ok(None);
+    };
+    let path = picked
+        .into_path()
+        .map_err(|_| internal_error("folder dialog returned a non-filesystem location"))?;
+    describe_picked_folder(&path)
+        .map(|folder| Some(to_picked_workspace_folder_dto(folder)))
+        .map_err(folder_error)
+}
+
 /// Lists every persisted project.
 #[tauri::command]
 pub fn list_projects(store: State<'_, ProjectStore>) -> Result<Vec<ProjectDto>, AppErrorDto> {
@@ -128,11 +189,7 @@ pub fn create_project(
     let name = ProjectName::new(request.name).map_err(validation_error)?;
     let (project, projects) = store
         .create_project(&name, &request.folders)
-        .map_err(|error| match &error {
-            ProjectError::FolderNotAuthorized { .. } => authority_error(error),
-            ProjectError::PersistenceFailed => internal_error("project could not be persisted"),
-            _ => validation_error(error),
-        })?;
+        .map_err(folder_error)?;
     Ok(CreatedProjectDto {
         project: to_project_dto(&project),
         projects: projects.iter().map(to_project_dto).collect(),
@@ -206,16 +263,104 @@ mod tests {
             .expect("seed holds the design system project");
         let single = ProjectStore::from_projects(vec![design_system]);
         let name = ProjectName::new("Docs site").expect("name");
+        // Folders must exist since #147, so a real scratch folder stands in for
+        // the fixture's `/workspace/docs-site` and is swapped back before the
+        // comparison; the rest of the wire shape is pinned byte for byte.
+        let folder = scratch_folder("fixture");
         let (project, projects) = single
-            .create_project(&name, &["/workspace/docs-site".to_owned()])
+            .create_project(&name, std::slice::from_ref(&folder))
             .expect("creation succeeds");
+        let pin = |dto: ProjectDto| ProjectDto {
+            workspace_folders: dto
+                .workspace_folders
+                .into_iter()
+                .map(|root| {
+                    if root == folder {
+                        "/workspace/docs-site".to_owned()
+                    } else {
+                        root
+                    }
+                })
+                .collect(),
+            ..dto
+        };
         assert_eq!(
             CreatedProjectDto {
-                project: to_project_dto(&project),
-                projects: projects.iter().map(to_project_dto).collect(),
+                project: pin(to_project_dto(&project)),
+                projects: projects.iter().map(to_project_dto).map(pin).collect(),
             },
             expected
         );
+    }
+
+    /// A fresh scratch folder under the OS temp dir, as its canonical string.
+    fn scratch_folder(name: &str) -> String {
+        let root =
+            std::env::temp_dir().join(format!("nx-project-commands-{name}-{}", std::process::id()));
+        if root.exists() {
+            std::fs::remove_dir_all(&root).expect("scratch folder resets");
+        }
+        std::fs::create_dir_all(&root).expect("scratch folder exists");
+        std::fs::canonicalize(&root)
+            .expect("scratch folder canonicalizes")
+            .to_string_lossy()
+            .into_owned()
+    }
+
+    #[test]
+    fn picked_folder_matches_the_pinned_fixture() {
+        let raw = include_str!("../../../../docs/ipc/fixtures/projects-pick-workspace-folder.json");
+        let fixture: serde_json::Value = serde_json::from_str(raw).expect("picker fixture parses");
+        let picked = to_picked_workspace_folder_dto(PickedWorkspaceFolder {
+            path: "/workspace/docs-site".to_owned(),
+            label: "docs-site".to_owned(),
+        });
+        assert_eq!(
+            serde_json::to_value(Some(picked)).expect("picked folder serializes"),
+            fixture["response"]
+        );
+        let cancelled: Option<PickedWorkspaceFolderDto> = None;
+        assert_eq!(
+            serde_json::to_value(cancelled).expect("cancel serializes"),
+            fixture["cancelledResponse"]
+        );
+    }
+
+    #[test]
+    fn folder_problems_are_validation_failures_and_relative_folders_are_denied() {
+        for error in [
+            ProjectError::FolderNotFound {
+                folder: "/missing".to_owned(),
+            },
+            ProjectError::FolderNotDirectory {
+                folder: "/file.txt".to_owned(),
+            },
+            ProjectError::DuplicateFolder {
+                folder: "/dup".to_owned(),
+            },
+        ] {
+            assert_eq!(folder_error(error).code, AppErrorCode::ValidationFailed);
+        }
+        let relative = folder_error(ProjectError::FolderNotAuthorized {
+            folder: "relative".to_owned(),
+        });
+        assert_eq!(relative.code, AppErrorCode::PermissionDenied);
+    }
+
+    #[test]
+    fn creating_with_a_missing_or_duplicate_folder_reports_validation_failed() {
+        let store = store();
+        let name = ProjectName::new("Docs site").expect("name");
+        let folder = scratch_folder("rejects");
+        let missing = format!("{folder}/missing");
+        for folders in [vec![missing], vec![folder.clone(), folder.clone()]] {
+            let error = store
+                .create_project(&name, &folders)
+                .map_err(folder_error)
+                .expect_err("folder refused");
+            assert_eq!(error.code, AppErrorCode::ValidationFailed);
+        }
+        assert_eq!(store.list_projects().len(), 2);
     }
 
     #[test]

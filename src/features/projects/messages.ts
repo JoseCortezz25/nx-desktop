@@ -26,6 +26,8 @@ export const projectMessages = {
     foldersEmptyHint: 'Añadir una carpeta',
     addFolderLabel: 'Añadir',
     addFolderRowLabel: 'Añadir carpeta',
+    /** Shown when the native folder dialog could not return a usable folder. */
+    folderPickError: 'No se pudo añadir la carpeta.',
     removeFolderLabel: (folderName: string) => `Quitar ${folderName}`,
     cancelLabel: 'Cancelar',
     submitLabel: 'Crear proyecto'

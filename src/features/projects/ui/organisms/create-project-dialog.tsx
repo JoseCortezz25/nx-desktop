@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/shared/ui/atoms/button';
 import { Icon } from '@/shared/ui/atoms/icon';
 import { TextInput } from '@/shared/ui/atoms/text-input';
@@ -6,7 +6,6 @@ import { Dialog } from '@/shared/ui/molecules/dialog';
 import {
   addSourceFolder,
   changeProjectName,
-  nextSourceFolder,
   removeSourceFolder,
   toCreateProjectInput,
   validateProjectName
@@ -15,6 +14,8 @@ import type {
   CreateProjectDraft,
   CreateProjectInput
 } from '../../model/create-project.types';
+import type { WorkspaceFolderPicker } from '../../api/workspace-folder-picker';
+import { useWorkspaceFolderPicker } from '../../hooks/use-workspace-folder-picker';
 import { getProjectMessages } from '../../messages';
 import { SourceFolderRow } from '../molecules/source-folder-row';
 import './create-project-dialog.css';
@@ -33,6 +34,11 @@ export interface CreateProjectDialogProps {
   readonly onSubmit: (input: CreateProjectInput) => void;
   /** Reports a dismissal (`Cancelar`, the close control, Escape or the backdrop). */
   readonly onClose: () => void;
+  /**
+   * Where added folders come from. Defaults to the native folder dialog the
+   * Rust core opens (#147); tests inject their own picker.
+   */
+  readonly folderPicker?: WorkspaceFolderPicker;
 }
 
 /**
@@ -41,10 +47,10 @@ export interface CreateProjectDialogProps {
  * with a source folder added.
  *
  * It is a self-contained product section, so it is an organism, but it holds no
- * catalog and calls no IPC: creating a project is the shell's `useProjectCatalog`,
- * and this component only reports the validated input upward. The only state it
- * owns is presentation — whether a submit has been attempted, which is what
- * decides if the name error is drawn.
+ * catalog and calls no raw IPC: creating a project is the shell's
+ * `useProjectCatalog`, and adding a folder goes through `useWorkspaceFolderPicker`
+ * (the native dialog, #147). The only state it owns is presentation — whether a
+ * submit has been attempted, which decides if the name error is drawn.
  *
  * Its sub-molecules are the shared `Dialog` (surface and dismissal) and the
  * feature `SourceFolderRow` (one folder). It never imports from `src/app/`.
@@ -53,10 +59,19 @@ export function CreateProjectDialog({
   draft,
   onDraftChange,
   onSubmit,
-  onClose
+  onClose,
+  folderPicker
 }: CreateProjectDialogProps) {
   const messages = getProjectMessages().createDialog;
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+  const folderPicking = useWorkspaceFolderPicker(folderPicker);
+  // The native dialog resolves later, so the picked folder joins the draft the
+  // shell holds by then, not the one this render closed over.
+  const latestDraft = useRef(draft);
+
+  useEffect(() => {
+    latestDraft.current = draft;
+  });
 
   if (!draft) {
     return null;
@@ -66,8 +81,6 @@ export function CreateProjectDialog({
   const currentDraft = draft;
   const validation = validateProjectName(currentDraft.name);
   const showNameError = hasAttemptedSubmit && validation.status === 'empty';
-  const isSourceExhausted =
-    nextSourceFolder(currentDraft).status === 'exhausted';
   const hasFolders = currentDraft.folders.length > 0;
 
   function handleNameChange(name: string) {
@@ -75,7 +88,13 @@ export function CreateProjectDialog({
   }
 
   function handleAddFolder() {
-    onDraftChange(addSourceFolder(currentDraft));
+    folderPicking.pickFolder(folder => {
+      const draftNow = latestDraft.current;
+
+      if (draftNow) {
+        onDraftChange(addSourceFolder(draftNow, folder));
+      }
+    });
   }
 
   function handleRemoveFolder(folderId: string) {
@@ -144,7 +163,7 @@ export function CreateProjectDialog({
           <Button
             variant="list"
             label={messages.addFolderRowLabel}
-            isDisabled={isSourceExhausted}
+            isDisabled={folderPicking.isPicking}
             onPress={handleAddFolder}
           >
             <Icon name="folder" size="sm" />
@@ -159,7 +178,7 @@ export function CreateProjectDialog({
           <Button
             variant="plain"
             label={messages.addFolderLabel}
-            isDisabled={isSourceExhausted}
+            isDisabled={folderPicking.isPicking}
             onPress={handleAddFolder}
           >
             <Icon name="folder" size="sm" />
@@ -167,6 +186,12 @@ export function CreateProjectDialog({
           </Button>
         </div>
       )}
+
+      {folderPicking.hasPickError ? (
+        <p className="create-project-dialog__error" role="alert">
+          {messages.folderPickError}
+        </p>
+      ) : null}
 
       <div className="create-project-dialog__actions">
         <Button variant="text" onPress={handleCancel}>

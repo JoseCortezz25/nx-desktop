@@ -63,6 +63,17 @@ pub struct CreateProjectRequestDto {
     pub folders: Vec<String>,
 }
 
+/// A folder the user chose in the native dialog (`pick_workspace_folder`).
+///
+/// `path` is the canonical folder; `label` is its display name. A cancelled
+/// dialog is `null` on the wire, not an empty row.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PickedWorkspaceFolderDto {
+    pub path: String,
+    pub label: String,
+}
+
 /// Request envelope for `set_project_approval_mode`; authority-bearing.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
