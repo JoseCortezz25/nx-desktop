@@ -217,7 +217,6 @@ export const sharedMessages = {
     },
     message: {
       copyLabel: 'Copiar mensaje',
-      feedbackLabel: 'Enviar comentarios',
       shareLabel: 'Compartir mensaje',
       timestampLabel: (time: string) => `Enviado a las ${time}`,
       editLabel: 'Editar mensaje'

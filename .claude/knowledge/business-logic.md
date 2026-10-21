@@ -79,6 +79,7 @@ Decisions 2026-10-16 (issue #30) whose surfaces are tracked by other tickets. Th
 1. **`DiffView` Modes** (ticket #13): `unified` only. The wireframe toolbar draws `unified` and `split`, but only `unified` is in scope; `split` is deferred.
 2. **Message Timestamp & Editing** (ticket #11): both are in scope. They are buttons rendered below the message bubbles; the wireframe does not draw them yet.
 3. **`Abrir` Menu** (ticket #12): only VS Code is offered. The option MUST NOT appear when VS Code is not installed on the machine, and no other editor or shell target replaces it for now.
+4. **No Like/Feedback Message Action** (2026-10-21, issue #89, implemented): the assistant message actions row MUST NOT render a like/feedback (thumb-up) control. This deliberately overrides the wireframe (`docs/wireframes/12-chat-conversation-full.html`, `.msg-actions`, and the `MessageActions` row of `docs/wireframes/README.md`). The button never had a handler, so its prop, message key, icon glyph and test assertion were removed with it; copy and share stay (copy behaviour: #88).
 
 ### 3.6 Application Identity in the Sidebar Header (2026-10-17, issue #41)
 

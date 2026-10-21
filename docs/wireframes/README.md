@@ -70,7 +70,7 @@ Every screen is a composition of the same regions:
 | `Dialog` | 05, 06, 14, 15 | Title, close, body, footer actions |
 | `ToolActivityRow` | 03, 11-13, 18 | Icon + short description of an executed tool; collapsible group header |
 | `FileChip` | 11-13, 18 | Inline link to a file inside a message; opens the right panel |
-| `MessageActions` | 11-13, 18 | Copy, read aloud, feedback, share. Timestamp and edit are in scope as buttons below the bubble but are not drawn yet |
+| `MessageActions` | 11-13, 18 | Copy, read aloud, share. The wireframe's feedback (thumb-up) action is deliberately not built (issue #89; `.claude/knowledge/business-logic.md` §3.5). Timestamp and edit are in scope as buttons below the bubble but are not drawn yet |
 | `RightPanel` | 03, 13, 18 | Tabs + breadcrumb + toolbar + one of: `DocumentView`, `CodeView`, `DiffView` |
 | `DiffView` | 18 | Per-file collapsible sections, hunk headers, `unified` only (`split` is deferred) |
 | `HookRow` | 14, 15 | Checkbox, name, `Nuevo` badge, expandable details |
