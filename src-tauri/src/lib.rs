@@ -32,6 +32,7 @@ use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
     adapters::{
         claude::{ClaudeAgentProvider, config::ClaudeConfig},
+        codex::{CodexAgentProvider, config::CodexConfig, workspace::AppWorkspaceResolver},
         env_credentials::EnvCredentialSource,
         fake::FakeAgentProvider,
         opencode::{
@@ -81,6 +82,13 @@ pub fn run() {
         )
         .expect("Claude HTTP client initialises"),
     );
+    // The Codex adapter drives the user's installed `codex` CLI with its own
+    // login; it precedes the fake catalog so it replaces the fake `codex` row.
+    let codex_workspaces = Arc::new(AppWorkspaceResolver::default());
+    let codex = Arc::new(
+        CodexAgentProvider::new(CodexConfig::from_process_env(), codex_workspaces.clone())
+            .expect("Codex provider id is valid"),
+    );
     // OpenCode (#27) is a live source: its models are discovered from the
     // OpenCode CLI at runtime (first discovery spawned in `setup`, off the UI
     // thread) and its row replaces the fixture `opencode` row. Runs execute
@@ -94,12 +102,15 @@ pub fn run() {
         )
         .expect("OpenCode adapter initialises"),
     );
-    let registry = ProviderRegistry::from_sources(&[&FakeAgentProvider, claude.as_ref()])
-        .with_live_source(opencode.clone());
+    let registry =
+        ProviderRegistry::from_sources(&[codex.as_ref(), &FakeAgentProvider, claude.as_ref()])
+            .with_live_source(opencode.clone());
     let claude_provider_id = claude.provider_id().as_str().to_owned();
+    let codex_provider_id = codex.provider_id().as_str().to_owned();
     let opencode_provider_id = opencode.provider_id().as_str().to_owned();
     let router = ProviderRoutingRunner::new(Arc::new(FakeAgentRunner::default()))
         .with_route(claude_provider_id, claude)
+        .with_route(codex_provider_id, codex)
         .with_route(opencode_provider_id, opencode.clone());
     let runs = RunSupervisor::new(Arc::new(router));
     let hooks = HookService::new(Arc::new(FakeHookSource));
@@ -121,6 +132,7 @@ pub fn run() {
             )?;
             app.manage(projects);
             app.manage(conversations);
+            codex_workspaces.bind(app.handle().clone());
             opencode_workspace.bind(app.handle().clone());
             tauri::async_runtime::spawn(async move { opencode.refresh().await });
             Ok(())

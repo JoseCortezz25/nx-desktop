@@ -6,6 +6,7 @@
 //! as a supervised child process and discovers its models at runtime.
 
 pub mod claude;
+pub mod codex;
 pub mod env_credentials;
 pub mod fake;
 pub mod opencode;
