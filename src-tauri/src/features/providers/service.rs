@@ -26,6 +26,22 @@ impl ProviderRegistry {
         }
     }
 
+    /// Snapshots and concatenates the catalogs of several engine sources, in
+    /// order (issue #25: the fake catalog plus the Claude adapter). A provider
+    /// id already contributed by an earlier source is skipped, so a duplicate
+    /// registration can never make the selection chain ambiguous.
+    pub fn from_sources(sources: &[&dyn AgentProvider]) -> Self {
+        let mut catalog: Vec<Provider> = Vec::new();
+        for source in sources {
+            for provider in source.catalog() {
+                if find_provider(&catalog, &provider.id).is_none() {
+                    catalog.push(provider);
+                }
+            }
+        }
+        Self { catalog }
+    }
+
     /// Every configured provider with its advertised models.
     pub fn list_providers(&self) -> Vec<Provider> {
         self.catalog.clone()
@@ -66,6 +82,17 @@ mod tests {
     #[test]
     fn lists_both_fixture_providers() {
         let ids: Vec<String> = registry()
+            .list_providers()
+            .iter()
+            .map(|provider| provider.id.as_str().to_owned())
+            .collect();
+        assert_eq!(ids, vec!["opencode".to_owned(), "codex".to_owned()]);
+    }
+
+    #[test]
+    fn composes_several_sources_in_order_without_duplicates() {
+        let registry = ProviderRegistry::from_sources(&[&FakeAgentProvider, &FakeAgentProvider]);
+        let ids: Vec<String> = registry
             .list_providers()
             .iter()
             .map(|provider| provider.id.as_str().to_owned())
