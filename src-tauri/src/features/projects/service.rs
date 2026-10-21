@@ -107,6 +107,67 @@ impl ProjectStore {
             .unwrap_or(false)
     }
 
+    /// One project snapshot, or `None` when the id is unknown.
+    ///
+    /// Short lock scope: the project is cloned under the guard and the guard is
+    /// dropped before the caller awaits anything.
+    pub fn project(&self, id: &ProjectId) -> Option<Project> {
+        self.inner
+            .lock()
+            .ok()?
+            .projects
+            .iter()
+            .find(|project| project.id == *id)
+            .cloned()
+    }
+
+    /// Records or updates one project-scoped hook decision (Invariants tier:
+    /// the project must be known; the caller validates the hook).
+    ///
+    /// Upsert by `hook_id`: a repeated decision never duplicates the row, which
+    /// keeps `ProjectDto.hookDecisions` stable across reviews.
+    pub fn set_hook_decision(
+        &self,
+        id: &ProjectId,
+        hook_id: &str,
+        approval_status: HookApprovalStatus,
+    ) -> Result<Project, ProjectError> {
+        let mut inner = self
+            .inner
+            .lock()
+            .map_err(|_| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?;
+        let project = inner
+            .projects
+            .iter_mut()
+            .find(|project| project.id == *id)
+            .ok_or_else(|| ProjectError::UnknownProject {
+                project_id: id.as_str().to_owned(),
+            })?;
+        let previous = project.hook_decisions.clone();
+        match project
+            .hook_decisions
+            .iter_mut()
+            .find(|decision| decision.hook_id == hook_id)
+        {
+            Some(decision) => decision.approval_status = approval_status,
+            None => project.hook_decisions.push(HookDecision {
+                hook_id: hook_id.to_owned(),
+                approval_status,
+            }),
+        }
+        let updated = project.clone();
+        if let Err(error) = self.persist(&inner.projects) {
+            // Roll back to the pre-call snapshot so memory never diverges from disk.
+            if let Some(project) = inner.projects.iter_mut().find(|project| project.id == *id) {
+                project.hook_decisions = previous;
+            }
+            return Err(error);
+        }
+        Ok(updated)
+    }
+
     /// The authorized workspace roots of one project, in project order.
     ///
     /// Short lock scope: the folder list is cloned under the guard. #21 resolves
@@ -502,6 +563,50 @@ mod tests {
     }
 
     #[test]
+    fn returns_a_project_snapshot_or_none() {
+        let store = store();
+        let id = ProjectId::new("proj-design-system").expect("id");
+        let project = store.project(&id).expect("known project");
+        assert_eq!(project.name, "Design system");
+        assert!(
+            store
+                .project(&ProjectId::new("proj-ghost").expect("id"))
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn records_a_new_hook_decision() {
+        let store = store();
+        let id = ProjectId::new("proj-design-system").expect("id");
+        let project = store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Rejected)
+            .expect("known project");
+        assert_eq!(project.hook_decisions.len(), 1);
+        assert_eq!(
+            project.hook_decisions[0],
+            HookDecision {
+                hook_id: "hook-lint-on-write".to_owned(),
+                approval_status: HookApprovalStatus::Rejected,
+            }
+        );
+    }
+
+    #[test]
+    fn updates_an_existing_hook_decision_without_duplicating_it() {
+        let store = store();
+        let id = ProjectId::new("proj-api-client").expect("id");
+        let project = store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+            .expect("known project");
+        assert_eq!(project.hook_decisions.len(), 1);
+        assert_eq!(
+            project.hook_decisions[0].approval_status,
+            HookApprovalStatus::Approved
+        );
+    }
+
+    #[test]
     fn returns_the_workspace_roots_of_a_known_project() {
         let store = store();
         let id = ProjectId::new("proj-api-client").expect("id");
@@ -511,6 +616,20 @@ mod tests {
                 "/workspace/api-client".to_owned(),
                 "/workspace/shared-contracts".to_owned()
             ]
+        );
+    }
+
+    #[test]
+    fn rejects_a_hook_decision_for_an_unknown_project() {
+        let store = store();
+        let id = ProjectId::new("proj-ghost").expect("id");
+        assert_eq!(
+            store
+                .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+                .expect_err("unknown project"),
+            ProjectError::UnknownProject {
+                project_id: "proj-ghost".to_owned(),
+            }
         );
     }
 
@@ -582,6 +701,32 @@ mod tests {
             .find(|project| project.id == id)
             .expect("project persists");
         assert_eq!(project.approval_mode, ApprovalMode::FullAccess);
+
+        fs::remove_file(&path).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn persisted_hook_decision_survives_a_reload() {
+        use std::fs;
+
+        let path = temp_store_path("hook-decision");
+        let _ = fs::remove_file(&path);
+        let store = ProjectStore::with_persistence(path.clone()).expect("store opens");
+        let id = ProjectId::new("proj-design-system").expect("id");
+        store
+            .set_hook_decision(&id, "hook-lint-on-write", HookApprovalStatus::Approved)
+            .expect("decision records");
+        drop(store);
+
+        let reloaded = ProjectStore::with_persistence(path.clone()).expect("store reloads");
+        let project = reloaded.project(&id).expect("project persists");
+        assert_eq!(
+            project.hook_decisions,
+            vec![HookDecision {
+                hook_id: "hook-lint-on-write".to_owned(),
+                approval_status: HookApprovalStatus::Approved,
+            }]
+        );
 
         fs::remove_file(&path).expect("scratch cleanup");
     }

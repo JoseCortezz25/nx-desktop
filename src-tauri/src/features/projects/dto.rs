@@ -6,6 +6,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use super::domain::HookApprovalStatus;
+
 /// Tool approval policy for a project (`ask_always` | `auto_approve` | `full_access`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -74,4 +76,25 @@ pub struct SetProjectApprovalModeRequestDto {
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ListWorkspaceBranchesRequestDto {
     pub project_id: String,
+}
+
+/// Projects the project-scoped hook decision status onto its wire enum.
+///
+/// One projection for the project catalog and the hook review, so the two
+/// surfaces cannot disagree about the closed three-value set.
+pub fn to_hook_approval_status_dto(status: HookApprovalStatus) -> HookApprovalStatusDto {
+    match status {
+        HookApprovalStatus::Pending => HookApprovalStatusDto::Pending,
+        HookApprovalStatus::Approved => HookApprovalStatusDto::Approved,
+        HookApprovalStatus::Rejected => HookApprovalStatusDto::Rejected,
+    }
+}
+
+/// Reads a closed wire status back into the domain enum.
+pub fn from_hook_approval_status_dto(dto: HookApprovalStatusDto) -> HookApprovalStatus {
+    match dto {
+        HookApprovalStatusDto::Pending => HookApprovalStatus::Pending,
+        HookApprovalStatusDto::Approved => HookApprovalStatus::Approved,
+        HookApprovalStatusDto::Rejected => HookApprovalStatus::Rejected,
+    }
 }

@@ -1,8 +1,9 @@
 // Shared cross-language IPC contract primitives (issue #16) plus the
 // implemented backends: providers (#17), projects/conversations with the
 // workspace path policy (#18), the run supervisor with its Channel stream
-// (#19) and the workspace file/open-target/diff services (#21). Remaining
-// services (#20 and #22–#24) land on their own tickets.
+// (#19), the approval policy plus hook review (#20), the workspace
+// file/open-target/diff services (#21) and persisted catalogs (#22). Remaining
+// services (#23–#24) land on their own tickets.
 pub mod features;
 pub mod ipc;
 pub mod persistence;
@@ -20,6 +21,11 @@ use features::diff::{adapters::git::GitDiffSource, commands::read_workspace_diff
 use features::files::{
     adapters::system::SystemOpenTargetLauncher,
     commands::{list_open_targets, open_in_target},
+};
+use features::hooks::{
+    adapters::fake::FakeHookSource,
+    commands::{list_hooks, set_hook_decision},
+    service::HookService,
 };
 use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
@@ -58,12 +64,14 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 pub fn run() {
     let registry = ProviderRegistry::new(&FakeAgentProvider);
     let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
+    let hooks = HookService::new(Arc::new(FakeHookSource));
     let open_targets = SystemOpenTargetLauncher;
     let diff_source = GitDiffSource;
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(registry)
         .manage(runs)
+        .manage(hooks)
         .manage(open_targets)
         .manage(diff_source)
         .setup(|app| {
@@ -90,6 +98,8 @@ pub fn run() {
             start_run,
             cancel_run,
             get_run,
+            list_hooks,
+            set_hook_decision,
             read_file,
             list_open_targets,
             open_in_target,

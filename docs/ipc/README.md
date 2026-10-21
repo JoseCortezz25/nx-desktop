@@ -237,8 +237,8 @@ fixture. Columns: **command** (`snake_case`), **request**, **response**,
 Parameterless commands take no `args`; every parameterized command passes a
 named `{ request }` envelope (`docs/research-tecnico/arquitectura-tauri.md`).
 Slices 2–4 define the contract; a row is registered with `generate_handler!`
-when its owning ticket lands. #17, #18, #19 and #21 are registered today; #20
-and #22–#24 remain.
+when its owning ticket lands. #17, #18, #19, #20, #21 and #22 are registered
+today; #23 and #24 remain.
 
 ## 5. Feature catalogs (slice 2)
 
@@ -569,6 +569,12 @@ client-supplied approval flag and performs no launch.
 `list_hooks` sends `{ projectId }` and resolves `HookDto[]`.
 `set_hook_decision` sends `{ projectId, hookId, approvalStatus }` and resolves
 the updated `HookDto`.
+
+Issue #20 implements both commands. A provider-reported status is a baseline; a
+project decision overrides it. Only `approved` `PreToolUse` hooks are ever
+executed, and a `rejected` hook is never run — whether declining must also block
+the guarded tool call is the open question recorded in
+`.claude/knowledge/business-logic.md` §4.
 
 The decision is **project-scoped**, not run-scoped
 (`.claude/knowledge/business-logic.md` §2 `Hook`, decision 2026-10-16): declining
