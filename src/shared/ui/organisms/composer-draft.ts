@@ -61,3 +61,51 @@ export function submitDraftWithSelection(
 ): ComposerDraft {
   return hasSelection ? submitDraft(draft, onSubmit) : draft;
 }
+
+/**
+ * The parts of a key press the composer's key rule reads. A plain shape (not a
+ * DOM event) so the rule stays testable in the node test runner.
+ */
+export interface ComposerKeyPress {
+  readonly key: string;
+  readonly shiftKey: boolean;
+  readonly metaKey: boolean;
+  readonly ctrlKey: boolean;
+  readonly altKey: boolean;
+  /** `true` while an IME composition is active (`nativeEvent.isComposing`). */
+  readonly isComposing: boolean;
+  /** Legacy key code; `229` marks a key press an IME is still processing. */
+  readonly keyCode: number;
+}
+
+/**
+ * What a key press in the prompt field means: `submit` sends through the same
+ * guarded path as the send button, `none` leaves the browser default (a
+ * newline for Shift+Enter, normal typing for every other key).
+ */
+export type ComposerKeyIntent = 'submit' | 'none';
+
+const IME_PROCESSING_KEY_CODE = 229;
+
+/**
+ * Enter and Cmd/Ctrl+Enter submit; Shift+Enter inserts a newline; an active IME
+ * composition never submits, so confirming a candidate with Enter only commits
+ * the composed text.
+ */
+export function resolveComposerKeyIntent(
+  press: ComposerKeyPress
+): ComposerKeyIntent {
+  if (press.key !== 'Enter') {
+    return 'none';
+  }
+  if (press.isComposing || press.keyCode === IME_PROCESSING_KEY_CODE) {
+    return 'none';
+  }
+  if (press.metaKey || press.ctrlKey) {
+    return 'submit';
+  }
+  if (press.shiftKey || press.altKey) {
+    return 'none';
+  }
+  return 'submit';
+}
