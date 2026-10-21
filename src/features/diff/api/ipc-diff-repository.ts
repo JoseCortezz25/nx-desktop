@@ -30,7 +30,8 @@ function toDiffFile(dto: DiffFileDto): DiffFile {
     path: dto.path,
     addedCount: dto.addedCount,
     removedCount: dto.removedCount,
-    hunks: dto.hunks.map(toDiffHunk)
+    hunks: dto.hunks.map(toDiffHunk),
+    ...(dto.notice === undefined ? {} : { notice: dto.notice })
   };
 }
 

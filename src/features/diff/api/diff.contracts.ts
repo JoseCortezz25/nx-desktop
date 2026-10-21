@@ -8,7 +8,10 @@
  * change set (`business-logic.md` §3.3). These DTOs mirror
  * `src-tauri/src/features/diff/dto.rs`; enforcement belongs to #21, not here.
  */
-import type { DiffLineKind } from '@/shared/domain/diff-file.types';
+import type {
+  DiffFileNotice,
+  DiffLineKind
+} from '@/shared/domain/diff-file.types';
 import type { ProjectId } from '@/shared/domain/value-objects.types';
 
 /** Request envelope for `read_workspace_diff`. */
@@ -39,4 +42,9 @@ export interface DiffFileDto {
   addedCount: number;
   removedCount: number;
   hunks: DiffHunkDto[];
+  /**
+   * Omitted for an ordinary file. `binary` or `too_large` marks a file listed
+   * with no hunks (issue #196, untracked files).
+   */
+  notice?: DiffFileNotice;
 }

@@ -57,6 +57,35 @@ describe('diff file section', () => {
     expect(markup).not.toContain('new line');
   });
 
+  it('states why a file without hunks has no table', () => {
+    const messages = getSharedMessages();
+    const binary: DiffFile = {
+      path: 'assets/logo.png',
+      addedCount: 0,
+      removedCount: 0,
+      hunks: [],
+      notice: 'binary'
+    };
+    const markup = renderToStaticMarkup(
+      <DiffFileSection
+        file={binary}
+        isCollapsed={false}
+        onToggle={() => undefined}
+      />
+    );
+
+    expect(markup).toContain('assets/logo.png');
+    expect(markup).toContain(messages.diff.section.noticeLabel('binary'));
+    expect(markup).not.toContain('diff-file-section__hunks');
+
+    const collapsed = renderToStaticMarkup(
+      <DiffFileSection file={binary} isCollapsed onToggle={() => undefined} />
+    );
+    expect(collapsed).not.toContain(
+      messages.diff.section.noticeLabel('binary')
+    );
+  });
+
   it('names the disclosure for the file it opens', () => {
     const messages = getSharedMessages();
 

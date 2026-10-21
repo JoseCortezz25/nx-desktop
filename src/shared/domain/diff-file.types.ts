@@ -21,9 +21,19 @@ export interface DiffHunk {
   readonly lines: readonly DiffLine[];
 }
 
+/**
+ * Why a changed file is listed without hunks (issue #196): its content is not
+ * text, or it is too large to draw.
+ */
+export const DIFF_FILE_NOTICES = ['binary', 'too_large'] as const;
+
+export type DiffFileNotice = (typeof DIFF_FILE_NOTICES)[number];
+
 export interface DiffFile {
   readonly path: string;
   readonly addedCount: number;
   readonly removedCount: number;
   readonly hunks: readonly DiffHunk[];
+  /** Present only when the file is listed without hunks on purpose. */
+  readonly notice?: DiffFileNotice;
 }

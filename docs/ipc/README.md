@@ -530,6 +530,7 @@ implements the path policy and the read.
 | `addedCount`   | `number`         | Repository's own added-line count; never recomputed.  |
 | `removedCount` | `number`         | Repository's own removed-line count.                  |
 | `hunks`        | `DiffHunkDto[]`  | Unified hunks, in the order the panel draws them.     |
+| `notice`       | `'binary' \| 'too_large'`, optional | Omitted for ordinary files; set when a file is listed with no hunks (#196). |
 | `header`       | `string`         | Hunk header, e.g. `@@ -12,7 +12,9 @@`.               |
 | `lines`        | `DiffLineDto[]`  | `{ kind, content }`, `kind` closed to `context`, `added`, `removed`. |
 
@@ -538,6 +539,13 @@ workspace is `[]`, never `null`. The view is **unified only**; `split` is
 deferred (`.claude/knowledge/business-logic.md` §3.5 item 1, #13). The panel
 never runs `git diff` itself; #21 owns the inspection and validates `projectId`
 against the canonicalized roots.
+
+Untracked, non-ignored files (#196, `git ls-files --others --exclude-standard`)
+follow the tracked changes as added files whose single hunk is their whole
+content. Each path passes the workspace path policy before it is read; a binary
+file carries `notice: 'binary'` and a file over 1 MiB (or over the per-file
+line bound or remaining diff budget) carries `notice: 'too_large'`, both with
+no hunks and zero counts.
 
 ### `list_open_targets` and `open_in_target`
 

@@ -36,6 +36,14 @@ pub struct DiffHunkDto {
     pub lines: Vec<DiffLineDto>,
 }
 
+/// Why a changed file carries no hunks (issue #196).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DiffFileNoticeDto {
+    Binary,
+    TooLarge,
+}
+
 /// One changed file, in the order the right panel draws it.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -44,6 +52,9 @@ pub struct DiffFileDto {
     pub added_count: u32,
     pub removed_count: u32,
     pub hunks: Vec<DiffHunkDto>,
+    /// Omitted for an ordinary file; present when it is listed without hunks.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub notice: Option<DiffFileNoticeDto>,
 }
 
 /// Request envelope for `read_workspace_diff`; authority-bearing.

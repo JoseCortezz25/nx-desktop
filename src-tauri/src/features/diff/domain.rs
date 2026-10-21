@@ -16,6 +16,19 @@ pub const MAX_LINES_PER_FILE: usize = 5_000;
 /// Maximum raw `git diff` output accepted from the adapter (Limits tier).
 pub const MAX_DIFF_BYTES: usize = 5 * 1024 * 1024;
 
+/// Largest untracked file whose content becomes hunks (issue #196); a bigger
+/// file is listed with [`DiffFileNotice::TooLarge`] and no hunks.
+pub const MAX_UNTRACKED_FILE_BYTES: u64 = 1024 * 1024;
+
+/// Why a changed file is listed without hunks (issue #196).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DiffFileNotice {
+    /// The content is not text, so there is nothing to draw line by line.
+    Binary,
+    /// The content exceeds a per-file or per-diff bound.
+    TooLarge,
+}
+
 /// How a unified diff line relates to the previous revision.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DiffLineKind {
@@ -45,6 +58,8 @@ pub struct DiffFile {
     pub added_count: u32,
     pub removed_count: u32,
     pub hunks: Vec<DiffHunk>,
+    /// Set when the file is listed without hunks on purpose.
+    pub notice: Option<DiffFileNotice>,
 }
 
 /// The ways a workspace diff can fail.

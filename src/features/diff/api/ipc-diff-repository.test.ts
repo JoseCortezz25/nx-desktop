@@ -35,6 +35,25 @@ describe('createIpcDiffRepository', () => {
     );
   });
 
+  it('carries a notice only for files listed without hunks', async () => {
+    readWorkspaceDiff.mockResolvedValue([
+      {
+        path: 'huge.log',
+        addedCount: 0,
+        removedCount: 0,
+        hunks: [],
+        notice: 'too_large'
+      },
+      ...diffFixture.response
+    ]);
+
+    const files =
+      await createIpcDiffRepository('proj-design-system').readWorkspaceDiff();
+
+    expect(files[0].notice).toBe('too_large');
+    expect(files[1]).not.toHaveProperty('notice');
+  });
+
   it('keeps a clean workspace as an empty list', async () => {
     readWorkspaceDiff.mockResolvedValue([]);
 

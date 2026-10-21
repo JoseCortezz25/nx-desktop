@@ -9,9 +9,10 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use tauri::State;
 
 use super::adapters::git::GitDiffSource;
-use super::domain::{DiffError, DiffFile, DiffHunk, DiffLine, DiffLineKind};
+use super::domain::{DiffError, DiffFile, DiffFileNotice, DiffHunk, DiffLine, DiffLineKind};
 use super::dto::{
-    DiffFileDto, DiffHunkDto, DiffLineDto, DiffLineKindDto, ReadWorkspaceDiffRequestDto,
+    DiffFileDto, DiffFileNoticeDto, DiffHunkDto, DiffLineDto, DiffLineKindDto,
+    ReadWorkspaceDiffRequestDto,
 };
 use super::service;
 use crate::features::projects::domain::ProjectId;
@@ -95,6 +96,10 @@ fn to_diff_file_dto(file: DiffFile) -> DiffFileDto {
         added_count: file.added_count,
         removed_count: file.removed_count,
         hunks: file.hunks.into_iter().map(to_hunk_dto).collect(),
+        notice: file.notice.map(|notice| match notice {
+            DiffFileNotice::Binary => DiffFileNoticeDto::Binary,
+            DiffFileNotice::TooLarge => DiffFileNoticeDto::TooLarge,
+        }),
     }
 }
 
@@ -146,6 +151,29 @@ index 1111111..2222222 100644
         let files = parse_unified_diff(patch).expect("valid patch");
         let actual: Vec<DiffFileDto> = files.into_iter().map(to_diff_file_dto).collect();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn notices_serialize_in_snake_case_and_ordinary_files_omit_them() {
+        let listed = to_diff_file_dto(DiffFile {
+            path: "big.bin".to_owned(),
+            added_count: 0,
+            removed_count: 0,
+            hunks: Vec::new(),
+            notice: Some(DiffFileNotice::TooLarge),
+        });
+        let json = serde_json::to_value(&listed).expect("dto serializes");
+        assert_eq!(json["notice"], "too_large");
+
+        let ordinary = to_diff_file_dto(DiffFile {
+            path: "app.ts".to_owned(),
+            added_count: 0,
+            removed_count: 0,
+            hunks: Vec::new(),
+            notice: None,
+        });
+        let json = serde_json::to_value(&ordinary).expect("dto serializes");
+        assert!(json.get("notice").is_none());
     }
 
     #[test]
