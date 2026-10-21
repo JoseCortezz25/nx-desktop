@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent } from 'react';
+import { useLayoutEffect, useRef, type KeyboardEvent } from 'react';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
 import type { ConversationId } from '@/shared/domain/value-objects.types';
@@ -8,6 +8,7 @@ import { Icon } from '../atoms/icon';
 import { ConversationRow } from '../molecules/conversation-row';
 import { SidebarProjectGroup } from '../molecules/sidebar-project-group';
 import { SidebarSection } from '../molecules/sidebar-section';
+import { resolveSidebarFocusRestore } from './sidebar-focus';
 import { buildSidebarModel } from './sidebar-model';
 import './sidebar.css';
 
@@ -72,33 +73,45 @@ export function Sidebar({
     activeConversationId
   );
   const drawerRef = useRef<HTMLElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
+
+  // Hands focus back to whatever opened the drawer (the rail toggle), but only
+  // while focus is still inside the drawer, so a window that widens back to the
+  // column arrangement never steals focus from wherever the user moved it. It
+  // must run while the drawer is still in the document: once the focused node
+  // is removed the browser has already dropped focus to `body` (#51). The ref
+  // is cleared so the Escape path and the cleanup never restore twice.
+  function restoreFocusFromDrawer() {
+    const target = resolveSidebarFocusRestore(
+      restoreFocusRef.current,
+      drawerRef.current,
+      document.activeElement
+    );
+    restoreFocusRef.current = null;
+    target?.focus();
+  }
 
   // The drawer is mounted only while the region is open, so focus moves in on
-  // mount and back to whatever opened it (the rail toggle) on unmount — but only
-  // when focus is still inside the drawer, so a window that widens back to the
-  // column arrangement never steals focus from wherever the user moved it.
-  useEffect(() => {
+  // mount and is restored on close. A layout effect is used because its cleanup
+  // runs before React removes the drawer node, which covers the closes that do
+  // not go through Escape (the rail toggle, a widening window).
+  useLayoutEffect(() => {
     if (!isOverlay) {
       return;
     }
 
-    const drawer = drawerRef.current;
-    const restore =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    drawer?.focus();
+    const active = document.activeElement;
+    restoreFocusRef.current = active instanceof HTMLElement ? active : null;
+    drawerRef.current?.focus();
 
-    return () => {
-      if (restore && drawer?.contains(document.activeElement)) {
-        restore.focus();
-      }
-    };
+    return restoreFocusFromDrawer;
   }, [isOverlay]);
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (isOverlay && event.key === 'Escape') {
       event.stopPropagation();
+      // Decide before the close unmounts the drawer (#51).
+      restoreFocusFromDrawer();
       onClose?.();
     }
   }
