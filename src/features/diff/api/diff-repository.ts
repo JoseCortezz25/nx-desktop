@@ -1,10 +1,11 @@
 /**
  * Port for reading the workspace's current change set into the right panel.
  *
- * Backed by the mock repository today and by the future typed IPC client once
- * the Rust core exposes a workspace diff (`business-logic.md` §2, `DiffFile`;
- * ticket #21 connects it). The panel never runs `git diff` itself: the change
- * set arrives as domain values, already counted.
+ * The IPC-backed repository (`ipc-diff-repository.ts`) implements this port at
+ * runtime (#24) over the Rust workspace diff from #21 (`business-logic.md` §2,
+ * `DiffFile`); it is bound to one project. The mock factory remains as a test
+ * fixture. The panel never runs `git diff` itself: the change set arrives as
+ * domain values, already counted.
  */
 import type { DiffFile } from '@/shared/domain/diff-file.types';
 

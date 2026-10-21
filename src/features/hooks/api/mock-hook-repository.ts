@@ -1,3 +1,7 @@
+/**
+ * In-memory hook fixture behind the mock port and its tests. The running app
+ * reads the IPC-backed repository (#24).
+ */
 import type { Hook } from '@/shared/domain/hook.types';
 import type { HookRepository } from './hook-repository';
 
@@ -68,6 +72,19 @@ const DEFAULT_HOOKS: readonly Hook[] = [
 export function createMockHookRepository(
   options: { hooks?: readonly Hook[] } = {}
 ): HookRepository {
-  const hooks = options.hooks ?? DEFAULT_HOOKS;
-  return { listHooks: async () => hooks };
+  let hooks = options.hooks ?? DEFAULT_HOOKS;
+  return {
+    listHooks: async () => hooks,
+    setHookDecision: async (hookId, approvalStatus) => {
+      const hook = hooks.find(candidate => candidate.id === hookId);
+      if (!hook) {
+        throw new Error(`unknown hook: ${hookId}`);
+      }
+      const stored: Hook = { ...hook, approvalStatus };
+      hooks = hooks.map(candidate =>
+        candidate.id === hookId ? stored : candidate
+      );
+      return stored;
+    }
+  };
 }

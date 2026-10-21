@@ -2,6 +2,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { FileDocument } from '@/shared/domain/file-document.types';
 import type { OpenTargetAvailability } from '@/shared/domain/open-target.types';
+import type { ProjectId } from '@/shared/domain/value-objects.types';
+import type { AppErrorDto } from '@/shared/ipc/contracts';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { FileViewer } from './file-viewer';
 
@@ -14,13 +16,16 @@ import { FileViewer } from './file-viewer';
 const harness = vi.hoisted(() => ({
   document: null as FileDocument | null,
   isLoading: false,
+  error: null as AppErrorDto | null,
+  hasOpenFailed: false,
   targets: [] as readonly OpenTargetAvailability[]
 }));
 
 vi.mock('@/features/files/hooks/use-file-document', () => ({
   useFileDocument: () => ({
     document: harness.document,
-    isLoading: harness.isLoading
+    isLoading: harness.isLoading,
+    error: harness.error
   })
 }));
 
@@ -28,6 +33,7 @@ vi.mock('@/features/files/hooks/use-open-targets', () => ({
   useOpenTargets: () => ({
     targets: harness.targets,
     isLoading: false,
+    hasOpenFailed: harness.hasOpenFailed,
     openInTarget: () => undefined
   })
 }));
@@ -42,14 +48,23 @@ const EDITOR_MISSING: readonly OpenTargetAvailability[] = [
   { target: 'reveal_in_file_manager', isInstalled: true }
 ];
 
-function renderViewer(path: string): string {
-  return renderToStaticMarkup(<FileViewer path={path} />);
+function renderViewer(
+  path: string,
+  projectId: ProjectId | null = 'proj-design-system'
+): string {
+  return renderToStaticMarkup(<FileViewer projectId={projectId} path={path} />);
+}
+
+function appError(code: AppErrorDto['code']): AppErrorDto {
+  return { code, message: 'diagnostic', retryable: false, requestId: 'req-1' };
 }
 
 describe('file viewer', () => {
   beforeEach(() => {
     harness.document = null;
     harness.isLoading = false;
+    harness.error = null;
+    harness.hasOpenFailed = false;
     harness.targets = EDITOR_INSTALLED;
   });
 
@@ -162,6 +177,39 @@ describe('file viewer', () => {
 
     expect(renderViewer('src/App.tsx')).toContain(
       getSharedMessages().fileViewer.loadingLabel
+    );
+  });
+
+  it('asks for a project before reading any file', () => {
+    expect(renderViewer('src/App.tsx', null)).toContain(
+      getSharedMessages().fileViewer.noProjectLabel
+    );
+  });
+
+  it('explains a path the core refused as outside the workspace', () => {
+    harness.error = appError('permission_denied');
+
+    const markup = renderViewer('../secret.txt');
+    expect(markup).toContain(
+      getSharedMessages().fileViewer.permissionDeniedLabel
+    );
+    expect(markup).not.toContain(getSharedMessages().fileViewer.missingLabel);
+  });
+
+  it('reports any other read failure with the generic error copy', () => {
+    harness.error = appError('internal_error');
+
+    expect(renderViewer('src/App.tsx')).toContain(
+      getSharedMessages().fileViewer.errorLabel
+    );
+  });
+
+  it('reports a rejected open request beside the toolbar', () => {
+    harness.document = { path: 'src/App.tsx', content: 'export {};' };
+    harness.hasOpenFailed = true;
+
+    expect(renderViewer('src/App.tsx')).toContain(
+      getSharedMessages().fileViewer.openFailedLabel
     );
   });
 });

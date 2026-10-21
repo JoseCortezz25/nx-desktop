@@ -1,7 +1,9 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DiffFile } from '@/shared/domain/diff-file.types';
+import type { ProjectId } from '@/shared/domain/value-objects.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
+import type { AppErrorDto } from '@/shared/ipc/contracts';
 import { createMockDiffRepository } from '../../api/mock-diff-repository';
 import { DiffView } from './diff-view';
 
@@ -13,20 +15,24 @@ import { DiffView } from './diff-view';
  */
 const harness = vi.hoisted(() => ({
   files: null as readonly DiffFile[] | null,
-  isLoading: false
+  isLoading: false,
+  error: null as AppErrorDto | null
 }));
 
 vi.mock('@/features/diff/hooks/use-workspace-diff', () => ({
   useWorkspaceDiff: () => ({
     files: harness.files,
-    isLoading: harness.isLoading
+    isLoading: harness.isLoading,
+    error: harness.error
   })
 }));
 
 let seed: readonly DiffFile[] = [];
 
-function renderView(): string {
-  return renderToStaticMarkup(<DiffView />);
+function renderView(
+  projectId: ProjectId | null = 'proj-design-system'
+): string {
+  return renderToStaticMarkup(<DiffView projectId={projectId} />);
 }
 
 describe('diff view', () => {
@@ -34,6 +40,7 @@ describe('diff view', () => {
     seed = await createMockDiffRepository().readWorkspaceDiff();
     harness.files = seed;
     harness.isLoading = false;
+    harness.error = null;
   });
 
   it('summarises the change set before the sections', () => {
@@ -78,5 +85,25 @@ describe('diff view', () => {
     expect(markup).toContain(getSharedMessages().diff.emptyLabel);
     expect(markup).not.toContain('diff-file-section');
     expect(markup).toContain('diff-view__summary');
+  });
+
+  it('asks for a project before inspecting any workspace', () => {
+    harness.files = null;
+
+    expect(renderView(null)).toContain(getSharedMessages().diff.noProjectLabel);
+  });
+
+  it('reports a failed read instead of claiming a clean workspace', () => {
+    harness.files = null;
+    harness.error = {
+      code: 'permission_denied',
+      message: 'diagnostic',
+      retryable: false,
+      requestId: 'req-1'
+    };
+
+    const markup = renderView();
+    expect(markup).toContain(getSharedMessages().diff.errorLabel);
+    expect(markup).not.toContain(getSharedMessages().diff.emptyLabel);
   });
 });

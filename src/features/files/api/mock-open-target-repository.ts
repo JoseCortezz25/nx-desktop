@@ -1,5 +1,6 @@
 /**
- * Mock machine report behind the `Abrir` menu.
+ * Mock machine report behind the `Abrir` menu, kept as a test fixture. The
+ * running app reads the IPC-backed repository (#24).
  *
  * The report carries the file-manager target the wireframe draws, marked as
  * installed, on purpose: the menu must not offer it while the locked decision
@@ -40,7 +41,7 @@ export function createMockOpenTargetRepository(
       );
     },
     openInTarget() {
-      // Stub: the real launch is a later ticket. Nothing is spawned here.
+      // Fixture: nothing is spawned here; the real launch is the core's.
       return Promise.resolve();
     }
   };

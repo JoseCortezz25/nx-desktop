@@ -224,6 +224,8 @@ export const sharedMessages = {
     listLabel: 'Cambios del espacio de trabajo',
     loadingLabel: 'Cargando los cambios…',
     emptyLabel: 'No hay cambios en este espacio de trabajo',
+    noProjectLabel: 'Selecciona un proyecto para ver sus cambios',
+    errorLabel: 'No se pudieron leer los cambios del espacio de trabajo',
     summary: {
       fileCount: (total: number) =>
         `${total} ${total === 1 ? 'archivo cambiado' : 'archivos cambiados'}`,
@@ -295,6 +297,11 @@ export const sharedMessages = {
     emptyLabel: 'Abre un archivo desde el chat',
     loadingLabel: 'Cargando el archivo…',
     missingLabel: 'No se pudo leer este archivo',
+    noProjectLabel: 'Selecciona un proyecto para abrir sus archivos',
+    errorLabel: 'Ocurrió un error al leer este archivo',
+    permissionDeniedLabel:
+      'Este archivo está fuera del espacio de trabajo autorizado',
+    openFailedLabel: 'No se pudo abrir el archivo en la aplicación elegida',
     breadcrumbLabel: 'Ruta del archivo',
     tabs: {
       listLabel: 'Archivos abiertos',

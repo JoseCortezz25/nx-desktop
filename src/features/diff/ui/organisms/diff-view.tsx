@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { ProjectId } from '@/shared/domain/value-objects.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { useWorkspaceDiff } from '../../hooks/use-workspace-diff';
 import {
@@ -27,9 +28,14 @@ import './diff-view.css';
  * workspace name is the active project's and belongs to the project surface
  * (#8), so this bar prints the count and the totals it can stand behind.
  */
-export function DiffView() {
+export interface DiffViewProps {
+  /** The active project whose workspace is inspected, or `null`. */
+  readonly projectId: ProjectId | null;
+}
+
+export function DiffView({ projectId }: DiffViewProps) {
   const messages = getSharedMessages();
-  const { files, isLoading } = useWorkspaceDiff();
+  const { files, isLoading, error } = useWorkspaceDiff(projectId);
   const [collapsed, setCollapsed] = useState<CollapsedDiffSections>(
     INITIAL_COLLAPSED_SECTIONS
   );
@@ -64,7 +70,13 @@ export function DiffView() {
 
       {files === null ? (
         <p className="diff-view__notice">
-          {isLoading ? messages.diff.loadingLabel : messages.diff.emptyLabel}
+          {projectId === null
+            ? messages.diff.noProjectLabel
+            : isLoading
+              ? messages.diff.loadingLabel
+              : error !== null
+                ? messages.diff.errorLabel
+                : messages.diff.emptyLabel}
         </p>
       ) : isDiffEmpty(files) ? (
         <p className="diff-view__notice">{messages.diff.emptyLabel}</p>
