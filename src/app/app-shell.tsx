@@ -9,6 +9,12 @@ import { useComposerSelection } from '@/features/providers/hooks/use-composer-se
 import { useProjectCatalog } from '@/features/projects/hooks/use-project-catalog';
 import { useWorkspaceBranches } from '@/features/projects/hooks/use-workspace-branches';
 import { useProviderCatalog } from '@/features/providers/hooks/use-provider-catalog';
+import { useLiveRun } from '@/features/runs/hooks/use-live-run';
+import { getLiveTurnStatusLabel } from '@/features/runs/messages';
+import {
+  appendLiveTurns,
+  findLatestTurn
+} from '@/features/runs/model/live-run';
 import { FilePanel } from '@/features/files/ui/organisms/file-panel';
 import { EMPTY_CREATE_PROJECT_DRAFT } from '@/features/projects/model/create-project';
 import type {
@@ -17,6 +23,7 @@ import type {
 } from '@/features/projects/model/create-project.types';
 import { CreateProjectDialog } from '@/features/projects/ui/organisms/create-project-dialog';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
+import type { RunEnvironment } from '@/shared/domain/run-environment.types';
 import type {
   ConversationId,
   SubagentId
@@ -105,9 +112,12 @@ function useWindowWidth(): number {
  * - the create-project draft (#9) is owned once, and `null` means the dialog is
  *   closed. Creation goes through this shell's one `useProjectCatalog`, so the
  *   picker and the sidebar see the new project immediately instead of through a
- *   second repository instance.
+ *   second repository instance;
+ * - the live run (#23) is owned by `useLiveRun`: the shell starts it from the
+ *   composer's submit, cancels it from the composer's stop control, and renders
+ *   its turns after the open conversation's persisted messages.
  *
- * It holds no persisted state and calls no IPC.
+ * It holds no persisted state and calls no IPC directly.
  */
 export function AppShell() {
   const [shell, setShell] = useState<ShellState>(INITIAL_SHELL_STATE);
@@ -132,6 +142,7 @@ export function AppShell() {
   } = useProjectCatalog();
   const { conversations } = useConversationCatalog();
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
+  const liveRun = useLiveRun();
 
   const {
     activeConversationId,
@@ -149,10 +160,18 @@ export function AppShell() {
   const windowWidth = useWindowWidth();
   const regionLayout = resolveRegionLayout(windowWidth);
 
-  const activeConversation =
+  const selectedConversation =
     conversations.find(
       conversation => conversation.id === activeConversationId
     ) ?? null;
+  // The live turns render after the persisted messages, derived during render.
+  const activeConversation = selectedConversation
+    ? appendLiveTurns(selectedConversation, liveRun.turns)
+    : null;
+  const latestTurn = selectedConversation
+    ? findLatestTurn(liveRun.turns, selectedConversation.id)
+    : null;
+  const runStatusLabel = latestTurn ? getLiveTurnStatusLabel(latestTurn) : null;
 
   // The draft is hoisted here, one owner beside the selection chain, so the
   // composer renders what it is handed and never keeps (or loses) a copy when
@@ -175,6 +194,8 @@ export function AppShell() {
       draft={draft}
       onDraftChange={setDraft}
       onSubmit={handleSubmitPrompt}
+      isRunActive={liveRun.isRunning}
+      onCancelRun={liveRun.cancelRun}
     />
   );
 
@@ -233,11 +254,25 @@ export function AppShell() {
     setShell(revealSubagentsInPanel(shell, subagentId));
   }
 
-  function handleSubmitPrompt(prompt: string) {
-    // Starting the run this prompt asks for is owned by #23 (live conversation
-    // and cancel). This ticket proves the composer hands the text up; the shell
-    // holds no state for it yet.
-    void prompt;
+  /**
+   * Starts a run for the open conversation (#23). The project is the
+   * conversation's own (the core enforces `conversation.projectId ==
+   * projectId`). Home has no conversation to stream into yet, so a submit there
+   * starts nothing; creating a conversation from Home is a later ticket.
+   */
+  function handleSubmitPrompt(prompt: string, environment: RunEnvironment) {
+    if (!selectedConversation || !resolved) {
+      return;
+    }
+    liveRun.startRun({
+      conversationId: selectedConversation.id,
+      projectId: selectedConversation.projectId,
+      providerId: resolved.provider.id,
+      modelId: resolved.model.id,
+      effortLevel: resolved.selection.effortLevel,
+      prompt,
+      environment
+    });
   }
 
   /** The picker's `Nuevo proyecto` row opens the dialog on a fresh draft. */
@@ -299,6 +334,7 @@ export function AppShell() {
               onRequestOpenChanges={handleRequestOpenChanges}
               onRequestOpenSubagent={handleRequestOpenSubagent}
               composer={composer}
+              runStatusLabel={runStatusLabel}
             />
           ) : (
             <HomeView composer={composer} />

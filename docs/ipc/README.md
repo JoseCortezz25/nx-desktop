@@ -385,6 +385,14 @@ text and tool activity) is a #19 decision, not invented here.
 `RunDto`; `runId` is the authority token. A `completed`/`failed`/`cancelled`
 race must resolve to exactly one terminal state in the supervisor (§3.2).
 
+The webview consumes the stream since #23 through `startRunStream`
+(`src/features/runs/api/run-client.ts`): one fresh `Channel` per run, bound
+before `start_run` is invoked, with an idempotent `unsubscribe`. The live-run
+session applies frames in `seq` order, drops frames for another `runId` and
+anything after the first terminal frame, and treats the stream's terminal frame
+as the authority (the `cancel_run` reply only settles a run whose terminal frame
+never arrived). The wire shape does not change.
+
 ### `SubagentDto`
 
 | Field         | Type                                                    | Meaning                                        |
