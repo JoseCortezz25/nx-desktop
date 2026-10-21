@@ -126,3 +126,11 @@
   color: var(--color-muted);
   font-size: 13px;
 }
+
+.file-viewer__open-error {
+  flex: none;
+  margin: 0;
+  padding: 6px 12px;
+  color: var(--color-removed);
+  font-size: 12px;
+}

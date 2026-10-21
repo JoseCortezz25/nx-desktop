@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useHookReview } from '@/features/hooks/hooks/use-hook-review';
-import { countNewHooks } from '@/features/hooks/model/hook-review';
+import {
+  countNewHooks,
+  resolveDecisionHookIds,
+  type HookDecisionScope
+} from '@/features/hooks/model/hook-review';
 import { HookReviewDialog } from '@/features/hooks/ui/organisms/hook-review-dialog';
 import type { HookApprovalStatus } from '@/shared/domain/hook.types';
 import type { HookId } from '@/shared/domain/value-objects.types';
@@ -129,7 +133,6 @@ export function AppShell() {
    */
   const [createProjectDraft, setCreateProjectDraft] =
     useState<CreateProjectDraft | null>(null);
-  const { hooks } = useHookReview();
   const { providers } = useProviderCatalog();
   const { resolved, selectProvider, selectModel, selectEffort } =
     useComposerSelection(providers);
@@ -142,6 +145,14 @@ export function AppShell() {
   } = useProjectCatalog();
   const { conversations } = useConversationCatalog();
   const branches = useWorkspaceBranches(activeProject?.id ?? null);
+  const {
+    hooks,
+    isLoading: isLoadingHooks,
+    loadError: hookLoadError,
+    isDeciding: isDecidingHooks,
+    decisionError: hookDecisionError,
+    decideHooks
+  } = useHookReview(activeProject?.id ?? null);
   const liveRun = useLiveRun();
 
   const {
@@ -241,13 +252,20 @@ export function AppShell() {
 
   function handleDecideHookReview(
     status: HookApprovalStatus,
-    scope: 'selection' | 'all'
+    scope: HookDecisionScope
   ) {
-    // Project-scoped HookDecision persistence belongs to #19/#23, not this UI, so
-    // the decision is reported and the dialog closes; nothing is written.
-    void status;
-    void scope;
-    setShell(closeHookReview);
+    // The core records each decision per project (#20); the dialog closes only
+    // once every write was stored, and stays open with the error otherwise.
+    const hookIds = resolveDecisionHookIds(
+      hooks ?? [],
+      shell.hookReview.selectedHookIds,
+      scope
+    );
+    void decideHooks(hookIds, status).then(isStored => {
+      if (isStored) {
+        setShell(closeHookReview);
+      }
+    });
   }
 
   function handleRequestOpenSubagent(subagentId: SubagentId) {
@@ -346,6 +364,7 @@ export function AppShell() {
           instead of being rebuilt from the single last request.
         */}
         <FilePanel
+          projectId={activeProject?.id ?? null}
           openFileRequest={openFileRequest}
           openChangesRequestCount={openChangesRequestCount}
           openSubagentsRequestCount={openSubagentsRequestCount}
@@ -368,6 +387,10 @@ export function AppShell() {
           onToggleSelection={handleToggleHookSelection}
           onDecide={handleDecideHookReview}
           onClose={handleCloseHookReview}
+          isLoading={isLoadingHooks}
+          hasLoadError={hookLoadError !== null}
+          isDeciding={isDecidingHooks}
+          hasDecisionError={hookDecisionError !== null}
         />
       ) : null}
       <CreateProjectDialog

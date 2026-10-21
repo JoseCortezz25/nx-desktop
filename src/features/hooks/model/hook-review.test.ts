@@ -4,7 +4,9 @@ import {
   countNewHooks,
   toggleHookId,
   isHookSelected,
-  formatHookTimeout
+  formatHookTimeout,
+  resolveDecisionHookIds,
+  applyStoredHooks
 } from './hook-review';
 
 const hooks: readonly Hook[] = [
@@ -51,5 +53,48 @@ describe('hook review rules', () => {
     [0, '0 s']
   ])('formats %i milliseconds as %s', (value, expected) => {
     expect(formatHookTimeout(value)).toBe(expected);
+  });
+});
+
+describe('resolveDecisionHookIds', () => {
+  const listed: readonly Hook[] = ['hook-a', 'hook-b', 'hook-c'].map(id => ({
+    id,
+    name: id,
+    isNew: false,
+    origin: 'Project',
+    hookType: 'PreToolUse',
+    command: 'pnpm lint',
+    timeoutMs: 1000,
+    approvalStatus: 'pending'
+  }));
+
+  it('covers every listed hook for the whole review', () => {
+    expect(resolveDecisionHookIds(listed, new Set(['hook-b']), 'all')).toEqual([
+      'hook-a',
+      'hook-b',
+      'hook-c'
+    ]);
+  });
+
+  it('keeps only listed selected hooks, in list order', () => {
+    expect(
+      resolveDecisionHookIds(
+        listed,
+        new Set(['hook-c', 'hook-ghost', 'hook-a']),
+        'selection'
+      )
+    ).toEqual(['hook-a', 'hook-c']);
+  });
+
+  it('replaces listed hooks with the stored version and keeps the rest', () => {
+    const stored = { ...listed[1], approvalStatus: 'approved' as const };
+    const merged = applyStoredHooks(listed, [stored]);
+
+    expect(merged.map(hook => hook.approvalStatus)).toEqual([
+      'pending',
+      'approved',
+      'pending'
+    ]);
+    expect(merged[0]).toBe(listed[0]);
   });
 });

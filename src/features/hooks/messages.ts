@@ -12,6 +12,10 @@ export const hookMessages = {
     commandLabel: 'Comando',
     timeoutLabel: 'Tiempo límite',
     footerNote: 'Puedes cambiarlo más tarde en Ajustes',
+    loadingLabel: 'Cargando hooks…',
+    loadErrorLabel: 'No se pudieron cargar los hooks de este proyecto',
+    emptyLabel: 'Este proyecto no tiene hooks para revisar',
+    decisionErrorLabel: 'No se pudo guardar la decisión. Inténtalo de nuevo.',
     rejectLabel: 'Ahora no',
     allowAllLabel: 'Permitir todo',
     allowSelectionLabel: 'Permitir la selección'

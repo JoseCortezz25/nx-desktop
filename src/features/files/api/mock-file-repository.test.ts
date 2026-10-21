@@ -81,7 +81,7 @@ describe('mock open target repository', () => {
     const repository = createMockOpenTargetRepository();
 
     await expect(
-      repository.openInTarget('editor', 'src/App.tsx')
+      repository.openInTarget('proj-design-system', 'editor', 'src/App.tsx')
     ).resolves.toBeUndefined();
   });
 });

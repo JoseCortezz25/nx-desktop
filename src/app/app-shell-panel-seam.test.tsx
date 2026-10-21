@@ -165,8 +165,14 @@ describe('shell to right panel open-file seam', () => {
       'openChangesRequestCount',
       'openFileRequest',
       'openSubagentsRequestCount',
-      'openSubagentsRequestSubagentId'
+      'openSubagentsRequestSubagentId',
+      'projectId'
     ]);
+  });
+
+  it('scopes the panel reads to the active project, none in this suite', () => {
+    renderToStaticMarkup(<AppShell />);
+    expect(captured.panel?.projectId).toBeNull();
   });
 
   it('hands the panel the region visibility the shell owns', () => {

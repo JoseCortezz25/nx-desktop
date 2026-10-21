@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { SubagentsViewer } from '@/features/subagents/ui/organisms/subagents-viewer';
-import type { SubagentId } from '@/shared/domain/value-objects.types';
+import type {
+  ProjectId,
+  SubagentId
+} from '@/shared/domain/value-objects.types';
 import { DiffView } from '@/features/diff/ui/organisms/diff-view';
 import type { OpenFileRequest } from '@/shared/domain/file-reference.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
@@ -20,6 +23,12 @@ import { FileViewer } from './file-viewer';
 import './file-panel.css';
 
 export interface FilePanelProps {
+  /**
+   * The active project, or `null`. File reads, the change set and the open
+   * action are project-scoped; the core resolves this id to its authorized
+   * roots (#24).
+   */
+  readonly projectId?: ProjectId | null;
   /**
    * The file the window shell currently has requested, or `null`. The shell owns
    * it once; the panel reads that same value instead of keeping a second copy
@@ -68,6 +77,7 @@ export interface FilePanelProps {
  * the single last-requested file.
  */
 export function FilePanel({
+  projectId = null,
   openFileRequest,
   openChangesRequestCount,
   openSubagentsRequestCount = 0,
@@ -143,14 +153,18 @@ export function FilePanel({
       }
     >
       {activeTab?.kind === 'changes' ? (
-        <DiffView />
+        <DiffView projectId={projectId} />
       ) : activeTab?.kind === 'subagents' ? (
         <SubagentsViewer
           focusRequestCount={openSubagentsRequestCount}
           focusedSubagentId={openSubagentsRequestSubagentId}
         />
       ) : activeTab ? (
-        <FileViewer key={activeTab.path} path={activeTab.path} />
+        <FileViewer
+          key={activeTab.path}
+          projectId={projectId}
+          path={activeTab.path}
+        />
       ) : (
         <div className="file-panel__empty">
           <p className="file-panel__empty-text">

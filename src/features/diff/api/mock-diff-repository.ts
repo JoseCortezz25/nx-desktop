@@ -1,5 +1,6 @@
 /**
- * In-memory change set used until the Rust core exposes a workspace diff.
+ * In-memory change-set fixture behind the mock port and its tests. The running
+ * app reads the IPC-backed repository (#24).
  *
  * The seed is the change screen 18 draws: `src/App.tsx` (+9 / -4) and
  * `src-tauri/src/lib.rs` (+5 / -2), which is the `2 archivos cambiados` and the
