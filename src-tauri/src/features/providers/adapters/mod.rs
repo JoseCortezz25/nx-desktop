@@ -1,7 +1,10 @@
-//! Concrete provider adapters (issue #17).
+//! Concrete provider adapters (issues #17, #25).
 //!
-//! Only the in-memory fake exists in this issue. The engine adapters
-//! (`opencode.rs`, `codex.rs`, `claude.rs`) belong to #25–#27 and are
-//! deliberately absent here.
+//! `fake` serves the fixture catalog; `claude` is the first real engine
+//! adapter (catalog + run streaming over the Messages API); `env_credentials`
+//! is the first `CredentialSource`. The `opencode` / `codex` engine adapters
+//! belong to #26–#27.
 
+pub mod claude;
+pub mod env_credentials;
 pub mod fake;

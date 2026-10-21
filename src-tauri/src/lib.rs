@@ -2,8 +2,8 @@
 // implemented backends: providers (#17), projects/conversations with the
 // workspace path policy (#18), the run supervisor with its Channel stream
 // (#19), the approval policy plus hook review (#20), the workspace
-// file/open-target/diff services (#21) and persisted catalogs (#22). Remaining
-// services (#23–#24) land on their own tickets.
+// file/open-target/diff services (#21), persisted catalogs (#22) and the
+// Claude provider adapter (#25). Remaining services land on their own tickets.
 pub mod features;
 pub mod ipc;
 pub mod persistence;
@@ -29,12 +29,16 @@ use features::hooks::{
 };
 use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
-    adapters::fake::FakeAgentProvider,
+    adapters::{
+        claude::{ClaudeAgentProvider, config::ClaudeConfig},
+        env_credentials::EnvCredentialSource,
+        fake::FakeAgentProvider,
+    },
     commands::{list_models, list_providers},
     service::ProviderRegistry,
 };
 use features::runs::{
-    adapters::fake::FakeAgentRunner,
+    adapters::{fake::FakeAgentRunner, routing::ProviderRoutingRunner},
     commands::{cancel_run, get_run, start_run},
     supervisor::RunSupervisor,
 };
@@ -62,8 +66,22 @@ fn default_app_menu(handle: &tauri::AppHandle) -> tauri::Result<tauri::menu::Men
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let registry = ProviderRegistry::new(&FakeAgentProvider);
-    let runs = RunSupervisor::new(Arc::new(FakeAgentRunner::default()));
+    // The Claude adapter is registered alongside (not instead of) the fake
+    // catalog. Its API key is resolved in Rust from the process environment
+    // at run time and never crosses IPC; without one it still lists, and its
+    // runs fail with a mapped `provider_unavailable` error.
+    let claude = Arc::new(
+        ClaudeAgentProvider::new(
+            ClaudeConfig::default(),
+            Arc::new(EnvCredentialSource::from_process_env()),
+        )
+        .expect("Claude HTTP client initialises"),
+    );
+    let registry = ProviderRegistry::from_sources(&[&FakeAgentProvider, claude.as_ref()]);
+    let claude_provider_id = claude.provider_id().as_str().to_owned();
+    let router = ProviderRoutingRunner::new(Arc::new(FakeAgentRunner::default()))
+        .with_route(claude_provider_id, claude);
+    let runs = RunSupervisor::new(Arc::new(router));
     let hooks = HookService::new(Arc::new(FakeHookSource));
     let open_targets = SystemOpenTargetLauncher;
     let diff_source = GitDiffSource;

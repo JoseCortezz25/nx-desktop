@@ -111,6 +111,38 @@ pub struct Provider {
     pub available_models: Vec<Model>,
 }
 
+/// A provider secret (API key or token) owned by the Rust core (issue #25).
+///
+/// It deliberately implements neither `Display`, `Serialize` nor `Clone`,
+/// and its `Debug` output is redacted, so the value cannot reach a DTO, an
+/// event, an error message or a log line by accident. The only way to read
+/// it is [`ProviderCredential::expose`], called by the HTTP adapter that
+/// attaches it to an outbound request header.
+pub struct ProviderCredential(String);
+
+impl ProviderCredential {
+    /// Wraps a secret; blank input is treated as "no credential configured".
+    pub fn new(secret: impl Into<String>) -> Option<Self> {
+        let secret = secret.into();
+        let trimmed = secret.trim();
+        if trimmed.is_empty() {
+            return None;
+        }
+        Some(Self(trimmed.to_owned()))
+    }
+
+    /// Reveals the secret to the adapter that authenticates a request.
+    pub fn expose(&self) -> &str {
+        &self.0
+    }
+}
+
+impl std::fmt::Debug for ProviderCredential {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("ProviderCredential(<redacted>)")
+    }
+}
+
 /// The ways a `provider -> model -> effort` chain can fail validation.
 ///
 /// Kept free of IPC types on purpose: the service maps each variant to an
@@ -214,6 +246,16 @@ mod tests {
             EffortLevel::new("").expect_err("empty effort stop"),
             SelectionChainError::EmptyEffortLevel
         );
+    }
+
+    #[test]
+    fn credentials_are_redacted_and_reject_blank_input() {
+        assert!(ProviderCredential::new("   ").is_none());
+        let credential = ProviderCredential::new(" sk-test-secret ").expect("non-blank secret");
+        assert_eq!(credential.expose(), "sk-test-secret");
+        let debug = format!("{credential:?}");
+        assert!(!debug.contains("sk-test-secret"));
+        assert!(debug.contains("redacted"));
     }
 
     #[test]

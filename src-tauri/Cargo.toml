@@ -23,6 +23,15 @@ tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["macros", "process", "rt", "rt-multi-thread", "sync", "time"] }
+# Claude provider adapter (issue #25): raw HTTPS + SSE streaming against the
+# Messages API. reqwest 0.13 names its rustls backend `rustls` (the 0.12
+# `rustls-tls` feature no longer exists).
+reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+
+[dev-dependencies]
+# Local mock HTTP server for the Claude adapter streaming tests.
+tokio = { version = "1", features = ["net", "io-util"] }
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
