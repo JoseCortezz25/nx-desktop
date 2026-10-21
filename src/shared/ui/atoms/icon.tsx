@@ -36,7 +36,6 @@ export const ICON_NAMES = [
   // `12-chat-conversation-full.html`, `23-file-viewer-markdown.html`).
   'file',
   'copy',
-  'thumb-up',
   'share',
   // Right panel file viewer (#12): the `Abrir` split button and its menu rows
   // (`docs/wireframes/24-file-open-menu.html`). The wireframe draws the VS Code
@@ -217,13 +216,6 @@ const ICON_GLYPHS: Record<IconName, ReactNode> = {
     <>
       <rect x="9" y="9" width="11" height="11" rx="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-    </>
-  ),
-  // Message action: feedback.
-  'thumb-up': (
-    <>
-      <path d="M7 10v11H3V10z" />
-      <path d="M7 10l4-7a2.5 2.5 0 0 1 2.5 2.5V9h6.2a2 2 0 0 1 2 2.3l-1.4 7.5A2 2 0 0 1 18.3 21H7" />
     </>
   ),
   // Message action: share.

@@ -3,10 +3,8 @@ import './message-actions.css';
 
 export interface MessageActionsProps {
   readonly copyLabel: string;
-  readonly feedbackLabel: string;
   readonly shareLabel: string;
   readonly onCopy: () => void;
-  readonly onFeedback: () => void;
   readonly onShare: () => void;
 }
 
@@ -18,21 +16,13 @@ export interface MessageActionsProps {
  */
 export function MessageActions({
   copyLabel,
-  feedbackLabel,
   shareLabel,
   onCopy,
-  onFeedback,
   onShare
 }: MessageActionsProps) {
   return (
     <div className="message-actions">
       <IconButton icon="copy" label={copyLabel} size="sm" onPress={onCopy} />
-      <IconButton
-        icon="thumb-up"
-        label={feedbackLabel}
-        size="sm"
-        onPress={onFeedback}
-      />
       <IconButton icon="share" label={shareLabel} size="sm" onPress={onShare} />
     </div>
   );

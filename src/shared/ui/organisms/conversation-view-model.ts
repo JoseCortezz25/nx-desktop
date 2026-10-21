@@ -55,7 +55,7 @@ export interface ConversationMessageView {
   readonly timestamp: string;
   readonly fileReferences: readonly FileReference[];
   readonly toolActivity: ToolActivityGroupView | null;
-  /** Only assistant turns carry the copy/feedback/share actions row. */
+  /** Only assistant turns carry the copy/share actions row. */
   readonly showsActions: boolean;
 }
 

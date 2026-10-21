@@ -91,10 +91,8 @@ export function ConversationMessages({
             {message.showsActions ? (
               <MessageActions
                 copyLabel={messages.conversation.message.copyLabel}
-                feedbackLabel={messages.conversation.message.feedbackLabel}
                 shareLabel={messages.conversation.message.shareLabel}
                 onCopy={() => undefined}
-                onFeedback={() => undefined}
                 onShare={() => undefined}
               />
             ) : null}

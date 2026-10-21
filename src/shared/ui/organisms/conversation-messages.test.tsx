@@ -199,11 +199,15 @@ describe('conversation messages', () => {
       `aria-label="${messages.conversation.message.copyLabel}"`
     );
     expect(markup).toContain(
-      `aria-label="${messages.conversation.message.feedbackLabel}"`
-    );
-    expect(markup).toContain(
       `aria-label="${messages.conversation.message.shareLabel}"`
     );
+  });
+
+  it('renders no like action on any message (#89)', () => {
+    const markup = renderMessages();
+
+    expect(markup).not.toContain('Enviar comentarios');
+    expect(markup).not.toContain('M7 10v11H3V10z');
   });
 
   it('draws the tool-activity group for a message that ran tools', () => {
