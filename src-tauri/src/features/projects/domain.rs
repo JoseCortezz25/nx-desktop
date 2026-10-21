@@ -103,6 +103,17 @@ pub struct Project {
     pub conversation_ids: Vec<String>,
 }
 
+/// A folder the user picked in the native dialog, ready to be shown in the
+/// create-project draft (issue #147).
+///
+/// `path` is already canonical; `create_project` still re-validates it, because
+/// the webview may send any string back.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PickedWorkspaceFolder {
+    pub path: String,
+    pub label: String,
+}
+
 /// The ways project validation can fail.
 ///
 /// Kept free of IPC types on purpose: the service maps each variant to an
@@ -129,6 +140,18 @@ pub enum ProjectError {
     /// service attaches the policy detail; commands report it as denied
     /// authority, since folders become authorized workspace roots.
     FolderNotAuthorized {
+        folder: String,
+    },
+    /// Nothing exists at the folder, so it cannot become a workspace root.
+    FolderNotFound {
+        folder: String,
+    },
+    /// The folder resolves to a file (or another non-directory entry).
+    FolderNotDirectory {
+        folder: String,
+    },
+    /// Two supplied folders canonicalize to the same workspace root.
+    DuplicateFolder {
         folder: String,
     },
     UnknownProject {

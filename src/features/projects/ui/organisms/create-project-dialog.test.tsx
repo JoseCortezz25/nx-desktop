@@ -1,12 +1,13 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { WorkspaceFolderPicker } from '../../api/workspace-folder-picker';
 import {
   EMPTY_CREATE_PROJECT_DRAFT,
-  MOCK_SOURCE_FOLDERS,
   addSourceFolder,
   changeProjectName,
   toCreateProjectInput
 } from '../../model/create-project';
+import type { SourceFolder } from '../../model/create-project.types';
 import { getProjectMessages } from '../../messages';
 import { CreateProjectDialog } from './create-project-dialog';
 
@@ -18,6 +19,18 @@ import { CreateProjectDialog } from './create-project-dialog';
  */
 const messages = getProjectMessages().createDialog;
 
+/** The folder an injected picker returns; the native dialog is never opened. */
+const pickedFolder: SourceFolder = {
+  id: '/workspace/gamma-site',
+  label: 'gamma-site',
+  path: '/workspace/gamma-site'
+};
+
+const pickFolder = vi.fn(() =>
+  Promise.resolve<SourceFolder | null>(pickedFolder)
+);
+const injectedPicker: WorkspaceFolderPicker = { pickFolder };
+
 function render(draft: Parameters<typeof CreateProjectDialog>[0]['draft']) {
   return renderToStaticMarkup(
     <CreateProjectDialog
@@ -25,6 +38,7 @@ function render(draft: Parameters<typeof CreateProjectDialog>[0]['draft']) {
       onDraftChange={() => undefined}
       onSubmit={() => undefined}
       onClose={() => undefined}
+      folderPicker={injectedPicker}
     />
   );
 }
@@ -78,17 +92,28 @@ describe('create project dialog — empty state', () => {
 
 describe('create project dialog — folder-added state', () => {
   const draft = addSourceFolder(
-    changeProjectName(EMPTY_CREATE_PROJECT_DRAFT, 'Gamma app')
+    changeProjectName(EMPTY_CREATE_PROJECT_DRAFT, 'Gamma app'),
+    pickedFolder
   );
 
   it('renders one removable row per added folder', () => {
     const markup = render(draft);
 
     expect(markup.match(/class="source-folder-row"/g)?.length).toBe(1);
-    expect(markup).toContain(MOCK_SOURCE_FOLDERS[0].label);
+    expect(markup).toContain(pickedFolder.label);
     expect(markup).toContain(
-      `aria-label="${messages.removeFolderLabel(MOCK_SOURCE_FOLDERS[0].label)}"`
+      `aria-label="${messages.removeFolderLabel(pickedFolder.label)}"`
     );
+  });
+
+  it('keeps the add control operable and opens no picker while rendering', () => {
+    const markup = render(draft);
+
+    expect(markup).not.toMatch(
+      new RegExp(`aria-label="${messages.addFolderRowLabel}"[^>]*\\sdisabled`)
+    );
+    expect(markup).not.toContain(messages.folderPickError);
+    expect(pickFolder).not.toHaveBeenCalled();
   });
 
   it('swaps the empty prompt for the add-folder row', () => {
@@ -102,7 +127,7 @@ describe('create project dialog — folder-added state', () => {
 describe('create project dialog — copy discipline', () => {
   it('names no wireframe placeholder project', () => {
     const markup = `${render(EMPTY_CREATE_PROJECT_DRAFT)}${render(
-      addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT)
+      addSourceFolder(EMPTY_CREATE_PROJECT_DRAFT, pickedFolder)
     )}`;
 
     expect(markup).not.toContain('nx-desktop');

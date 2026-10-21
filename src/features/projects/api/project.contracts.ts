@@ -49,6 +49,17 @@ export interface CreateProjectRequestDto {
   folders: WorkspacePath[];
 }
 
+/**
+ * The folder the native dialog returned (`pick_workspace_folder`, #147).
+ *
+ * `path` is canonical and `label` is the folder's display name; a cancelled
+ * dialog is `null`, never an empty row.
+ */
+export interface PickedWorkspaceFolderDto {
+  path: WorkspacePath;
+  label: string;
+}
+
 /** Request envelope for `set_project_approval_mode`; authority-bearing. */
 export interface SetProjectApprovalModeRequestDto {
   projectId: ProjectId;

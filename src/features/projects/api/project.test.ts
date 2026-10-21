@@ -8,17 +8,20 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import createProjectFixture from '../../../../docs/ipc/fixtures/projects-create-project.json';
 import listProjectsFixture from '../../../../docs/ipc/fixtures/projects-list-projects.json';
+import pickFolderFixture from '../../../../docs/ipc/fixtures/projects-pick-workspace-folder.json';
 import setApprovalFixture from '../../../../docs/ipc/fixtures/projects-set-project-approval-mode.json';
 import type { CreateProjectInput } from '../model/create-project.types';
 import type {
   CreateProjectRequestDto,
   CreatedProjectDto,
+  PickedWorkspaceFolderDto,
   ProjectDto,
   SetProjectApprovalModeRequestDto
 } from './project.contracts';
 import {
   createProject,
   listProjects,
+  pickWorkspaceFolder,
   setProjectApprovalMode
 } from './project-client';
 
@@ -66,6 +69,10 @@ const expectedCreateRequest: CreateProjectRequestDto = {
   name: 'Docs site',
   folders: ['/workspace/docs-site']
 };
+const expectedPickedFolder: PickedWorkspaceFolderDto = {
+  path: '/workspace/docs-site',
+  label: 'docs-site'
+};
 const expectedSetApprovalRequest: SetProjectApprovalModeRequestDto = {
   projectId: 'proj-design-system',
   approvalMode: 'full_access'
@@ -83,6 +90,11 @@ describe('project fixtures', () => {
   it('match the create request and created-project response', () => {
     expect(createProjectFixture.request).toEqual(expectedCreateRequest);
     expect(createProjectFixture.response).toEqual(expectedCreated);
+  });
+
+  it('match the picked folder and the cancelled pick', () => {
+    expect(pickFolderFixture.response).toEqual(expectedPickedFolder);
+    expect(pickFolderFixture.cancelledResponse).toBeNull();
   });
 
   it('match the approval request and updated catalog', () => {
@@ -118,5 +130,16 @@ describe('project client', () => {
     expect(ipcInvoke).toHaveBeenCalledWith('set_project_approval_mode', {
       request: expectedSetApprovalRequest
     });
+  });
+
+  it('calls pick_workspace_folder without an envelope', async () => {
+    ipcInvoke.mockResolvedValue(expectedPickedFolder);
+    await expect(pickWorkspaceFolder()).resolves.toEqual(expectedPickedFolder);
+    expect(ipcInvoke).toHaveBeenCalledWith('pick_workspace_folder');
+  });
+
+  it('resolves null when the folder dialog is cancelled', async () => {
+    ipcInvoke.mockResolvedValue(null);
+    await expect(pickWorkspaceFolder()).resolves.toBeNull();
   });
 });

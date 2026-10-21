@@ -63,6 +63,39 @@ pub fn canonicalize_or_normalize_root(root: &Path) -> Result<PathBuf, PathPolicy
     }
 }
 
+/// Why a folder cannot become a new workspace root (issue #147).
+///
+/// Separate from [`PathPolicyError`] on purpose: new roots are checked against
+/// the real filesystem, while the lenient seed-root resolution above keeps
+/// accepting authority records that do not exist on this machine.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum WorkspaceRootError {
+    /// The folder is relative, so it is never authority.
+    Relative,
+    /// Nothing exists at the folder (or it cannot be resolved).
+    Missing,
+    /// The folder resolves to something other than a directory.
+    NotADirectory,
+}
+
+/// Canonicalizes a folder that is about to become a workspace root.
+///
+/// Unlike [`canonicalize_or_normalize_root`] there is no lexical fallback: the
+/// folder must exist and resolve (symlinks followed) to a directory, and the
+/// canonical path is what the caller stores, so two spellings of one folder
+/// compare equal.
+pub fn canonicalize_existing_root(root: &Path) -> Result<PathBuf, WorkspaceRootError> {
+    if root.is_relative() {
+        return Err(WorkspaceRootError::Relative);
+    }
+    let canonical = std::fs::canonicalize(root).map_err(|_| WorkspaceRootError::Missing)?;
+    if canonical.is_dir() {
+        Ok(canonical)
+    } else {
+        Err(WorkspaceRootError::NotADirectory)
+    }
+}
+
 /// Canonicalizes a path through its nearest existing ancestor so symlink
 /// escapes are caught even when the final path does not exist yet.
 ///
@@ -233,6 +266,36 @@ mod tests {
         }
         fs::create_dir_all(&root).expect("scratch workspace exists");
         root
+    }
+
+    #[test]
+    fn existing_root_canonicalizes_an_existing_directory() {
+        let root = temp_workspace("existing-root");
+        let spelled = root.join(".").join("nested").join("..");
+        fs::create_dir_all(root.join("nested")).expect("nested dir");
+        let canonical = canonicalize_existing_root(&spelled).expect("existing directory");
+        assert_eq!(canonical, fs::canonicalize(&root).expect("canonical root"));
+        fs::remove_dir_all(&root).expect("scratch cleanup");
+    }
+
+    #[test]
+    fn existing_root_rejects_relative_missing_and_file_paths() {
+        let root = temp_workspace("existing-root-errors");
+        let file = root.join("notes.txt");
+        fs::write(&file, "x").expect("scratch file");
+        assert_eq!(
+            canonicalize_existing_root(Path::new("relative/folder")),
+            Err(WorkspaceRootError::Relative)
+        );
+        assert_eq!(
+            canonicalize_existing_root(&root.join("missing")),
+            Err(WorkspaceRootError::Missing)
+        );
+        assert_eq!(
+            canonicalize_existing_root(&file),
+            Err(WorkspaceRootError::NotADirectory)
+        );
+        fs::remove_dir_all(&root).expect("scratch cleanup");
     }
 
     #[test]

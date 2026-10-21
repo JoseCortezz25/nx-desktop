@@ -118,6 +118,10 @@ pub fn run() {
     let diff_source = GitDiffSource;
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        // Issue #147: the dialog plugin is driven only from Rust
+        // (`pick_workspace_folder`); no capability grants `dialog:*` to the
+        // webview, so the frontend cannot open dialogs on its own.
+        .plugin(tauri_plugin_dialog::init())
         .manage(registry)
         .manage(runs)
         .manage(hooks)
@@ -145,6 +149,7 @@ pub fn run() {
             project_commands::create_project,
             project_commands::set_project_approval_mode,
             project_commands::list_workspace_branches,
+            project_commands::pick_workspace_folder,
             conversation_commands::list_conversations,
             conversation_commands::create_conversation,
             start_run,

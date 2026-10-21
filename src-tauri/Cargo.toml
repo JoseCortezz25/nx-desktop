@@ -28,6 +28,7 @@ tokio = { version = "1", features = ["macros", "process", "rt", "rt-multi-thread
 # `rustls-tls` feature no longer exists).
 reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
+tauri-plugin-dialog = "2"
 
 # Codex (#26) and OpenCode (#27) provider adapters: signal the child's
 # process group on cancellation so no CLI or private server outlives a run.
