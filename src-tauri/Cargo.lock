@@ -2284,6 +2284,7 @@ name = "nx-desktop"
 version = "0.1.0"
 dependencies = [
  "futures-util",
+ "libc",
  "reqwest",
  "serde",
  "serde_json",

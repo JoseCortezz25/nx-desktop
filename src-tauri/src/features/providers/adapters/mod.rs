@@ -6,5 +6,6 @@
 //! belong to #26–#27.
 
 pub mod claude;
+pub mod codex;
 pub mod env_credentials;
 pub mod fake;
