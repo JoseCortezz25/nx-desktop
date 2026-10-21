@@ -29,8 +29,9 @@ tokio = { version = "1", features = ["macros", "process", "rt", "rt-multi-thread
 reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
 
+# Codex (#26) and OpenCode (#27) provider adapters: signal the child's
+# process group on cancellation so no CLI or private server outlives a run.
 [target.'cfg(unix)'.dependencies]
-# Codex provider adapter (issue #26): signal the CLI's process group on cancel.
 libc = "0.2"
 
 [dev-dependencies]

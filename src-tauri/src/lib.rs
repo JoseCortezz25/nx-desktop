@@ -3,7 +3,8 @@
 // workspace path policy (#18), the run supervisor with its Channel stream
 // (#19), the approval policy plus hook review (#20), the workspace
 // file/open-target/diff services (#21), persisted catalogs (#22) and the
-// Claude provider adapter (#25). Remaining services land on their own tickets.
+// Claude (#25) and OpenCode (#27) provider adapters. Remaining services land
+// on their own tickets.
 pub mod features;
 pub mod ipc;
 pub mod persistence;
@@ -34,6 +35,9 @@ use features::providers::{
         codex::{CodexAgentProvider, config::CodexConfig, workspace::AppWorkspaceResolver},
         env_credentials::EnvCredentialSource,
         fake::FakeAgentProvider,
+        opencode::{
+            OpenCodeAgentProvider, config::OpenCodeConfig, workspace::ProjectWorkspaceDirectory,
+        },
     },
     commands::{list_models, list_providers},
     service::ProviderRegistry,
@@ -85,13 +89,29 @@ pub fn run() {
         CodexAgentProvider::new(CodexConfig::from_process_env(), codex_workspaces.clone())
             .expect("Codex provider id is valid"),
     );
+    // OpenCode (#27) is a live source: its models are discovered from the
+    // OpenCode CLI at runtime (first discovery spawned in `setup`, off the UI
+    // thread) and its row replaces the fixture `opencode` row. Runs execute
+    // in the project's authorized workspace root, resolved once the project
+    // store is managed.
+    let opencode_workspace = Arc::new(ProjectWorkspaceDirectory::new());
+    let opencode = Arc::new(
+        OpenCodeAgentProvider::new(
+            OpenCodeConfig::from_process_env(),
+            opencode_workspace.clone(),
+        )
+        .expect("OpenCode adapter initialises"),
+    );
     let registry =
-        ProviderRegistry::from_sources(&[codex.as_ref(), &FakeAgentProvider, claude.as_ref()]);
+        ProviderRegistry::from_sources(&[codex.as_ref(), &FakeAgentProvider, claude.as_ref()])
+            .with_live_source(opencode.clone());
     let claude_provider_id = claude.provider_id().as_str().to_owned();
     let codex_provider_id = codex.provider_id().as_str().to_owned();
+    let opencode_provider_id = opencode.provider_id().as_str().to_owned();
     let router = ProviderRoutingRunner::new(Arc::new(FakeAgentRunner::default()))
         .with_route(claude_provider_id, claude)
-        .with_route(codex_provider_id, codex);
+        .with_route(codex_provider_id, codex)
+        .with_route(opencode_provider_id, opencode.clone());
     let runs = RunSupervisor::new(Arc::new(router));
     let hooks = HookService::new(Arc::new(FakeHookSource));
     let open_targets = SystemOpenTargetLauncher;
@@ -113,6 +133,8 @@ pub fn run() {
             app.manage(projects);
             app.manage(conversations);
             codex_workspaces.bind(app.handle().clone());
+            opencode_workspace.bind(app.handle().clone());
+            tauri::async_runtime::spawn(async move { opencode.refresh().await });
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

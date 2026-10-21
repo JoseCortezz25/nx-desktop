@@ -2,10 +2,11 @@
 //!
 //! `fake` serves the fixture catalog; `claude` is the first real engine
 //! adapter (catalog + run streaming over the Messages API); `env_credentials`
-//! is the first `CredentialSource`. The `opencode` / `codex` engine adapters
-//! belong to #26–#27.
+//! is the first `CredentialSource`. `opencode` (#27) drives the OpenCode CLI
+//! as a supervised child process and discovers its models at runtime.
 
 pub mod claude;
 pub mod codex;
 pub mod env_credentials;
 pub mod fake;
+pub mod opencode;

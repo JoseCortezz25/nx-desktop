@@ -72,10 +72,15 @@ fn to_provider_dto(provider: &Provider) -> ProviderDto {
 }
 
 /// Lists every configured provider with its advertised models.
+///
+/// Async since issue #27: it first awaits the bounded discovery of live
+/// engine catalogs (OpenCode), off the UI thread, so the first listing
+/// already carries the discovered models.
 #[tauri::command]
-pub fn list_providers(
+pub async fn list_providers(
     registry: State<'_, ProviderRegistry>,
 ) -> Result<Vec<ProviderDto>, AppErrorDto> {
+    registry.ready().await;
     Ok(registry
         .list_providers()
         .iter()
@@ -86,11 +91,12 @@ pub fn list_providers(
 /// Lists the models of one provider; a cross-provider or unknown id is
 /// rejected with `validation_failed` (Invariants tier).
 #[tauri::command]
-pub fn list_models(
+pub async fn list_models(
     registry: State<'_, ProviderRegistry>,
     request: ListModelsRequestDto,
 ) -> Result<Vec<ModelDto>, AppErrorDto> {
     let provider_id = ProviderId::new(request.provider_id).map_err(validation_error)?;
+    registry.ready().await;
     let models = registry
         .list_models(&provider_id)
         .map_err(validation_error)?;
