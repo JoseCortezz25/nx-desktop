@@ -3,7 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Project } from '@/shared/domain/project.types';
 import type { Provider } from '@/shared/domain/provider.types';
-import { resolveSelection } from '@/shared/domain/selection-chain';
+import {
+  changeProvider,
+  resolveSelection
+} from '@/shared/domain/selection-chain';
 
 /**
  * The seam #11 built and #12 consumes: the shell owns **one** open-file request,
@@ -186,9 +189,10 @@ describe('shell to right panel open-file seam', () => {
   it('resolves the shell selection chain the same way the composer does', () => {
     // Guards the assumptions of this suite: the seeded catalog reconciles, so the
     // rendered shell is the shell the app ships, not an empty stub.
-    expect(resolveSelection(catalog, null)?.provider.displayName).toBe(
-      'OpenCode'
-    );
+    expect(
+      resolveSelection(catalog, changeProvider(catalog, 'opencode'))?.provider
+        .displayName
+    ).toBe('OpenCode');
   });
 
   it('keeps the panel inline at wide widths (#43)', () => {

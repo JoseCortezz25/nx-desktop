@@ -5,6 +5,7 @@ import { runMessages } from '@/features/runs/messages';
 import type { LiveTurn } from '@/features/runs/model/live-run';
 import type { Conversation } from '@/shared/domain/conversation.types';
 import type { Provider } from '@/shared/domain/provider.types';
+import type { ComposerSelection } from '@/shared/domain/selection-chain';
 import type { ComposerProps } from '@/shared/ui/organisms/composer';
 import type { ConversationViewProps } from '@/shared/ui/organisms/conversation-view';
 
@@ -38,7 +39,8 @@ const liveRun = vi.hoisted(() => ({
 
 const harness = vi.hoisted(() => ({
   providers: [] as readonly Provider[],
-  conversations: [] as readonly Conversation[]
+  conversations: [] as readonly Conversation[],
+  desired: null as ComposerSelection | null
 }));
 
 vi.mock('@/shared/ui/organisms/composer', () => ({
@@ -76,7 +78,7 @@ vi.mock('@/features/providers/hooks/use-composer-selection', async () => {
   const { resolveSelection } = await import('@/shared/domain/selection-chain');
   return {
     useComposerSelection: (providers: readonly Provider[]) => ({
-      resolved: resolveSelection(providers, null),
+      resolved: resolveSelection(providers, harness.desired),
       selectProvider: () => undefined,
       selectModel: () => undefined,
       selectEffort: () => undefined
@@ -159,6 +161,11 @@ beforeEach(() => {
   capture.shellState.activeConversationId = 'conv-1';
   harness.providers = catalog;
   harness.conversations = [conversation];
+  harness.desired = {
+    providerId: 'opencode',
+    modelId: 'glm-4.6',
+    effortLevel: 'light'
+  };
   liveRun.turns = [];
   liveRun.isRunning = false;
   liveRun.startRun.mockClear();
@@ -179,6 +186,31 @@ describe('shell live-run seam', () => {
       prompt: 'Explain it',
       environment
     });
+  });
+
+  it('starts nothing while no provider is selected', () => {
+    // No provider is preselected (decision 2026-10-20): with a loaded catalog
+    // but no explicit choice the chain is unresolved, and the shell must not
+    // fall back to the catalog's first provider to start a run.
+    harness.desired = null;
+    renderToStaticMarkup(<AppShell />);
+
+    expect(capture.composer?.selection).toBeNull();
+    capture.composer?.onSubmit('Explain it', environment);
+    expect(liveRun.startRun).not.toHaveBeenCalled();
+  });
+
+  it('starts nothing once the selected provider leaves the catalog', () => {
+    harness.desired = {
+      providerId: 'gone',
+      modelId: 'gone-model',
+      effortLevel: 'light'
+    };
+    renderToStaticMarkup(<AppShell />);
+
+    expect(capture.composer?.selection).toBeNull();
+    capture.composer?.onSubmit('Explain it', environment);
+    expect(liveRun.startRun).not.toHaveBeenCalled();
   });
 
   it('starts nothing from Home, where no conversation is open', () => {

@@ -24,6 +24,13 @@ export interface ComposerBarProps {
   /** Hands the send intent up; the composer organism owns the submit rule. */
   readonly onSendPress?: () => void;
   /**
+   * Disables the send control. The composer sets it while no provider/model is
+   * selected, so a run can never start without an explicit provider.
+   */
+  readonly isSendDisabled?: boolean;
+  /** Id of the visible text explaining why sending is unavailable. */
+  readonly sendDescriptionId?: string;
+  /**
    * `true` while a run streams: the send control becomes the cancel control
    * (#23), so a second send cannot be issued mid-stream.
    */
@@ -43,6 +50,8 @@ export function ComposerBar({
   controls,
   onAddPress,
   onSendPress,
+  isSendDisabled = false,
+  sendDescriptionId,
   isRunActive = false,
   onCancelPress
 }: ComposerBarProps) {
@@ -74,6 +83,8 @@ export function ComposerBar({
           <Button
             variant="solid"
             label={messages.composer.sendLabel}
+            isDisabled={isSendDisabled}
+            describedBy={sendDescriptionId}
             onPress={onSendPress}
           >
             <Icon name="send" size="sm" />

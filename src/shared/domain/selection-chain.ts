@@ -46,14 +46,6 @@ export interface ResolvedSelection {
   readonly effortLevels: readonly EffortLevel[];
 }
 
-/** The provider's default (first) model at that model's first supported stop. */
-function defaultChain(
-  providers: readonly Provider[]
-): ComposerSelection | null {
-  const first = providers[0];
-  return first ? defaultSelection(first) : null;
-}
-
 function findProvider(
   providers: readonly Provider[],
   providerId: ProviderId
@@ -130,16 +122,19 @@ export function reconcileSelection(
  *
  * The caller keeps the user's last choice (`desired`) and this function derives
  * a display-ready chain during render: the choice reconciled against the
- * catalog, or the catalog's default when there is no choice yet or the choice no
- * longer exists. Returns `null` only while the catalog is empty, so a
- * late-arriving catalog becomes a valid chain without an effect.
+ * catalog. There is **no default provider** (product decision 2026-10-20,
+ * `.claude/knowledge/business-logic.md` §3.1, item 6): the result is `null` —
+ * the "no provider selected yet" state — while nothing is chosen, while the
+ * catalog is empty, and when the chosen provider is no longer in the catalog.
+ * The catalog's registration order never picks a provider on the user's
+ * behalf. Once a provider is chosen, a model or effort it no longer offers is
+ * still reconciled to that provider's defaults.
  */
 export function resolveSelection(
   providers: readonly Provider[],
   desired: ComposerSelection | null
 ): ResolvedSelection | null {
-  const reconciled = desired ? reconcileSelection(providers, desired) : null;
-  const selection = reconciled ?? defaultChain(providers);
+  const selection = desired ? reconcileSelection(providers, desired) : null;
   if (!selection) {
     return null;
   }

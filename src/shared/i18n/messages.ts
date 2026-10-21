@@ -86,15 +86,24 @@ export const sharedMessages = {
     sendLabel: 'Enviar',
     cancelRunLabel: 'Detener la ejecución',
     promptPlaceholder: (providerName: string) => `Trabaja con ${providerName}`,
+    // No provider is preselected (decision 2026-10-20): until the user picks
+    // one, the chips show this "not defined yet" state and the composer tells
+    // the user why sending is blocked.
+    selectionRequiredHint:
+      'Selecciona un proveedor y un modelo para poder enviar el mensaje.',
     provider: {
       listLabel: 'Proveedores',
       triggerLabel: (providerName: string) => `Proveedor: ${providerName}`,
+      emptyValue: 'Selecciona un proveedor',
+      emptyTriggerLabel: 'Proveedor: sin seleccionar',
       header: 'Seleccionar proveedor',
       footer: 'Los modelos disponibles dependen del proveedor'
     },
     model: {
       listLabel: 'Modelos',
       triggerLabel: (modelName: string) => `Modelo: ${modelName}`,
+      emptyValue: 'Modelo',
+      emptyTriggerLabel: 'Modelo: selecciona primero un proveedor',
       header: 'Seleccionar modelo',
       providerLine: (providerName: string) => `Proveedor: ${providerName}`,
       changeLabel: 'Cambiar',

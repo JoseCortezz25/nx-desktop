@@ -9,8 +9,10 @@
  * holding a second copy of the selection (defect carried over from #7).
  *
  * Every value the surfaces render is derived during render by
- * `resolveSelection`, so a late-arriving catalog becomes a valid, reconciled
- * chain without an effect (`.claude/knowledge/business-logic.md` §3.1).
+ * `resolveSelection`, so a late-arriving catalog reconciles the user's chosen
+ * chain without an effect, and a chosen provider that leaves the catalog
+ * falls back to the unselected state rather than to another provider
+ * (`.claude/knowledge/business-logic.md` §3.1, item 6).
  */
 import { useState } from 'react';
 import type { EffortLevel } from '@/shared/domain/effort-level.types';
@@ -25,7 +27,11 @@ import {
 import type { ModelId, ProviderId } from '@/shared/domain/value-objects.types';
 
 export interface ComposerSelectionState {
-  /** The reconciled chain to render, or `null` while the catalog is empty. */
+  /**
+   * The reconciled chain to render, or `null` while no provider is selected —
+   * nothing chosen yet, an empty catalog, or a chosen provider that left the
+   * catalog. There is no default provider (decision 2026-10-20).
+   */
   readonly resolved: ResolvedSelection | null;
   /** Transition rule: a provider change resets model and effort (§3.1, item 2). */
   readonly selectProvider: (providerId: ProviderId) => void;
@@ -40,6 +46,16 @@ export function useComposerSelection(
     useState<ComposerSelection | null>(null);
 
   const resolved = resolveSelection(providers, desiredSelection);
+
+  // A chosen provider that left a loaded catalog drops the choice itself, so
+  // the composer returns to the unselected state for good instead of silently
+  // re-selecting that provider if it ever comes back. Adjusting state during
+  // render (not in an effect) is React's pattern for state derived from props;
+  // the guard turns false after the update, so it cannot loop. An empty
+  // catalog is "still loading" and keeps the choice.
+  if (desiredSelection && !resolved && providers.length > 0) {
+    setDesiredSelection(null);
+  }
 
   function selectProvider(providerId: ProviderId) {
     setDesiredSelection(changeProvider(providers, providerId));
