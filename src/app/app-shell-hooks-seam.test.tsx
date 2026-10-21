@@ -13,6 +13,9 @@ const harness = vi.hoisted(() => ({
   dialog: null as HookReviewDialogProps | null,
   hooks: null as readonly Hook[] | null,
   projects: [] as readonly Project[],
+  hookProjectIds: [] as (string | null)[],
+  decideHooks: vi.fn(),
+  isDecisionStored: true,
   selectProject: vi.fn(),
   changeApprovalMode: vi.fn(),
   createProject: vi.fn()
@@ -57,10 +60,17 @@ vi.mock('@/features/hooks/ui/organisms/hook-review-dialog', () => ({
   }
 }));
 vi.mock('@/features/hooks/hooks/use-hook-review', () => ({
-  useHookReview: () => ({
-    hooks: harness.hooks,
-    isLoading: harness.hooks === null
-  })
+  useHookReview: (projectId: string | null) => {
+    harness.hookProjectIds.push(projectId);
+    return {
+      hooks: harness.hooks,
+      isLoading: harness.hooks === null,
+      loadError: null,
+      isDeciding: false,
+      decisionError: null,
+      decideHooks: harness.decideHooks
+    };
+  }
 }));
 vi.mock('@/features/providers/hooks/use-provider-catalog', () => ({
   useProviderCatalog: () => ({ providers: [], isLoading: false })
@@ -118,6 +128,11 @@ describe('shell hooks review seam', () => {
     harness.composer = null;
     harness.dialog = null;
     harness.hooks = hooks;
+    harness.hookProjectIds = [];
+    harness.isDecisionStored = true;
+    harness.decideHooks.mockImplementation(() =>
+      Promise.resolve(harness.isDecisionStored)
+    );
     harness.projects = [
       {
         id: 'project-one',
@@ -161,20 +176,48 @@ describe('shell hooks review seam', () => {
     render();
     expect(dialog().selectedHookIds.size).toBe(0);
   });
+  it('reads the hooks of the active project', () => {
+    render();
+    expect(harness.hookProjectIds[harness.hookProjectIds.length - 1]).toBe(
+      'project-one'
+    );
+  });
   it.each(['approved', 'rejected'] as const)(
-    'closes on %s without writing to the project catalog',
-    status => {
-      const before = JSON.stringify(harness.projects);
+    'records %s for every reviewed hook and closes once stored',
+    async status => {
       render();
       composer().onOpenHookReview?.();
       render();
       dialog().onDecide(status, 'all');
+      expect(harness.decideHooks).toHaveBeenCalledWith(
+        ['hook-0', 'hook-1', 'hook-2'],
+        status
+      );
+      await Promise.resolve();
+      await Promise.resolve();
       render();
       expect(harness.dialog).toBeNull();
-      expect(harness.selectProject).not.toHaveBeenCalled();
       expect(harness.changeApprovalMode).not.toHaveBeenCalled();
-      expect(harness.createProject).not.toHaveBeenCalled();
-      expect(JSON.stringify(harness.projects)).toBe(before);
     }
   );
+  it('records only the selection for the selection scope', () => {
+    render();
+    composer().onOpenHookReview?.();
+    render();
+    dialog().onToggleSelection('hook-2');
+    render();
+    dialog().onDecide('approved', 'selection');
+    expect(harness.decideHooks).toHaveBeenCalledWith(['hook-2'], 'approved');
+  });
+  it('keeps the review open when the core did not store the decision', async () => {
+    harness.isDecisionStored = false;
+    render();
+    composer().onOpenHookReview?.();
+    render();
+    dialog().onDecide('approved', 'all');
+    await Promise.resolve();
+    await Promise.resolve();
+    render();
+    expect(harness.dialog).not.toBeNull();
+  });
 });

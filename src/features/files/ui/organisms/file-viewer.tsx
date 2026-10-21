@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react';
+import type { ProjectId } from '@/shared/domain/value-objects.types';
 import { getSharedMessages } from '@/shared/i18n/messages';
 import { Button } from '@/shared/ui/atoms/button';
 import { IconButton } from '@/shared/ui/molecules/icon-button';
@@ -17,6 +18,11 @@ import { OpenWithMenu } from '../molecules/open-with-menu';
 import './file-viewer.css';
 
 export interface FileViewerProps {
+  /**
+   * The active project whose authorized roots the file is read from, or `null`
+   * when none is selected. The core resolves it; the viewer only forwards it.
+   */
+  readonly projectId: ProjectId | null;
   /** Workspace-relative path of the file the focused tab shows. */
   readonly path: string;
 }
@@ -32,10 +38,10 @@ export interface FileViewerProps {
  * The panel remounts it per file, so the mode and the menu never leak from one
  * file to the next.
  */
-export function FileViewer({ path }: FileViewerProps) {
+export function FileViewer({ projectId, path }: FileViewerProps) {
   const messages = getSharedMessages();
-  const { document, isLoading } = useFileDocument(path);
-  const { targets, openInTarget } = useOpenTargets();
+  const { document, isLoading, error } = useFileDocument(projectId, path);
+  const { targets, hasOpenFailed, openInTarget } = useOpenTargets(projectId);
   const [modeOverride, setModeOverride] = useState<FileViewMode | null>(null);
   const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const menuItems = buildOpenMenuItems(targets);
@@ -44,9 +50,15 @@ export function FileViewer({ path }: FileViewerProps) {
     return (
       <section className="file-viewer file-viewer--notice" aria-label={path}>
         <p className="file-viewer__notice">
-          {isLoading
-            ? messages.fileViewer.loadingLabel
-            : messages.fileViewer.missingLabel}
+          {projectId === null
+            ? messages.fileViewer.noProjectLabel
+            : isLoading
+              ? messages.fileViewer.loadingLabel
+              : error?.code === 'permission_denied'
+                ? messages.fileViewer.permissionDeniedLabel
+                : error !== null
+                  ? messages.fileViewer.errorLabel
+                  : messages.fileViewer.missingLabel}
         </p>
       </section>
     );
@@ -71,8 +83,8 @@ export function FileViewer({ path }: FileViewerProps) {
   }
 
   function handleSelectTarget(target: (typeof menuItems)[number]['target']) {
-    // The stub action lives behind the open-target port; the panel only asks it
-    // to open the file and closes the list.
+    // The launch lives behind the open-target port and the core validates it;
+    // the panel only asks it to open the file and closes the list.
     openInTarget(target, path);
     setIsMenuExpanded(false);
   }
@@ -148,6 +160,12 @@ export function FileViewer({ path }: FileViewerProps) {
           ) : null}
         </div>
       </header>
+
+      {hasOpenFailed ? (
+        <p className="file-viewer__open-error" role="alert">
+          {messages.fileViewer.openFailedLabel}
+        </p>
+      ) : null}
 
       <div
         className="file-viewer__content"

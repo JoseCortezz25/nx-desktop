@@ -70,6 +70,16 @@ const hooks: readonly Hook[] = [
   }
 ];
 const messages = getHookMessages().hookReview;
+const footerLabels: readonly string[] = [
+  messages.rejectLabel,
+  messages.allowAllLabel,
+  messages.allowSelectionLabel
+];
+function footerButtons(): ButtonProps[] {
+  return harness.buttons.filter(button =>
+    footerLabels.includes(String(button.children))
+  );
+}
 function render(
   selectedHookIds: ReadonlySet<string> = new Set(),
   onDecide = vi.fn()
@@ -143,5 +153,51 @@ describe('hook review dialog', () => {
       ['approved', 'all'],
       ['approved', 'selection']
     ]);
+  });
+  it('shows the load state and blocks decisions until the list is read', () => {
+    harness.buttons = [];
+    const loading = renderToStaticMarkup(
+      <HookReviewDialog
+        hooks={[]}
+        selectedHookIds={new Set()}
+        onToggleSelection={() => undefined}
+        onDecide={() => undefined}
+        onClose={() => undefined}
+        isLoading
+      />
+    );
+    expect(loading).toContain(messages.loadingLabel);
+    expect(footerButtons()).toHaveLength(3);
+    expect(footerButtons().every(button => button.isDisabled)).toBe(true);
+
+    const failed = renderToStaticMarkup(
+      <HookReviewDialog
+        hooks={[]}
+        selectedHookIds={new Set()}
+        onToggleSelection={() => undefined}
+        onDecide={() => undefined}
+        onClose={() => undefined}
+        hasLoadError
+      />
+    );
+    expect(failed).toContain(messages.loadErrorLabel);
+  });
+  it('disables the footer while deciding and reports a failed decision', () => {
+    harness.buttons = [];
+    const markup = renderToStaticMarkup(
+      <HookReviewDialog
+        hooks={hooks}
+        selectedHookIds={new Set(['hook-lint'])}
+        onToggleSelection={() => undefined}
+        onDecide={() => undefined}
+        onClose={() => undefined}
+        isDeciding
+        hasDecisionError
+      />
+    );
+    expect(markup).toContain(messages.decisionErrorLabel);
+    expect(footerButtons()).toHaveLength(3);
+    expect(footerButtons().every(button => button.isDisabled)).toBe(true);
+    expect(render()).not.toContain(messages.decisionErrorLabel);
   });
 });

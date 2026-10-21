@@ -1,5 +1,6 @@
 /**
- * In-memory file contents used until the Rust core exposes a workspace read.
+ * In-memory file fixture behind the mock port and its tests. The running app
+ * reads the IPC-backed repository (#24).
  *
  * The seed deliberately covers the paths the conversation's file chips point at
  * (`mock-conversation-repository.ts`) plus the Markdown document screen 23 draws,

@@ -106,8 +106,18 @@ export interface ComposerProps {
   readonly draft: ComposerDraft;
   /** Reports the draft a keystroke, paste or send produces up to the shell. */
   readonly onDraftChange: (draft: ComposerDraft) => void;
-  /** Handed the submitted prompt text. */
-  readonly onSubmit: (prompt: string) => void;
+  /**
+   * Handed the submitted prompt text and the run environment the composer
+   * resolved for it, so the shell can start the run (#23).
+   */
+  readonly onSubmit: (prompt: string, environment: RunEnvironment) => void;
+  /**
+   * `true` while a run streams. Sending is guarded (the draft is kept) and the
+   * send control becomes the cancel control.
+   */
+  readonly isRunActive?: boolean;
+  /** Cancels the streaming run. */
+  readonly onCancelRun?: () => void;
 }
 
 /**
@@ -142,7 +152,9 @@ export function Composer({
   onChangeApprovalMode,
   draft,
   onDraftChange,
-  onSubmit
+  onSubmit,
+  isRunActive = false,
+  onCancelRun
 }: ComposerProps) {
   const messages = getSharedMessages();
   const [desiredEnvironment, setDesiredEnvironment] = useState<RunEnvironment>(
@@ -264,10 +276,14 @@ export function Composer({
   }
 
   function handleSend() {
+    // One run at a time: a send while a run streams keeps the draft untouched.
+    if (isRunActive) {
+      return;
+    }
     // Reads the draft it is handed rather than a state updater: `submitDraft`
     // calls `onSubmit`, and an updater must stay side-effect free (React may
     // invoke it twice in StrictMode).
-    onDraftChange(submitDraft(draft, onSubmit));
+    onDraftChange(submitDraft(draft, text => onSubmit(text, environment)));
   }
 
   function handleToggle(selector: OpenSelector) {
@@ -449,6 +465,8 @@ export function Composer({
             </>
           }
           onSendPress={handleSend}
+          isRunActive={isRunActive}
+          onCancelPress={onCancelRun}
         />
 
         {openSelector === 'provider' ? (

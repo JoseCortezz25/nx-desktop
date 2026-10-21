@@ -1,8 +1,5 @@
-import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { createMockHookRepository } from './mock-hook-repository';
-import { useHookReview } from '../hooks/use-hook-review';
 
 describe('hook repository', () => {
   it('ships six pending realistic hooks with both new and known entries', async () => {
@@ -33,12 +30,21 @@ describe('hook repository', () => {
       hooks
     );
   });
-  it('starts unresolved and loading before effects run', () => {
-    function Probe() {
-      const state = useHookReview();
-      expect(state).toEqual({ hooks: null, isLoading: true });
-      return null;
-    }
-    renderToStaticMarkup(createElement(Probe));
+  it('stores a decision and lists the stored status afterwards', async () => {
+    const repository = createMockHookRepository();
+    const stored = await repository.setHookDecision(
+      'hook-lint-on-write',
+      'rejected'
+    );
+    expect(stored.approvalStatus).toBe('rejected');
+    const hooks = await repository.listHooks();
+    expect(
+      hooks.find(hook => hook.id === 'hook-lint-on-write')?.approvalStatus
+    ).toBe('rejected');
+  });
+  it('rejects a decision for a hook it does not list', async () => {
+    await expect(
+      createMockHookRepository().setHookDecision('hook-ghost', 'approved')
+    ).rejects.toThrow('unknown hook');
   });
 });

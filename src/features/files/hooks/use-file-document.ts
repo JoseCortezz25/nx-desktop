@@ -1,48 +1,101 @@
 /**
  * Loads one workspace file through the typed file port.
  *
- * The viewer never reads the disk; it asks this hook, which resolves the port
- * (`file-repository.ts`) so the mock repository today and the IPC client later
- * are swapped behind the same seam (`react-19` skill: external async work lives
- * in a feature hook, with an `isCancelled` guard for a late-resolving read).
+ * The viewer never reads the disk; it asks this hook, which reads through the
+ * IPC-backed repository (`ipc-file-repository.ts`, #24) bound to the active
+ * project, so the Rust core resolves the project's roots and validates the path
+ * before reading (`react-19` skill: external async work lives in a feature
+ * hook).
+ *
+ * Stale responses are discarded twice over: the effect's `isCancelled` guard
+ * drops a read whose `projectId`/`path` was superseded, and the stored result is
+ * tagged with the request it answers, so a result for a previous file is never
+ * rendered as the current one — the new request reads as loading until its own
+ * answer lands.
  */
 import { useEffect, useState } from 'react';
 import type { FileDocument } from '@/shared/domain/file-document.types';
-import { createMockFileRepository } from '../api/mock-file-repository';
+import type {
+  ProjectId,
+  WorkspacePath
+} from '@/shared/domain/value-objects.types';
+import { toAppErrorDto, type AppErrorDto } from '@/shared/ipc/contracts';
+import { createIpcFileRepository } from '../api/ipc-file-repository';
 
 export interface FileDocumentState {
-  /** The resolved document, or `null` while loading or when the path is empty. */
+  /** The resolved document, or `null` while loading, on error or when absent. */
   readonly document: FileDocument | null;
   readonly isLoading: boolean;
+  /** The normalized failure of the current read, or `null`. */
+  readonly error: AppErrorDto | null;
 }
 
-export function useFileDocument(path: string | null): FileDocumentState {
-  const [document, setDocument] = useState<FileDocument | null>(null);
-  const [isLoading, setIsLoading] = useState(path !== null);
+interface FileReadResult {
+  readonly projectId: ProjectId;
+  readonly path: WorkspacePath;
+  readonly document: FileDocument | null;
+  readonly error: AppErrorDto | null;
+}
+
+const IDLE_STATE: FileDocumentState = {
+  document: null,
+  isLoading: false,
+  error: null
+};
+
+const LOADING_STATE: FileDocumentState = {
+  document: null,
+  isLoading: true,
+  error: null
+};
+
+export function useFileDocument(
+  projectId: ProjectId | null,
+  path: WorkspacePath | null
+): FileDocumentState {
+  const [result, setResult] = useState<FileReadResult | null>(null);
 
   useEffect(() => {
-    if (path === null) {
-      setDocument(null);
-      setIsLoading(false);
+    if (projectId === null || path === null) {
       return;
     }
 
     let isCancelled = false;
-    const repository = createMockFileRepository();
-    setIsLoading(true);
 
-    void repository.readDocument(path).then(next => {
-      if (isCancelled) {
-        return;
-      }
-      setDocument(next);
-      setIsLoading(false);
-    });
+    createIpcFileRepository(projectId)
+      .readDocument(path)
+      .then(
+        document => {
+          if (!isCancelled) {
+            setResult({ projectId, path, document, error: null });
+          }
+        },
+        (error: unknown) => {
+          if (!isCancelled) {
+            setResult({
+              projectId,
+              path,
+              document: null,
+              error: toAppErrorDto(error)
+            });
+          }
+        }
+      );
 
     return () => {
       isCancelled = true;
     };
-  }, [path]);
+  }, [projectId, path]);
 
-  return { document, isLoading };
+  if (projectId === null || path === null) {
+    return IDLE_STATE;
+  }
+  if (
+    result === null ||
+    result.projectId !== projectId ||
+    result.path !== path
+  ) {
+    return LOADING_STATE;
+  }
+  return { document: result.document, isLoading: false, error: result.error };
 }

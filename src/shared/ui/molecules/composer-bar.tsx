@@ -23,6 +23,13 @@ export interface ComposerBarProps {
   readonly onAddPress?: () => void;
   /** Hands the send intent up; the composer organism owns the submit rule. */
   readonly onSendPress?: () => void;
+  /**
+   * `true` while a run streams: the send control becomes the cancel control
+   * (#23), so a second send cannot be issued mid-stream.
+   */
+  readonly isRunActive?: boolean;
+  /** Hands the cancel intent up while a run streams. */
+  readonly onCancelPress?: () => void;
 }
 
 /**
@@ -35,7 +42,9 @@ export function ComposerBar({
   leadingControls,
   controls,
   onAddPress,
-  onSendPress
+  onSendPress,
+  isRunActive = false,
+  onCancelPress
 }: ComposerBarProps) {
   const messages = getSharedMessages();
 
@@ -53,13 +62,23 @@ export function ComposerBar({
       </div>
       <div className="composer-bar__controls">
         {controls}
-        <Button
-          variant="solid"
-          label={messages.composer.sendLabel}
-          onPress={onSendPress}
-        >
-          <Icon name="send" size="sm" />
-        </Button>
+        {isRunActive ? (
+          <Button
+            variant="solid"
+            label={messages.composer.cancelRunLabel}
+            onPress={onCancelPress}
+          >
+            <Icon name="square" size="sm" />
+          </Button>
+        ) : (
+          <Button
+            variant="solid"
+            label={messages.composer.sendLabel}
+            onPress={onSendPress}
+          >
+            <Icon name="send" size="sm" />
+          </Button>
+        )}
       </div>
     </div>
   );

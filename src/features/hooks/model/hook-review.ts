@@ -37,3 +37,33 @@ export function isHookSelected(
 export function formatHookTimeout(timeoutMs: number): string {
   return `${timeoutMs / 1000} s`;
 }
+
+/** The range a footer decision applies to: the whole review or the selection. */
+export type HookDecisionScope = 'selection' | 'all';
+
+/**
+ * The hook ids one footer decision writes, in list order. `all` covers every
+ * reviewed hook; `selection` only the selected ones that are still listed, so a
+ * stale id never reaches the core.
+ */
+export function resolveDecisionHookIds(
+  hooks: readonly Hook[],
+  selected: ReadonlySet<HookId>,
+  scope: HookDecisionScope
+): readonly HookId[] {
+  return hooks
+    .filter(hook => scope === 'all' || selected.has(hook.id))
+    .map(hook => hook.id);
+}
+
+/**
+ * Replaces each listed hook with the version the core stored, keeping list
+ * order; hooks the core did not answer for stay as they were.
+ */
+export function applyStoredHooks(
+  hooks: readonly Hook[],
+  stored: readonly Hook[]
+): readonly Hook[] {
+  const byId = new Map(stored.map(hook => [hook.id, hook]));
+  return hooks.map(hook => byId.get(hook.id) ?? hook);
+}
