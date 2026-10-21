@@ -31,6 +31,7 @@ use features::projects::{commands as project_commands, service::ProjectStore};
 use features::providers::{
     adapters::{
         claude::{ClaudeAgentProvider, config::ClaudeConfig},
+        codex::{CodexAgentProvider, config::CodexConfig, workspace::AppWorkspaceResolver},
         env_credentials::EnvCredentialSource,
         fake::FakeAgentProvider,
     },
@@ -77,10 +78,20 @@ pub fn run() {
         )
         .expect("Claude HTTP client initialises"),
     );
-    let registry = ProviderRegistry::from_sources(&[&FakeAgentProvider, claude.as_ref()]);
+    // The Codex adapter drives the user's installed `codex` CLI with its own
+    // login; it precedes the fake catalog so it replaces the fake `codex` row.
+    let codex_workspaces = Arc::new(AppWorkspaceResolver::default());
+    let codex = Arc::new(
+        CodexAgentProvider::new(CodexConfig::from_process_env(), codex_workspaces.clone())
+            .expect("Codex provider id is valid"),
+    );
+    let registry =
+        ProviderRegistry::from_sources(&[codex.as_ref(), &FakeAgentProvider, claude.as_ref()]);
     let claude_provider_id = claude.provider_id().as_str().to_owned();
+    let codex_provider_id = codex.provider_id().as_str().to_owned();
     let router = ProviderRoutingRunner::new(Arc::new(FakeAgentRunner::default()))
-        .with_route(claude_provider_id, claude);
+        .with_route(claude_provider_id, claude)
+        .with_route(codex_provider_id, codex);
     let runs = RunSupervisor::new(Arc::new(router));
     let hooks = HookService::new(Arc::new(FakeHookSource));
     let open_targets = SystemOpenTargetLauncher;
@@ -92,7 +103,7 @@ pub fn run() {
         .manage(hooks)
         .manage(open_targets)
         .manage(diff_source)
-        .setup(|app| {
+        .setup(move |app| {
             let data_dir = app.path().app_data_dir()?;
             let projects = ProjectStore::with_persistence(data_dir.join("projects.json"))?;
             let conversations = ConversationStore::with_persistence(
@@ -101,6 +112,7 @@ pub fn run() {
             )?;
             app.manage(projects);
             app.manage(conversations);
+            codex_workspaces.bind(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
