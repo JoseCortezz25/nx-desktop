@@ -84,6 +84,7 @@ export const sharedMessages = {
     promptLabel: 'Mensaje',
     addLabel: 'Añadir',
     sendLabel: 'Enviar',
+    cancelRunLabel: 'Detener la ejecución',
     promptPlaceholder: (providerName: string) => `Trabaja con ${providerName}`,
     provider: {
       listLabel: 'Proveedores',

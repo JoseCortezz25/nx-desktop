@@ -36,6 +36,28 @@
   overflow-y: auto;
 }
 
+/* The thread stacks the messages and the live run's status line (#23). */
+.conversation-view__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+/* The live run's status line, aligned to the capped message column. It stays
+   mounted (empty when idle) so the polite live region announces changes. */
+.conversation-view__run-status {
+  width: 100%;
+  max-width: 810px;
+  margin: 0 auto;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.conversation-view__run-status:empty {
+  display: none;
+}
+
 /* The composer dock the shell composes under the conversation. */
 .conversation-view__composer {
   display: flex;

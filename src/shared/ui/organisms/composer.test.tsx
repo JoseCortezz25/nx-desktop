@@ -193,6 +193,29 @@ describe('composer', () => {
     expect(markup).not.toContain('>Keep this draft</textarea>');
   });
 
+  it('swaps the send control for the cancel control while a run streams', () => {
+    const messages = getSharedMessages();
+    const markup = renderComposer({
+      isRunActive: true,
+      onCancelRun: () => undefined
+    });
+
+    expect(markup).toContain(
+      `aria-label="${messages.composer.cancelRunLabel}"`
+    );
+    expect(markup).not.toContain(`aria-label="${messages.composer.sendLabel}"`);
+  });
+
+  it('draws the send control, not cancel, while no run streams', () => {
+    const messages = getSharedMessages();
+    const markup = renderComposer({ onCancelRun: () => undefined });
+
+    expect(markup).toContain(`aria-label="${messages.composer.sendLabel}"`);
+    expect(markup).not.toContain(
+      `aria-label="${messages.composer.cancelRunLabel}"`
+    );
+  });
+
   it('renders the send control enabled so a message can be sent', () => {
     const markup = renderComposer();
 
