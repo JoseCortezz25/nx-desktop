@@ -6,11 +6,22 @@
 //! the only method this issue needs; run execution and streaming belong to
 //! #19 and the per-engine adapter tickets and are deliberately absent.
 //!
+//! [`AgentProvider::ready`] (issue #27) lets an engine whose catalog is
+//! discovered at runtime (OpenCode reads its own configuration through a
+//! child process) finish or refresh that discovery before a listing. The
+//! default is an immediately ready, static catalog.
+//!
 //! [`CredentialSource`] (issue #25) is the seam where provider secrets enter
 //! the Rust core. The first adapter reads the process environment; an OS
 //! keychain adapter can replace it later without touching the engines.
 
+use std::future::Future;
+use std::pin::Pin;
+
 use super::domain::{Provider, ProviderCredential, ProviderId};
+
+/// A boxed, sendable future returned by [`AgentProvider::ready`].
+pub type CatalogReady<'a> = Pin<Box<dyn Future<Output = ()> + Send + 'a>>;
 
 /// Source of the provider catalog the selectors render.
 ///
@@ -19,6 +30,12 @@ use super::domain::{Provider, ProviderCredential, ProviderId};
 pub trait AgentProvider: Send + Sync {
     /// Returns every configured provider with its advertised models.
     fn catalog(&self) -> Vec<Provider>;
+
+    /// Resolves once [`AgentProvider::catalog`] reflects a completed (or
+    /// failed, bounded) discovery. Static catalogs are always ready.
+    fn ready(&self) -> CatalogReady<'_> {
+        Box::pin(std::future::ready(()))
+    }
 }
 
 /// Resolves the secret an engine adapter authenticates with.

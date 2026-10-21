@@ -29,6 +29,11 @@ tokio = { version = "1", features = ["macros", "process", "rt", "rt-multi-thread
 reqwest = { version = "0.13", default-features = false, features = ["json", "stream", "rustls"] }
 futures-util = { version = "0.3", default-features = false, features = ["std"] }
 
+# OpenCode provider adapter (issue #27): signal the child's process group on
+# cancellation so its private `opencode serve` grandchild never outlives a run.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
 [dev-dependencies]
 # Local mock HTTP server for the Claude adapter streaming tests.
 tokio = { version = "1", features = ["net", "io-util"] }
