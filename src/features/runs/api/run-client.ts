@@ -5,11 +5,11 @@
  * `{ request }` envelope documented in `docs/ipc/README.md`. `start_run` also
  * carries the `onEvent` `Channel`, which the caller binds **before** invoking
  * so no frame is missed (`.claude/rules/ipc-and-contracts.md` §5). The
- * `RunSupervisor`, service and command registration land in #19, so this module
- * defines the seam only.
+ * `RunSupervisor`, service and command registration landed in #19;
+ * `startRunStream` (#23) is the subscription the live conversation consumes.
  */
 import type { Channel } from '@tauri-apps/api/core';
-import { ipcInvoke } from '@/shared/ipc/client';
+import { createChannel, ipcInvoke } from '@/shared/ipc/client';
 import type {
   CancelRunRequestDto,
   GetRunRequestDto,
@@ -31,6 +31,49 @@ export function startRun(
   onEvent: Channel<RunStreamEventDto>
 ): Promise<RunDto> {
   return ipcInvoke<RunDto>('start_run', { request, onEvent });
+}
+
+/**
+ * A live subscription to one run's stream, owned by whoever started it.
+ *
+ * `run` is the `start_run` reply (the pending snapshot). `unsubscribe` detaches
+ * the frame handler and is idempotent: the first call detaches, every later
+ * call is a no-op, so a StrictMode double cleanup, an unmount after the
+ * terminal frame or a cancel followed by unmount never double-detach.
+ */
+export interface RunStreamSubscription {
+  readonly run: Promise<RunDto>;
+  unsubscribe(): void;
+}
+
+/**
+ * Binds a fresh `Channel` to `onFrame`, then starts the run with it.
+ *
+ * One channel per run: a frame arriving on it belongs to this run by
+ * construction, and nothing reaches `onFrame` after `unsubscribe`.
+ */
+export function startRunStream(
+  request: StartRunRequestDto,
+  onFrame: (frame: RunStreamEventDto) => void
+): RunStreamSubscription {
+  let isSubscribed = true;
+  const channel = createChannel<RunStreamEventDto>(frame => {
+    if (isSubscribed) {
+      onFrame(frame);
+    }
+  });
+
+  return {
+    run: startRun(request, channel),
+    unsubscribe() {
+      if (!isSubscribed) {
+        return;
+      }
+      isSubscribed = false;
+      // Release the handler so a late frame cannot reach a closed closure.
+      channel.onmessage = () => {};
+    }
+  };
 }
 
 /**

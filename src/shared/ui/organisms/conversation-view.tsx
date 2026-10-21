@@ -28,6 +28,11 @@ export interface ConversationViewProps {
   readonly onRequestOpenSubagent?: (subagentId: SubagentId) => void;
   /** The composer dock the shell composes under the conversation (#6/#8). */
   readonly composer?: ReactNode;
+  /**
+   * The live run's status line (#23) — streaming, cancelled or failed — or
+   * `null` when the latest turn needs none. Resolved copy, never a status code.
+   */
+  readonly runStatusLabel?: string | null;
 }
 
 /**
@@ -48,7 +53,8 @@ export function ConversationView({
   onRequestOpenFile,
   onRequestOpenChanges,
   onRequestOpenSubagent,
-  composer
+  composer,
+  runStatusLabel = null
 }: ConversationViewProps) {
   const model = buildConversationViewModel(conversation);
   // The view tracks the collapsed groups, not the shown ones, so every group
@@ -69,15 +75,24 @@ export function ConversationView({
       </header>
 
       <div className="conversation-view__scroll">
-        <ConversationMessages
-          messages={model.messages}
-          collapsedGroupIds={collapsedGroupIds}
-          onToggleGroup={handleToggleGroup}
-          openFileRequest={openFileRequest}
-          onRequestOpenFile={onRequestOpenFile}
-          onRequestOpenChanges={onRequestOpenChanges}
-          onRequestOpenSubagent={onRequestOpenSubagent}
-        />
+        <div className="conversation-view__thread">
+          <ConversationMessages
+            messages={model.messages}
+            collapsedGroupIds={collapsedGroupIds}
+            onToggleGroup={handleToggleGroup}
+            openFileRequest={openFileRequest}
+            onRequestOpenFile={onRequestOpenFile}
+            onRequestOpenChanges={onRequestOpenChanges}
+            onRequestOpenSubagent={onRequestOpenSubagent}
+          />
+          <p
+            className="conversation-view__run-status"
+            role="status"
+            aria-live="polite"
+          >
+            {runStatusLabel}
+          </p>
+        </div>
       </div>
 
       {composer ? (
