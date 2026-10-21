@@ -9,6 +9,7 @@ pub mod features;
 pub mod ipc;
 pub mod persistence;
 pub mod security;
+pub mod storage;
 
 use std::sync::Arc;
 
@@ -48,6 +49,7 @@ use features::runs::{
     supervisor::RunSupervisor,
 };
 use features::workspace::commands::read_file;
+use storage::{DATABASE_FILE_NAME, Database};
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -125,6 +127,10 @@ pub fn run() {
         .manage(diff_source)
         .setup(move |app| {
             let data_dir = app.path().app_data_dir()?;
+            // SQLite foundation (#82): opened and migrated before any store so a
+            // refused or corrupt database fails startup like the JSON stores do.
+            let database = Database::open(data_dir.join(DATABASE_FILE_NAME))?;
+            app.manage(database);
             let projects = ProjectStore::with_persistence(data_dir.join("projects.json"))?;
             let conversations = ConversationStore::with_persistence(
                 data_dir.join("conversations.json"),
